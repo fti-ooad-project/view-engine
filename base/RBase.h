@@ -1,9 +1,9 @@
 #ifndef _RBase_H_
 #define _RBase_H_
-#include "list"
-#include "vector"
+//#include <list>
+//#include "vector"
 #include <time.h>
-#include <functional>
+//#include <functional>
 #include "../linalg/vec.h"
 #include "../linalg/mat.h"
 #include <memory>
@@ -14,12 +14,12 @@ typedef unsigned short ushort;
 #define MIN( x , y ) x < y ? x : y
 #define ifor( i , x , y ) for( int i = x; i < y; ++i )
 #define ito( y ) ifor( i , 0 , y )
-class Log
+/*class Log
 {
 static std::fstream file;
 public:
 };
-std::fstream Log::file;
+std::fstream Log::file;*/
 #define LOG std::cout
 class RTimer
 {

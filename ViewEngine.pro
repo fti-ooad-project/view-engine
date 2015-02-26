@@ -1,3 +1,4 @@
+QMAKE_CXXFLAGS += -std=c++11
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
@@ -16,26 +17,30 @@ LIBS += -L"C://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//fr
 -lSDL2
 
 HEADERS += \
-    linalg/mat.h \
-    linalg/vec.h \
-    view/RViewModels.h \
-    view/RViewModelsGL.h \
+    base/Parallel.h \
     base/RBase.h \
-    base/RModels.h \
-    view/RVertex.h \
     base/REventer.h \
     base/RFileloader.h \
     base/RFileParser.hpp \
-    view/RPassDesc.h \
-    view/RAnim.h \
-    view/RDrawable.h \
-    view/RLight.h \
-    view/RTextures.h \
-    view/RAnimGL.h \
+    base/RModels.h \
+    linalg/mat.h \
+    linalg/vec.h \
+    view/3dgl/RAnim.h \
+    view/3dgl/RAnimGL.h \
+    view/3dgl/RDrawable.h \
+    view/3dgl/RDrawableGL.h \
+    view/3dgl/RLight.h \
+    view/3dgl/RLightGL.h \
+    view/3dgl/RPassDesc.h \
+    view/3dgl/RPassGL.h \
+    view/3dgl/RTextures.h \
+    view/3dgl/RTexturesGL.h \
+    view/3dgl/RVertex.h \
+    view/3dgl/RViewModels.h \
+    view/3dgl/RViewModelsGL.h \
+    view/gui/gl/GUIRendererGL.h \
     view/GL.h \
-    view/RTexturesGL.h \
-    view/RLightGL.h \
-    view/RPassGL.h \
-    view/RDrawableGL.h \
-    view/RSceneDrawler.h
+    view/ViewEngineGL.hpp \
+    view/ViewInterface.h \
+    view/WindowGL.hpp
 

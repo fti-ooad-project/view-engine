@@ -5,7 +5,7 @@
 #include "RFileloader.h"
 typedef std::string RWord;
 #define RWORDS_COUNT 1
-const RWord res_word[RWORDS_COUNT] = { "include" };
+const RWord res_word[RWORDS_COUNT] = { "$include" };
 class RFileParser
 {
 public:
@@ -26,7 +26,7 @@ public:
 		size_t pos = 0;
 		for( const char *t = str.c_str(); *t != '\0'; ++t , ++pos )
         {
-			if( *t == '' )
+			if( *t == '$' )
 			{
 				size_t size = 0;
 				size = toSpace( t );
