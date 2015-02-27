@@ -14,10 +14,10 @@ CXX           = g++
 DEFINES       = -DUNICODE
 CFLAGS        = -O2 -Wall -Wextra -m32 $(DEFINES)
 CXXFLAGS      = -std=c++11 -O2 -Wall -Wextra -m32 $(DEFINES)
-INCPATH       = -I. -I"..\..\..\ProgrammingLibs\SDL2-2.0.3\i686-w64-mingw32\include" -I"..\..\..\ProgrammingLibs\freeglut\include" -I"..\..\..\..\..\QT\5.2.1\mingw48_32\mkspecs\win32-g++"
+INCPATH       = -I. -I"..\..\..\ProgrammingLibs\SDL2-2.0.3\i686-w64-mingw32\include" -I"..\..\..\ProgrammingLibs\freeglut\include" -I"..\..\..\ProgrammingLibs\SDL2\image" -I"..\..\..\..\..\QT\5.2.1\mingw48_32\mkspecs\win32-g++"
 LINKER      =        g++
 LFLAGS        =        -Wl,-s -Wl,-subsystem,console
-LIBS        =        -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//freeglut//lib -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2-2.0.3//i686-w64-mingw32//lib -lopengl32 -lglew32 -lmingw32 -lSDL2main -lSDL2 
+LIBS        =        -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//freeglut//lib -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2-2.0.3//i686-w64-mingw32//lib -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2//image//lib -lopengl32 -lglew32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image 
 QMAKE         = C:\QT\5.2.1\mingw48_32\bin\qmake.exe
 IDC           = idc
 IDL           = midl
@@ -172,7 +172,10 @@ release/main.o: main.cpp view/ViewEngineGL.hpp \
 		view/3dgl/RTexturesGL.h \
 		view/3dgl/RViewModelsGL.h \
 		base/RFileParser.hpp \
-		base/RFileloader.h
+		base/RFileloader.h \
+		../../../ProgrammingLibs/SDL2/image/SDL/SDL_image.h \
+		../../../ProgrammingLibs/SDL2/image/SDL/SDL.h \
+		../../../ProgrammingLibs/SDL2/image/SDL/SDL_cdrom.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\main.o main.cpp
 
 ####### Install

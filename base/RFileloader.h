@@ -11,6 +11,7 @@
 #endif
 #include <fstream>
 #include <sstream>
+#include <SDL/SDL_image.h>
 //==========================
 //	RData class 1.04.14 schreiner
 //==========================
@@ -18,16 +19,43 @@
 class RFileLoader
 {
 public:
-	static void loadImageBin( RImage &out ,std::shared_ptr< std::ifstream > stream )
+	static std::unique_ptr< RImage[] > loadImage( std::string filename )
 	{
-        stream->read( ( char * )&out._size._w , sizeof( int ) );
-        stream->read( ( char * )&out._size._h , sizeof( int ) );
-		out.__data = std::move( std::unique_ptr< char >( new char[4 * out._size._w * out._size._h] ) );
-		stream->read( ( char * )out.__data.get() , 4 * out._size._w * out._size._h );
+		if( !IMG_Init( IMG_INIT_PNG | IMG_INIT_JPG ) )
+		{
+			printf( "SDL_image could not initialize! SDL_image Error: %s\n" , IMG_GetError() );
+		}
+		SDL_Surface *loadedSurface = IMG_Load( filename.c_str() );
+		if( loadedSurface == NULL )
+		{
+			printf( "Unable to load image %s! SDL_image Error: %s\n" , filename.c_str() , IMG_GetError() );
+		}
+		uint bpp = loadedSurface->pitch / loadedSurface->w;
+		std::unique_ptr< char[] > data( new char[loadedSurface->h * loadedSurface->w * bpp] );
+		memcpy( data.get() , loadedSurface->pixels , loadedSurface->h * loadedSurface->w * bpp );
+		std::unique_ptr< RImage[] > out( new RImage[1]{ { std::move( data ) , RSize{ loadedSurface->w , loadedSurface->h } , bpp } } );
+		SDL_FreeSurface( loadedSurface );
+		IMG_Quit();
+		return std::move( out );
+	}
+	static std::unique_ptr< RImage[] > loadImageBin( std::shared_ptr< std::ifstream > stream , int count )
+	{
+		std::unique_ptr< RImage[] > out( new RImage[count] );
+		ito( count )
+		{
+			int h , w;
+			stream->read( ( char * )&w , sizeof( int ) );
+			stream->read( ( char * )&h , sizeof( int ) );
+			std::unique_ptr< char[] > data( new char[h * w * 4] );
+			stream->read( ( char * )data.get() , 4 * w * h );
+			out[i] = std::move( RImage( std::move( data ) , RSize{ w , h } , 4 ) );
+		}
+		return std::move( out );
     }
 	static std::unique_ptr< RPolymesh > loadPolyMeshBin( std::shared_ptr< std::ifstream > stream , int type )
     {
 		std::unique_ptr< RPolymesh > out( new RPolymesh() );
+		out->_flags = 0;
 		out->_type = type;
 		switch( type )
 		{
@@ -56,15 +84,21 @@ public:
 		}
 		int img_count = 3;
 		stream->read( ( char* )&img_count , sizeof( int ) );
-		if( img_count < 1 ) return out;
-		out->_flags |= ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_DIF | ShaderMask::MASK_TEXTURED_NOR;
-		std::unique_ptr< RImage[] > img( new RImage[img_count] );
-		ito( img_count )
+		if( img_count > 1 )
 		{
-			loadImageBin( img[i] , stream );
+			out->_flags |= ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_DIF | ShaderMask::MASK_TEXTURED_NOR;
+			out->_textures = std::move( loadImageBin( stream  , img_count ) );
+			out->_texture_count = img_count;
 		}
-		out->_textures = std::move( img );
-		out->_texture_count = img_count;
+		if( type != RPolymesh::RPolyMeshType::RBONED_PMESH )
+			return std::move( out );
+		int anim_count;
+		if( anim_count )
+		{
+			out->_flags |= ShaderMask::MASK_OWN_ANIMATED;
+			stream->read( ( char * )&anim_count, sizeof( uint ) );
+			out->__mat4anim = std::move( loadAnimSetBin( stream , anim_count ) );
+		}
 		return std::move( out );
     }
 	static uint binarize( uint c )
@@ -77,23 +111,28 @@ public:
 		}
 		return 0;
 	}
-	static std::unique_ptr< RAnimationset[] > loadAnimSetBin( std::shared_ptr< std::ifstream > stream )
+	static std::unique_ptr< RAnimationset[] > loadAnimSetBin( std::shared_ptr< std::ifstream > stream , int count )
     {
-		std::unique_ptr< RAnimationset[] > out( new RAnimationset[1] );
+		std::unique_ptr< RAnimationset[] > out( new RAnimationset[count] );
 		/*int anim_count = 0;
 		stream->read( ( char* )&anim_count , sizeof( int ) );
 		int bcount = 0;
 		stream->read( ( char* )&bcount , sizeof( int ) );
 		int *skelet = new int[bcount*2];
 		stream->read( ( char* )skelet , bcount * 2 * sizeof( int ) );/////*/
-		int temp;
-		stream->read( ( char * )&temp, sizeof( uint ) );
-		stream->read( ( char * )&out[0]._bone_count, sizeof( uint ) );
-		stream->read( ( char * )&out[0]._frame_count, sizeof( uint ) );
-		///ATWECHAU PEREPISATI BLYAAAATY
-		out[0].__data = std::move( std::unique_ptr< f4x4[] >( new f4x4[out[0]._frame_count*out[0]._bone_count] ) );
-		stream->read( ( char * )out[0].__data.get() , sizeof( f4x4 )*out[0]._frame_count*out[0]._bone_count );
-		return out;
+		ito( count )
+		{
+			int bc , fc;
+			stream->read( ( char * )&bc, sizeof( uint ) );
+			stream->read( ( char * )&fc, sizeof( uint ) );
+			///ATWECHAU PEREPISATI BLYAAAATY
+			//out[i].__data = std::move( std::unique_ptr< f4x4[] >( new f4x4[fc*bc] ) );
+			//stream->read( ( char * )out[i].__data.get() , sizeof( f4x4 )*fc*bc );
+			std::unique_ptr< f4x4[] > data( new f4x4[fc*bc] );
+			stream->read( ( char * )data.get() , sizeof( f4x4 ) * fc * bc );
+			out[i] = std::move( RAnimationset( std::move( data ) , fc , bc ) );
+		}
+		return std::move( out );
     }
 	/*static void loadScene( const char *filename , std::shared_ptr< RSceneDsc > out_scene )
 	{

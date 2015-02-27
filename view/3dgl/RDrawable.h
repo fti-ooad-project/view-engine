@@ -12,8 +12,8 @@ enum RDrawableType
 class RDrawableState
 {
 public:
-	std::list< ViewTypes::RDrawablePTR > _view;
-	f4x4 _model_mat4;
+	std::vector< std::tuple< ViewTypes::RDrawablePTR , f4x4 > > _view;
+	//f4x4 _model_mat4;
 	RAnimationMixer _animstat;
 };
 class RSpriteEffect

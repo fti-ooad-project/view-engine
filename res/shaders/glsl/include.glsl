@@ -1,5 +1,5 @@
 const int MASK_TEXTURED			= 1 << 0;
-const int MASK_TEXTURED_DIF 	= 1 << 1;
+const int MASK_TEXTURED_DIF			= 1 << 1;
 const int MASK_TEXTURED_NOR 	= 1 << 2;
 const int MASK_TEXTURED_SPE		= 1 << 3;
 const int MASK_ANIMATED			= 1 << 4;

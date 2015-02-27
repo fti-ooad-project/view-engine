@@ -72,12 +72,15 @@ private:
 		glViewport( 0 , 0 , w , h );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		_shader_in.reset();
-		f4x4 model( 1.0f ) , viewproj( RCamera::orthographic( f3( 0.0f , -1.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 1.0f , 0.0f , 0.0f ) ) );
+		f4x4 model( 1.0f ) , viewproj( RCamera::perpLookUp1x1( f3( 0.0f , 4.0f , 3.0f ) , f3( 0.0f , -1.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) ) );
+		//RTextureHolderGL tex( std::move( std::unique_ptr< RImage[] >( RFileLoader::loadImage( "res/view/images/env_test.jpg" ) ) ) , 1 );
+		//tex.init();
+		//_shader_in.add( 0 , RShaderInTypes::tex , &tex.__texture_pointer_array[0] );
 		_shader_in.add( 6 , RShaderInTypes::mat4 , &model );
 		_shader_in.add( 30 , RShaderInTypes::mat4 , &viewproj );
 		_prog.bind( _shader_in );
 		_view[0]->draw( RDrawableState() );
-		//_screen_quad.draw( RDrawableState() );
+		_screen_quad.draw( RDrawableState() );
 	}
 public:
 	void init() override

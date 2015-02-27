@@ -14,10 +14,11 @@ class ShaderMask
 {
 public:
 	static constexpr int MASK_TEXTURED	= 1 << 0;
-	static constexpr int MASK_TEXTURED_DIF 	= 1 << 1;
+	static constexpr int MASK_TEXTURED_DIF	= 1 << 1;
 	static constexpr int MASK_TEXTURED_NOR 	= 1 << 2;
 	static constexpr int MASK_TEXTURED_SPE	= 1 << 3;
 	static constexpr int MASK_ANIMATED	= 1 << 4;
+	static constexpr int MASK_OWN_ANIMATED	= 1 << 5;
 };
 struct RSize
 {
@@ -111,7 +112,7 @@ public:
         _fovx = aspectx;
         _fovy = aspecty;
     }
-	static f4x4 perpLookUp1x1( const f3 &pos, const f3 &z, const f3 &v3local_z )
+	static f4x4 perpLookUp1x1( const f3 &pos, const f3 &look, const f3 &up )
     {
 		f4x4 view, proj;
         float farp = 1000.0f, nearp = 1.0f;
@@ -124,13 +125,13 @@ public:
 		proj( 3 , 2 ) = - Q * nearp;
 		proj( 2 , 3 ) = 1.0f;
 
-		f3 x = -vecx( z, v3local_z );
-		f3 y = -v3local_z;
+		f3 x = -vecx( look, up );
+		f3 y = up;
         view = f4x4(
-				   x.x(), y.x(), z.x(), 0.0f,
-				   x.y(), y.y(), z.y(), 0.0f,
-				   x.z(), y.z(), z.z(), 0.0f,
-                   -x * pos, -y * pos, -z * pos, 1.0f );
+				   x.x(), y.x(), look.x(), 0.0f,
+				   x.y(), y.y(), look.y(), 0.0f,
+				   x.z(), y.z(), look.z(), 0.0f,
+				   -x * pos, -y * pos, -look * pos, 1.0f );
 		//view.print();
 		return view * proj;
     }

@@ -2,7 +2,7 @@
 #define RTEXTURESGL_H
 #include "RTextures.h"
 #include "../GL.h"
-class RTextureHolderGL
+class RTextureHolderGL : public RInitable
 {
 private:
 	std::unique_ptr< RSize[] > __tex_size;
@@ -21,12 +21,17 @@ public:
 		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
 		__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[_count] ) );
 		glGenTextures( _count , __texture_pointer_array.get() );
-		for ( int i = 0; i < _count; i++ )
+		for ( uint i = 0; i < _count; i++ )
 		{
 			__tex_size[i] = _imgs[i]._size;
 			glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[i] );
-			glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGBA , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
+			if( _imgs[i]._bytes_per_pixel == 4 )
+				glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGBA , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
 					GL_RGBA , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
+			else
+			if( _imgs[i]._bytes_per_pixel == 3 )
+				glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGB , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
+					GL_RGB , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER ,
 					GL_LINEAR );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER ,
@@ -35,6 +40,9 @@ public:
 					GL_CLAMP_TO_EDGE );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T ,
 					GL_CLAMP_TO_EDGE );
+#ifdef RLOG
+		LOG << "_________________________\n" << "texture generated:id:" << __texture_pointer_array[i] << "\n";
+#endif
 		}
 		_imgs.reset();
 	}

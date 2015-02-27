@@ -112,7 +112,8 @@ public:
 	}
 	void bindRes( RDrawableState const &stat ) const override
 	{
-		if( _flags & ShaderMask::MASK_ANIMATED && !__anim_intex._count )
+		glUniform1i( 0 , _flags );
+		if( ( _flags & ShaderMask::MASK_ANIMATED ) && __anim_intex._count )
 		{
 			glActiveTexture( GL_TEXTURE0 + 3 );
 			glBindTexture( GL_TEXTURE_2D , __anim_intex.__texture_pointer_array[stat._animstat._moment._cur_set] );
@@ -125,7 +126,7 @@ public:
 			glUniform1f( 9 , stat._animstat._moment._last_time );
 			glUniform1f( 10 , __anim_intex._bone_count );
 		}
-		if( _flags & ShaderMask::MASK_TEXTURED && !__textures._count )
+		if( ( _flags & ShaderMask::MASK_TEXTURED ) && __textures._count )
 		{
 			ito( __textures._count )///<=3
 			{
