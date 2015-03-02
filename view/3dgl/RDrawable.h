@@ -9,11 +9,12 @@ enum RDrawableType
 {
 	RDRAWBL_POLYMESH = 0 , RDRAWBL_QUAD = 1 , RDRAWBL_BOX = 2
 };
+typedef std::tuple< RAnimationMixer , f4x4 > DrawableInfo;
+typedef std::tuple< RAnimationMixer , f4x4 > ViewInfo;
 class RDrawableState
 {
 public:
-	std::vector< std::tuple< ViewTypes::RDrawablePTR , f4x4 > > _view;
-	//f4x4 _model_mat4;
+	std::vector< ViewInfo > _view;
 	RAnimationMixer _animstat;
 };
 class RSpriteEffect
@@ -36,15 +37,6 @@ public:
 		_time += _speed * dt;
 		if( _time > 1.0f ) _dead = true;
 	}
-};
-class RDrawable : public RInitable
-{
-public:
-	int _flags = 0;
-public:
-	virtual void draw( RDrawableState const & ) const = 0;
-	virtual void drawPatches( RDrawableState const & ) const = 0;
-	//virtual void drawInstanced( int ) const = 0;
 };
 class RPolymesh
 {

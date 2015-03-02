@@ -4,21 +4,27 @@
 #include "../GL.h"
 class RBoneAnimInTexHolderGL
 {
-private:
+public:
 	std::unique_ptr< RAnimationset[] > __sets;
 public:
 	int _count;
 	int _bone_count;
 	std::unique_ptr< uint[] > __texture_pointer_array;
 	std::unique_ptr< int[] > __frame_count;
-
 	RBoneAnimInTexHolderGL( std::unique_ptr< RAnimationset[] > &&sets , int count ):
 	_count( count )
+	, __sets( std::move( sets ) )
+	, __frame_count( new int[count] )
+	, _bone_count( __sets.get()[0]._bone_count )
 	{
-		if( !count ) return;
-		__sets = std::move( sets );
-		__frame_count = std::move( std::unique_ptr< int[] >( new int[count] ) );
-		_bone_count = sets.get()[0]._bone_count;
+	}
+	void operator=( RBoneAnimInTexHolderGL &&a )
+	{
+		_count =  a._count;
+		if( !_count ) return;
+		__sets = std::move( a.__sets );
+		__frame_count = std::move( std::unique_ptr< int[] >( new int[_count] ) );
+		_bone_count = __sets[0]._bone_count;
 	}
 	void init()
 	{

@@ -8,9 +8,14 @@ out PerVertex pvo;
 void main()
 {
 	vec4 p = vec4( invertex_position , 1.0 );
-	mat4 m = MAT4X4_MODEL;
-	/*$include anim_func.glsl
-	*/
+	mat4 m;
+	if( bool( INSTANSING ) )
+		m = INS_MODEL4x4;
+	else
+		m = MAT4X4_MODEL;
+	
+	$include anim_func.glsl
+	
 	p = m * p;
 	if( bool( FLAGS & MASK_TEXTURED_NOR ) )
 	{

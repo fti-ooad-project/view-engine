@@ -9,11 +9,13 @@ layout( location = 7 ) uniform float TIME;
 layout( location = 8 ) uniform int MIXING;
 layout( location = 9 ) uniform float LAST_TIME;
 layout( location = 10 ) uniform int BONE_COUNT;
+layout( location = 13 ) uniform int CUR_ANIM;
+layout( location = 14 ) uniform int LAST_ANIM;
+layout( location = 15 ) uniform int INSTANSING;
 
 layout( location = 11 ) uniform vec3 CAM_POS;
 layout( location = 12 ) uniform int TESSELATE;
 
-layout( location = 20 ) uniform sampler2D ANIM_TEX;
-layout( location = 21 ) uniform sampler2D LAST_ANIM_TEX;
+layout( location = 20 ) uniform sampler2D ANIM_TEX[10];
 
 layout( location = 30 ) uniform mat4 MAT4X4_VIEWPROJ[6];

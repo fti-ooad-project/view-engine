@@ -24,7 +24,7 @@ std::fstream Log::file;*/
 class RTimer
 {
 protected:
-	float _dt , _last_time , _cur_time;
+	float _dt = 0.0f , _last_time = 0.0f , _cur_time = 0.0f;
 	void updateTime()
 	{
 		_last_time = _cur_time;

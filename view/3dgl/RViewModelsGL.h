@@ -76,7 +76,7 @@ public:
 				glGetProgramiv( _m_program , GL_INFO_LOG_LENGTH , &length );
 				std::string log( length , ' ' );
 				glGetProgramInfoLog( _m_program , length , &length , &log[0] );
-#ifdef RLOGERROR
+#ifdef RLOG
 				LOG << "shader link error: " << log << "\n";
 #endif
 				throw std::logic_error( "shader linkage error" );
@@ -93,7 +93,7 @@ public:
 	inline void bind( RShaderInput &in )
     {
 		glUseProgram( _m_program );
-		uint tc = 5;///five becouse polymeshes bind textures from 0 to 5( diffuse, spec , normals... )
+		uint tc = 0;///five becouse polymeshes bind textures from 0 to 5( diffuse, spec , normals... )
 		for( uint i = 0; i < RShaderInput::MAX_INPUT; ++i )
         {
             if( in._loaded[i] ) continue;

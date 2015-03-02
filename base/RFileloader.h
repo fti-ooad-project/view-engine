@@ -82,23 +82,26 @@ public:
 				stream->read( ( char * )out->__indeces.get(), sizeof( unsigned short )*out->_face_count * 3 );
 			break;
 		}
-		int img_count = 3;
+		int img_count;
 		stream->read( ( char* )&img_count , sizeof( int ) );
+		out->_texture_count = img_count;
 		if( img_count > 1 )
 		{
 			out->_flags |= ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_DIF | ShaderMask::MASK_TEXTURED_NOR;
 			out->_textures = std::move( loadImageBin( stream  , img_count ) );
-			out->_texture_count = img_count;
 		}
 		if( type != RPolymesh::RPolyMeshType::RBONED_PMESH )
 			return std::move( out );
 		int anim_count;
+		stream->read( ( char * )&anim_count, sizeof( uint ) );
+		out->_anim_count = anim_count;
 		if( anim_count )
 		{
 			out->_flags |= ShaderMask::MASK_OWN_ANIMATED;
-			stream->read( ( char * )&anim_count, sizeof( uint ) );
 			out->__mat4anim = std::move( loadAnimSetBin( stream , anim_count ) );
+			//LOG<<anim_count;
 		}
+		//LOG<<out->__mat4anim[0]._bone_count;
 		return std::move( out );
     }
 	static uint binarize( uint c )

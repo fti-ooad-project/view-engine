@@ -4,27 +4,79 @@
 #include "../GL.h"
 #include "RAnimGL.h"
 #include "RTexturesGL.h"
-class RPolyMeshGL : public RDrawable
+struct InstanceInfo
 {
-public:
+	float time;
+	float last_time;
+	int mixing;
+	int cur_anim;
+	int last_anim;
+	f4x4 model;
+};
+class RPolyMeshGL : public RInitable
+{
+protected:
 	uint _vao;
+	uint _instanced_buf = 0;
 	int _indx_count;
-	virtual void bindRes( RDrawableState const & ) const = 0;
-	void draw( RDrawableState const &stat ) const override
+public:
+	int _flags = 0;
+public:
+	bool isInstanced() const
+	{
+		return bool( _instanced_buf );
+	}
+	void genInstancedBuffer()
+	{
+		if( _instanced_buf ) return;
+		glBindVertexArray( _vao );
+		glGenBuffers( 1 , &_instanced_buf );
+		glBindBuffer( GL_ARRAY_BUFFER , _instanced_buf );
+		uint datasize = sizeof( InstanceInfo );
+		int mc = 12;
+		for( int c = 7; c <= mc; ++c )
+			glEnableVertexAttribArray( c );
+		glVertexAttribPointer( 7 , 2 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 0 ) );
+		glVertexAttribPointer( 8 , 3 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 8 ) );
+		glVertexAttribPointer( 9 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 20 ) );
+		glVertexAttribPointer( 10 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 36 ) );
+		glVertexAttribPointer( 11 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 52 ) );
+		glVertexAttribPointer( 12 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 68 ) );
+		for( int c = 7; c <= mc; ++c )
+			glVertexAttribDivisor( c , 1 );
+		glBindBuffer( GL_ARRAY_BUFFER , 0 );
+		glBindVertexArray( 0 );
+		//LOG<<datasize;
+	}
+	virtual void bindRes( InstanceInfo const & ) const = 0;
+	void draw( InstanceInfo const &stat ) const
 	{
 		bindRes( stat );
 		glBindVertexArray( _vao );
 		glDrawElements( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 );
 	}
-	void drawPatches( RDrawableState const &stat ) const override
+	void drawPatches( InstanceInfo const &stat ) const
 	{
 		bindRes( stat );
 		glBindVertexArray( _vao );
 		glDrawElements( GL_PATCHES , _indx_count , GL_UNSIGNED_SHORT , 0 );
 	}
-	void release() override
+	void release()
 	{
 		glDeleteVertexArrays( 1 , &_vao );
+		glDeleteBuffers( 1 , &_instanced_buf );
+	}
+	void drawInstanced( std::vector< InstanceInfo > const &data )
+	{
+		bindRes( data[0] );
+		glBindVertexArray( _vao );
+		glBindBuffer( GL_ARRAY_BUFFER , _instanced_buf );
+		glBufferData( GL_ARRAY_BUFFER , sizeof( InstanceInfo ) * data.size() , &data[0] , GL_DYNAMIC_DRAW );
+		glDrawElementsInstanced( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 , data.size() );
+		glBindBuffer( GL_ARRAY_BUFFER , 0 );
+		glBindVertexArray( 0 );
+		//data[0].pos.print();
+		//LOG << _instanced_buf;
 	}
 };
 class RComplexPolyMeshGL : public RPolyMeshGL
@@ -33,10 +85,12 @@ public:
 	RTextureHolderGL __textures;
 	RBoneAnimInTexHolderGL __anim_intex;
 	std::unique_ptr< RPolymesh > __mesh;
+	int _bone_count;
 	RComplexPolyMeshGL( std::unique_ptr< RPolymesh > &&mesh ):
 	__textures( std::move( mesh->_textures ) , mesh->_texture_count )
 	, __anim_intex( std::move( mesh->__mat4anim ) , mesh->_anim_count )
 	, __mesh( std::move( mesh ) )///ORDER
+	, _bone_count( __mesh->_bone_count )
 	{
 	}
 	void init() override
@@ -110,29 +164,37 @@ public:
 	{
 		release();
 	}
-	void bindRes( RDrawableState const &stat ) const override
+	void bindRes( InstanceInfo const &stat ) const override
 	{
 		glUniform1i( 0 , _flags );
-		if( ( _flags & ShaderMask::MASK_ANIMATED ) && __anim_intex._count )
+		if( _flags & ShaderMask::MASK_ANIMATED )
 		{
-			glActiveTexture( GL_TEXTURE0 + 3 );
-			glBindTexture( GL_TEXTURE_2D , __anim_intex.__texture_pointer_array[stat._animstat._moment._cur_set] );
-			glUniform1i( 20 , 3 );///20-location of anim texture
-			glActiveTexture( GL_TEXTURE0 + 4 );
-			glBindTexture( GL_TEXTURE_2D , __anim_intex.__texture_pointer_array[stat._animstat._moment._last_set] );
-			glUniform1i( 21 , 4 );///21-location of anim texture
-			glUniform1f( 7 , stat._animstat._moment._time );///same
-			glUniform1i( 8 , static_cast< int >( stat._animstat._moment._mix ) );
-			glUniform1f( 9 , stat._animstat._moment._last_time );
-			glUniform1f( 10 , __anim_intex._bone_count );
+			glUniform1f( 7 , stat.time );///same
+			glUniform1i( 8 , stat.mixing );
+			glUniform1f( 9 , stat.last_time );
+			glUniform1i( 10 , _bone_count );
+			glUniform1i( 13 , stat.cur_anim );
+			glUniform1f( 14 , stat.last_anim );
 		}
+		int c = 0;
 		if( ( _flags & ShaderMask::MASK_TEXTURED ) && __textures._count )
 		{
 			ito( __textures._count )///<=3
 			{
-				glActiveTexture( GL_TEXTURE0 + i );
+				glActiveTexture( GL_TEXTURE0 + c );
 				glBindTexture( GL_TEXTURE_2D , __textures.__texture_pointer_array[i] );
-				glUniform1i( 1 + i , i );///1-layout of the first texture in shader
+				glUniform1i( 1 + i , c );///1-layout of the first texture in shader
+				c++;
+			}
+		}
+		if( ( _flags & ShaderMask::MASK_OWN_ANIMATED ) && __anim_intex._count )
+		{
+			ito( __anim_intex._count )
+			{
+				glActiveTexture( GL_TEXTURE0 + c );
+				glBindTexture( GL_TEXTURE_2D , __anim_intex.__texture_pointer_array[i] );
+				glUniform1i( 20 + i , c );///20-location of anim texture
+				c++;
 			}
 		}
 	}
@@ -176,8 +238,9 @@ struct RPolyQuadGL : public RPolyMeshGL
 	{
 		release();
 	}
-	void bindRes( RDrawableState const &stat ) const override
+	void bindRes( InstanceInfo const &stat ) const override
 	{
+		glUniform1i( 0 , _flags );
 	}
 };
 struct RPolyBoxGL : public RPolyMeshGL
@@ -228,9 +291,9 @@ struct RPolyBoxGL : public RPolyMeshGL
 	{
 		release();
 	}
-	void bindRes( RDrawableState const &stat ) const override
+	void bindRes( InstanceInfo const &stat ) const override
 	{
-
+		glUniform1i( 0 , _flags );
 	}
 };
 #endif // RDRAWABLEGL_H
