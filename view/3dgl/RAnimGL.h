@@ -2,6 +2,7 @@
 #define RANIMGL_H
 #include "RAnim.h"
 #include "../GL.h"
+#include "view/export/RViewModels.h"
 class RBoneAnimInTexHolderGL
 {
 public:

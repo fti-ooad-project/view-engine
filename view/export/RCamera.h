@@ -1,54 +1,23 @@
-#ifndef __RViewModels_H__
-#define __RViewModels_H__
-//#include "../../hpp/linalg/RLinAlg.hpp"
-#include "linalg/vec.h"
-#include "linalg/mat.h"
-#include "RVertex.h"
+#ifndef RCAMERA_H
+#define RCAMERA_H
+#include "../../linalg/vec.h"
+#include "../../linalg/mat.h"
 #include <memory>
-#include "base/RModels.h"
-#include "base/RBase.h"
-/*started 29.03.14
-*@schreiner
-*/
-class ShaderMask
-{
-public:
-	static constexpr int MASK_TEXTURED	= 1 << 0;
-	static constexpr int MASK_TEXTURED_DIF	= 1 << 1;
-	static constexpr int MASK_TEXTURED_NOR 	= 1 << 2;
-	static constexpr int MASK_TEXTURED_SPE	= 1 << 3;
-	static constexpr int MASK_ANIMATED	= 1 << 4;
-	static constexpr int MASK_OWN_ANIMATED	= 1 << 5;
-};
-struct RSize
-{
-	uint _w , _h;
-	RSize( uint w = 0 , uint h = 0 ): _w( w ) , _h( h ) {}
-	RSize( const RSize &size ): _w( size._w ) , _h( size._h ) {}
-};
-class ViewTypes
-{
-public:
-	static const int CREATE_NEW = -1;
-	typedef uint RDrawBufferPTR;
-	typedef uint RDrawablePTR;
-	typedef uint RLightSourcePTR;
-	typedef uint RDrawInstancePTR;
-	typedef uint RBoneAnimInTexPTR;
-};
+#include "../../base/RModels.h"
+#include "../../base/RBase.h"
 class RCamera : public REntity
 {
 private:
 	mutable float		_fovx = 1.4f;
 	mutable float		_fovy = 1.4f;
 	float		_nearplane = 0.1f;
-    float		_farplane = 1000.0f;
+	float		_farplane = 1000.0f;
 	f4x4 _view_proj_matrix = f4x4( 1.0f );
 public:
 	f4x4 const &getViewProj() const
-    {
-        return _view_proj_matrix;
-    }
+	{
+		return _view_proj_matrix;
+	}
 	f4x4 const &calc()
 	{
 		if( _calc_m4x4 ) return _view_proj_matrix;
@@ -106,16 +75,16 @@ public:
 		pushChange();
 	}
 	void perspective( const float nearp, const float farplane, const float aspectx, const float aspecty )
-    {
-        _nearplane = nearp;
-        _farplane = farplane;
-        _fovx = aspectx;
-        _fovy = aspecty;
-    }
+	{
+		_nearplane = nearp;
+		_farplane = farplane;
+		_fovx = aspectx;
+		_fovy = aspecty;
+	}
 	static f4x4 perpLookUp1x1( const f3 &pos, const f3 &look, const f3 &up )
-    {
+	{
 		f4x4 view, proj;
-        float farp = 1000.0f, nearp = 1.0f;
+		float farp = 1000.0f, nearp = 1.0f;
 		float Q;
 		Q = farp / ( farp - nearp );
 		proj = f4x4( 0.0f );
@@ -127,14 +96,14 @@ public:
 
 		f3 x = -vecx( look, up );
 		f3 y = up;
-        view = f4x4(
+		view = f4x4(
 				   x.x(), y.x(), look.x(), 0.0f,
 				   x.y(), y.y(), look.y(), 0.0f,
 				   x.z(), y.z(), look.z(), 0.0f,
 				   -x * pos, -y * pos, -look * pos, 1.0f );
 		//view.print();
 		return view * proj;
-    }
+	}
 	static f4x4 orthographic( const f3 &pos, const f3 &z, const f3 &local_y )
 	{
 		f4x4 view, proj;
@@ -168,57 +137,4 @@ public:
 		out[5] = RCamera::perpLookUp1x1( pos , f3( 0.0f, 0.0f, -1.0f ) , f3( 0.0f, 1.0f, 0.0f ) );
 	}
 };
-struct RShaderInTypes
-{
-	static const int vec1 = 0 , vec2 = 1 , vec3 = 2 , ivec1 = 3 , mat4 = 4 , tex = 5 , cubemap = 6 , vec4 = 7 , none = -1;
-};
-struct RTuple
-{
-	int _type;
-	const void *__data;
-	uint _count;
-};
-struct RShaderInput
-{
-	static const uint MAX_INPUT = 50;
-	RTuple __tuple[MAX_INPUT];
-	bool _loaded[MAX_INPUT];
-	uint __id[MAX_INPUT];
-	uint c;
-	inline void set( int i , int index , int type , const void *data , uint count = 1 )
-	{
-		__id[index] = i;
-		__tuple[index]._type = type;
-		__tuple[index].__data = data;
-		__tuple[index]._count = count;
-		_loaded[index] = false;
-	}
-	inline int add( int i , int type , const void *data , uint count = 1 )
-	{
-		__id[c] = i;
-		__tuple[c]._type = type;
-		__tuple[c].__data = data;
-		__tuple[c]._count = count;
-		_loaded[c] = false;
-		c++;
-		return c - 1;
-	}
-	inline void reset()
-	{
-		ito( MAX_INPUT )
-		{
-			__tuple[i]._type = RShaderInTypes::none;
-			__tuple[i].__data = nullptr;
-			__tuple[i]._count = 0;
-			_loaded[i] = true;
-			__id[i] = 0;
-		}
-		c = 0;
-	}
-};
-class RGraphicProgramm : public RInitable
-{
-public:
-	virtual void bind( RShaderInput & ) = 0;
-};
-#endif /* __RViewModels_H__ */
+#endif // RCAMERA_H

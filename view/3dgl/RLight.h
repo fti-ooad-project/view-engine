@@ -9,14 +9,4 @@ class RLightSourceShape
 {
 	static const int RLIGHTSHAPE_CIRCLE = 0 , RLIGHTSHAPE_CIRCLE_SMOOTH = 1;
 };
-struct RLightState
-{
-	bool _cast_shadow;
-	int _type;
-	f3	_pos;
-	f3	_dir;
-	f4	_colori;
-	float _size;
-	int _shape;
-};
 #endif /* __RLIGHT_H__ */

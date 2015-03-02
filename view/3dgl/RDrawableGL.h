@@ -4,6 +4,8 @@
 #include "../GL.h"
 #include "RAnimGL.h"
 #include "RTexturesGL.h"
+#include "ShaderSpecs.h"
+#include "RVertex.h"
 struct InstanceInfo
 {
 	float time;

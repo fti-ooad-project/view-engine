@@ -1,10 +1,14 @@
 #ifndef RSCENEDRAWLER_H
 #define RSCENEDRAWLER_H
-#include "base/RBase.h"
-#include "base/REventer.h"
-#include "3dgl/RViewModels.h"
-#include "3dgl/RDrawable.h"
-#include "3dgl/RLight.h"
+#include "../../base/RBase.h"
+#include "../../base/REventer.h"
+#include "RViewModels.h"
+#include "RCamera.h"
+#if defined( VIEWLIBRARY_EXPORT )
+#   define VIEWAPI   __declspec( dllexport )
+#else
+#   define VIEWAPI   __declspec( dllimport )
+#endif
 class Scene3D
 {
 public:
@@ -35,7 +39,7 @@ public:
 	ViewManager(){}
 	ViewManager( ViewManager const & ) = delete;
 	void operator=( ViewManager const & ) = delete;
-	static ViewManager *singletonGet( int );
+	static VIEWAPI ViewManager *singletonGet( int );
 	virtual void init() = 0;
 	virtual void drawScene( Scene3D const * ) = 0;
 	virtual void drawGUI( GUILayout const * ) = 0;

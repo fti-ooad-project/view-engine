@@ -1,9 +1,10 @@
 QMAKE_CXXFLAGS += -std=c++11
 TEMPLATE = app
+#TEMPLATE = lib
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-
+DEFINES += VIEWLIBRARY_EXPORT
 SOURCES += main.cpp
 INCLUDEPATH += "C://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2-2.0.3//i686-w64-mingw32//include" \
 "C://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//freeglut//include" \
@@ -44,5 +45,10 @@ HEADERS += \
     view/GL.h \
     view/ViewEngineGL.hpp \
     view/ViewInterface.h \
-    view/WindowGL.hpp
+    view/WindowGL.hpp \
+    view/3dgl/RCamera.h \
+    view/export/RCamera.h \
+    view/export/RViewModels.h \
+    view/export/ViewInterface.h \
+    view/3dgl/ShaderSpecs.h
 

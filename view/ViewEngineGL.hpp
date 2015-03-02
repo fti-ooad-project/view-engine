@@ -1,11 +1,12 @@
 #ifndef VIEWENGINEGL_H
 #define VIEWENGINEGL_H
-#include "ViewInterface.h"
+#include "view/export/ViewInterface.h"
 #include "WindowGL.hpp"
 #include "base/REventer.h"
 #include "view/3dgl/RDrawableGL.h"
 #include "view/3dgl/RViewModelsGL.h"
 #include <list>
+#include "gui/gl/GUIRendererGL.h"
 class Scene3DGL : public Scene3D
 {
 private:
@@ -52,6 +53,7 @@ private:
 	RGraphicProgrammGL _prog;
 	RPolyQuadGL _screen_quad;
 	RShaderInput _shader_in;
+	GUIRendererGL _guimng;
 	bool _inited = false;
 	void tick( int w , int h )
 	{
@@ -66,6 +68,7 @@ private:
 				i->init();
 			_inited = true;
 			_view[0]->genInstancedBuffer();
+			_guimng.init();
 		}
 		glBindFramebuffer( GL_FRAMEBUFFER , 0 );
 		glClearColor( 0.5f, 0.5f, 0.0f, 0.5f );
@@ -100,6 +103,7 @@ private:
 		_shader_in.set( 15 , id , RShaderInTypes::ivec1 , &instancing );
 		_prog.bind( _shader_in );
 		_screen_quad.draw( InstanceInfo() );
+		_guimng.drawText( "test" , f2( 0.1f , 0.1f ) , 0.1f );
 		//sleep( 0x1000 );
 	}
 public:

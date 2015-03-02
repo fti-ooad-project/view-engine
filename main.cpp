@@ -1,7 +1,7 @@
 #include <iostream>
 #define RLOG
 #include "view/ViewEngineGL.hpp"
-ViewManager *ViewManager::singletonGet( int type )
+VIEWAPI ViewManager * ViewManager::singletonGet( int type )
 {
 	static ViewManager* singleton = nullptr;
 	if( singleton ) return singleton;
@@ -23,6 +23,5 @@ int main()
 	{
 		sleep( 0x10 );
 	}
-	return 0;
 }
 

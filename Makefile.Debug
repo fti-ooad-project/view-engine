@@ -11,7 +11,7 @@ MAKEFILE      = Makefile.Debug
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DUNICODE
+DEFINES       = -DUNICODE -DVIEWLIBRARY_EXPORT
 CFLAGS        = -g -Wall -Wextra -m32 $(DEFINES)
 CXXFLAGS      = -std=c++11 -g -Wall -Wextra -m32 $(DEFINES)
 INCPATH       = -I. -I"..\..\..\ProgrammingLibs\SDL2-2.0.3\i686-w64-mingw32\include" -I"..\..\..\ProgrammingLibs\freeglut\include" -I"..\..\..\ProgrammingLibs\SDL2\image" -I"..\..\..\..\..\QT\5.2.1\mingw48_32\mkspecs\win32-g++"
@@ -106,19 +106,14 @@ compiler_clean:
 ####### Compile
 
 debug/main.o: main.cpp view/ViewEngineGL.hpp \
-		view/ViewInterface.h \
+		view/export/ViewInterface.h \
 		base/RBase.h \
 		linalg/vec.h \
 		linalg/mat.h \
 		base/REventer.h \
-		view/3dgl/RViewModels.h \
-		view/3dgl/RVertex.h \
+		view/export/RViewModels.h \
+		view/export/RCamera.h \
 		base/RModels.h \
-		view/3dgl/RDrawable.h \
-		view/3dgl/RTextures.h \
-		view/3dgl/RAnim.h \
-		view/3dgl/RLight.h \
-		view/3dgl/RPassDesc.h \
 		view/WindowGL.hpp \
 		../../../ProgrammingLibs/freeglut/include/GL/glew.h \
 		../../../ProgrammingLibs/SDL2-2.0.3/i686-w64-mingw32/include/SDL2/SDL.h \
@@ -167,9 +162,14 @@ debug/main.o: main.cpp view/ViewEngineGL.hpp \
 		../../../ProgrammingLibs/SDL2-2.0.3/i686-w64-mingw32/include/SDL2/SDL_opengl.h \
 		base/Parallel.h \
 		view/3dgl/RDrawableGL.h \
+		view/3dgl/RDrawable.h \
+		view/3dgl/RTextures.h \
+		view/3dgl/RAnim.h \
 		view/GL.h \
 		view/3dgl/RAnimGL.h \
 		view/3dgl/RTexturesGL.h \
+		view/3dgl/ShaderSpecs.h \
+		view/3dgl/RVertex.h \
 		view/3dgl/RViewModelsGL.h \
 		base/RFileParser.hpp \
 		base/RFileloader.h \

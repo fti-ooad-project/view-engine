@@ -12,10 +12,20 @@ public:
 	std::unique_ptr< uint[] > __texture_pointer_array;
 	RTextureHolderGL( std::unique_ptr< RImage[] > &&imgs , int count ):
 	_count( count )
+	, _imgs( std::move( imgs ) )
 	{
-		if( !_count ) return;
-		_imgs = std::move( imgs );
 	}
+	RTextureHolderGL( RTextureHolderGL &&a ):
+	_count( a._count )
+	, _imgs( std::move( a._imgs ) )
+	{
+	}
+	void operator=( RTextureHolderGL &&a )
+	{
+		_count = a._count;
+		_imgs = std::move( a._imgs );
+	}
+	RTextureHolderGL() = default;
 	void init()
 	{
 		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
@@ -52,9 +62,11 @@ public:
 	}
 	void release()
 	{
-		if( !__texture_pointer_array ) return;
-		glDeleteTextures( _count , __texture_pointer_array.get() );
-		__texture_pointer_array.reset();
+		if( __texture_pointer_array )
+		{
+			glDeleteTextures( _count , __texture_pointer_array.get() );
+			__texture_pointer_array.reset();
+		}
 		__tex_size.reset();
 	}
 };

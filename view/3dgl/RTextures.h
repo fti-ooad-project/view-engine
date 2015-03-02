@@ -1,7 +1,6 @@
 #ifndef __RTEXTURES_H__
 #define __RTEXTURES_H__
 #include "base/RBase.h"
-#include "view/3dgl/RViewModels.h"
 struct RImage: public RInitable
 {
 	RSize _size;

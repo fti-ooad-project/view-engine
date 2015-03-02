@@ -1,21 +1,12 @@
 #ifndef __RDRAWABLES_H__
 #define __RDRAWABLES_H__
 #include "base/RBase.h"
-#include "view/3dgl/RViewModels.h"
 #include "view/3dgl/RTextures.h"
 #include "view/3dgl/RAnim.h"
 #include <list>
 enum RDrawableType
 {
 	RDRAWBL_POLYMESH = 0 , RDRAWBL_QUAD = 1 , RDRAWBL_BOX = 2
-};
-typedef std::tuple< RAnimationMixer , f4x4 > DrawableInfo;
-typedef std::tuple< RAnimationMixer , f4x4 > ViewInfo;
-class RDrawableState
-{
-public:
-	std::vector< ViewInfo > _view;
-	RAnimationMixer _animstat;
 };
 class RSpriteEffect
 {

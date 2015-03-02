@@ -1,7 +1,7 @@
 #ifndef __ROPENGLINTFC_H__
 #define __ROPENGLINTFC_H__
 //#include "RLinAlg.hpp"
-#include "RViewModels.h"
+#include "ShaderSpecs.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string>
@@ -16,7 +16,7 @@ struct RAnimPref
     int _type;
     int _frame_count;
 };
-class RGraphicProgrammGL : public RGraphicProgramm
+class RGraphicProgrammGL
 {
 private:
 	uint _vertex_program , _fragment_program , _m_program = 0 , _geometric_program = 0 , _tess_program = 0 , _tess_est_program = 0;
@@ -101,6 +101,10 @@ public:
 			setUniform( in.__tuple[i] , in.__id[i] , tc );
 		}
     }
+	inline void bind()
+	{
+		glUseProgram( _m_program );
+	}
 	void release()
     {
 		if( !_m_program ) glDeleteProgram( _m_program );
