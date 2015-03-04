@@ -2,8 +2,8 @@
 #define RSCENEDRAWLER_H
 #include "../../base/RBase.h"
 #include "../../base/REventer.h"
-#include "RViewModels.h"
-#include "RCamera.h"
+#include "RViewModels.hpp"
+#include "RCamera.hpp"
 #if defined( VIEWLIBRARY_EXPORT )
 #   define VIEWAPI   __declspec( dllexport )
 #else

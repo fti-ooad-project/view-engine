@@ -13,6 +13,7 @@ class RWindowGL : public RTimer , public Parallel , public RInitable
 {
 public:
 	typedef std::function< void( int , int ) > FrameFunc;
+	typedef std::function< void() > ReleaseFunc;
 protected:
 	keystate	__key_state[MAX_KEY] = {0};
 	keystate	__mouse_state[3] = {0};
@@ -23,6 +24,7 @@ protected:
 	bool mouse_holded = false;
 	bool ignore_mmove = false;
 	FrameFunc _func;
+	ReleaseFunc _relf;
 	void holdCursor()
 	{
 		SDL_WarpMouseInWindow( mainwindow , _screen_width / 2 , _screen_height / 2 );
@@ -33,13 +35,18 @@ protected:
 		__mouse_pos.y() = 1.0f - float( y ) / _screen_height * 2.0f;
 	}
 public:
-	void init( FrameFunc func )
+	void init( FrameFunc func , ReleaseFunc relf )
 	{
+		if( isInited() ) return;
+		setInited( true );
 		_func = func;
+		_relf = relf;
 		start();
 	}
 	void release() override
 	{
+		if( !isInited() ) return;
+		setInited( false );
 	}
 	~RWindowGL() override
 	{
@@ -126,13 +133,17 @@ public:
 				}
 			}
 			//__eventer->update( this->__key_state , this->__mouse_state , &this->__mouse_pos );
-
 			SDL_GetWindowSize( mainwindow , &_screen_width , &_screen_height );
 			_func( _screen_width , _screen_height );
 			updateTime();
 			SDL_GL_SwapWindow( mainwindow );
 		}
 exit:
+		_relf();
+		SDL_GL_DeleteContext( maincontext );
+		SDL_DestroyWindow( mainwindow );
+		SDL_Quit();
+		release();
 		return;
 	}
 };

@@ -28,6 +28,8 @@ public:
 	RTextureHolderGL() = default;
 	void init()
 	{
+		if( isInited() ) return;
+		setInited( true );
 		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
 		__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[_count] ) );
 		glGenTextures( _count , __texture_pointer_array.get() );
@@ -35,13 +37,21 @@ public:
 		{
 			__tex_size[i] = _imgs[i]._size;
 			glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[i] );
-			if( _imgs[i]._bytes_per_pixel == 4 )
-				glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGBA , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
+			switch( _imgs[i]._bytes_per_pixel )
+			{
+			case 4:
+				glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGBA8 , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
 					GL_RGBA , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
-			else
-			if( _imgs[i]._bytes_per_pixel == 3 )
+			break;
+			case 3:
 				glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGB , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
 					GL_RGB , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
+			break;
+			case 1:
+				glTexImage2D( GL_TEXTURE_2D , 0 , GL_LUMINANCE , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
+					GL_LUMINANCE , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
+			break;
+			}
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER ,
 					GL_LINEAR );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER ,
@@ -62,6 +72,8 @@ public:
 	}
 	void release()
 	{
+		if( !isInited() ) return;
+		setInited( false );
 		if( __texture_pointer_array )
 		{
 			glDeleteTextures( _count , __texture_pointer_array.get() );

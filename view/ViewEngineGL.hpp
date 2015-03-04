@@ -1,12 +1,12 @@
 #ifndef VIEWENGINEGL_H
 #define VIEWENGINEGL_H
-#include "view/export/ViewInterface.h"
+#include "view/export/ViewInterface.hpp"
 #include "WindowGL.hpp"
 #include "base/REventer.h"
 #include "view/3dgl/RDrawableGL.h"
 #include "view/3dgl/RViewModelsGL.h"
 #include <list>
-#include "gui/gl/GUIRendererGL.h"
+#include "gui/gl/GUIRendererGL.hpp"
 class Scene3DGL : public Scene3D
 {
 private:
@@ -77,16 +77,19 @@ private:
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		_shader_in.reset();
 		f4x4 model( 1.0f ) , viewproj( RCamera::perpLookUp1x1( f3( 0.0f , 10.0f , 10.0f ) , f3( 0.0f , -0.7f , -0.7f ) , f3( 0.0f , 0.0f , 1.0f ) ) );
-		//RTextureHolderGL tex( std::move( std::unique_ptr< RImage[] >( RFileLoader::loadImage( "res/view/images/env_test.jpg" ) ) ) , 1 );
+		//auto rend = TextRenderer::getSingleton();
+		//rend->init();
+		//RTextureHolderGL tex( rend->renderText( "hello" ) , 1 );
+		//std::move( std::unique_ptr< RImage[] >( RFileLoader::loadImage( "res/view/images/env_test.jpg" ) ) ) , 1 );
 		//tex.init();
-		//_shader_in.add( 0 , RShaderInTypes::tex , &( dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() ) )->__anim_intex.__texture_pointer_array[0] );
+		//_shader_in.add( 0 , RShaderInTypes::tex , &tex.__texture_pointer_array[0] );
 		updateTime();
 		int instancing = 1;
 		_shader_in.add( 30 , RShaderInTypes::mat4 , &viewproj );
 		int id = _shader_in.add( 15 , RShaderInTypes::ivec1 , &instancing );
 		_prog.bind( _shader_in );
+		float time = _cur_time - floorf( _cur_time );
 		{
-			float time = _cur_time - floorf( _cur_time );
 			std::vector< InstanceInfo > data;
 			xfor( x , 100 )
 				xfor( y , 100 )
@@ -103,13 +106,17 @@ private:
 		_shader_in.set( 15 , id , RShaderInTypes::ivec1 , &instancing );
 		_prog.bind( _shader_in );
 		_screen_quad.draw( InstanceInfo() );
-		_guimng.drawText( "test" , f2( 0.1f , 0.1f ) , 0.1f );
+
+		_guimng.drawPanel( f2( 0.0f , 0.0f ) , f2( 0.2f , 0.2f ) + 0.1f * f2( sin( _cur_time ) , cos( _cur_time ) ) , 0 );
+		_guimng.drawText( "start game" , f2( 0.0f , 0.0f ) , f2( 0.2f , 0.1f ) );
 		//sleep( 0x1000 );
 	}
 public:
 	void init() override
 	{
-		win.init( [this]( int w , int h ){ tick( w , h ); } );
+		if( isInited() ) return;
+		setInited( true );
+		win.init( [this]( int w , int h ){ tick( w , h ); } , [this](){ this->release(); } );
 	}
 	void drawScene( Scene3D const *scene ) override
 	{
@@ -124,7 +131,12 @@ public:
 	}
 	void release() override
 	{
-		win.release();
+		if( !isInited() ) return;
+		setInited( false );
+		_guimng.release();
+		_screen_quad.release();
+		_prog.release();
+		_view.clear();
 	}
 };
 #endif // VIEWENGINEGL_H

@@ -57,6 +57,11 @@ public:
 		glBindVertexArray( _vao );
 		glDrawElements( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 );
 	}
+	void draw() const
+	{
+		glBindVertexArray( _vao );
+		glDrawElements( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 );
+	}
 	void drawPatches( InstanceInfo const &stat ) const
 	{
 		bindRes( stat );
@@ -207,10 +212,10 @@ struct RPolyQuadGL : public RPolyMeshGL
 	{
 		static constexpr float quad[] =
 		{
-			-1.0f , -1.0f , 0.0f , 0.0f , 0.0f , 0.0f , 0.0f , 1.0f ,
-			1.0f , -1.0f , 0.0f , 1.0f , 0.0f , 0.0f , 0.0f , 1.0f ,
-			1.0f , 1.0f , 0.0f , 1.0f , 1.0f , 0.0f , 0.0f , 1.0f ,
-			-1.0f , 1.0f , 0.0f , 0.0f , 1.0f , 0.0f , 0.0f , 1.0f
+			-1.0f , -1.0f , 0.0f , 0.0f , 1.0f , 0.0f , 0.0f , 1.0f ,
+			1.0f , -1.0f , 0.0f , 1.0f , 1.0f , 0.0f , 0.0f , 1.0f ,
+			1.0f , 1.0f , 0.0f , 1.0f , 0.0f , 0.0f , 0.0f , 1.0f ,
+			-1.0f , 1.0f , 0.0f , 0.0f , 0.0f , 0.0f , 0.0f , 1.0f
 		};
 		static constexpr ushort indx[] =
 		{

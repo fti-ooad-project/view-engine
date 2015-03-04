@@ -1,7 +1,7 @@
 #ifndef __RPASSDESC_H__
 #define __RPASSDESC_H__
 #include "base/RBase.h"
-#include "view/3dgl/RViewModels.h"
+#include "../export/RViewModels.hpp"
 class RBufferStoreType
 {
 	static const int RBUFFER_BYTE = 0 , RBUFFER_FLOAT = 1;

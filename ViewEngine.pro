@@ -18,7 +18,8 @@ LIBS += -L"C://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//fr
 -lmingw32 \
 -lSDL2main \
 -lSDL2 \
--lSDL2_image
+-lSDL2_image \
+-lSDL2_ttf
 HEADERS += \
     base/Parallel.h \
     base/RBase.h \
@@ -41,14 +42,14 @@ HEADERS += \
     view/3dgl/RVertex.h \
     view/3dgl/RViewModels.h \
     view/3dgl/RViewModelsGL.h \
-    view/gui/gl/GUIRendererGL.h \
     view/GL.h \
     view/ViewEngineGL.hpp \
     view/ViewInterface.h \
     view/WindowGL.hpp \
     view/3dgl/RCamera.h \
-    view/export/RCamera.h \
-    view/export/RViewModels.h \
-    view/export/ViewInterface.h \
-    view/3dgl/ShaderSpecs.h
+    view/3dgl/ShaderSpecs.h \
+    view/gui/gl/GUIRendererGL.hpp \
+    view/export/ViewInterface.hpp \
+    view/export/RViewModels.hpp \
+    view/export/RCamera.hpp
 

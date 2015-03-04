@@ -17,7 +17,7 @@ CXXFLAGS      = -std=c++11 -O2 -Wall -Wextra -m32 $(DEFINES)
 INCPATH       = -I. -I"..\..\..\ProgrammingLibs\SDL2-2.0.3\i686-w64-mingw32\include" -I"..\..\..\ProgrammingLibs\freeglut\include" -I"..\..\..\ProgrammingLibs\SDL2\image" -I"..\..\..\..\..\QT\5.2.1\mingw48_32\mkspecs\win32-g++"
 LINKER      =        g++
 LFLAGS        =        -Wl,-s -Wl,-subsystem,console
-LIBS        =        -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//freeglut//lib -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2-2.0.3//i686-w64-mingw32//lib -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2//image//lib -lopengl32 -lglew32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image 
+LIBS        =        -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//freeglut//lib -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2-2.0.3//i686-w64-mingw32//lib -LC://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//SDL2//image//lib -lopengl32 -lglew32 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf 
 QMAKE         = C:\QT\5.2.1\mingw48_32\bin\qmake.exe
 IDC           = idc
 IDL           = midl
@@ -106,13 +106,13 @@ compiler_clean:
 ####### Compile
 
 release/main.o: main.cpp view/ViewEngineGL.hpp \
-		view/export/ViewInterface.h \
+		view/export/ViewInterface.hpp \
 		base/RBase.h \
 		linalg/vec.h \
 		linalg/mat.h \
 		base/REventer.h \
-		view/export/RViewModels.h \
-		view/export/RCamera.h \
+		view/export/RViewModels.hpp \
+		view/export/RCamera.hpp \
 		base/RModels.h \
 		view/WindowGL.hpp \
 		../../../ProgrammingLibs/freeglut/include/GL/glew.h \
@@ -175,7 +175,10 @@ release/main.o: main.cpp view/ViewEngineGL.hpp \
 		base/RFileloader.h \
 		../../../ProgrammingLibs/SDL2/image/SDL/SDL_image.h \
 		../../../ProgrammingLibs/SDL2/image/SDL/SDL.h \
-		../../../ProgrammingLibs/SDL2/image/SDL/SDL_cdrom.h
+		../../../ProgrammingLibs/SDL2/image/SDL/SDL_cdrom.h \
+		view/gui/gl/GUIRendererGL.hpp \
+		view/Gl.h \
+		../../../ProgrammingLibs/SDL2-2.0.3/i686-w64-mingw32/include/SDL2/SDL_ttf.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\main.o main.cpp
 
 ####### Install

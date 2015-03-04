@@ -1,6 +1,6 @@
 #ifndef RPASSGL_H
 #define RPASSGL_H
-#include "GL.h"
+#include "../GL.h"
 #include "RPassDesc.h"
 class RDrawPassGL : public RPass
 {
