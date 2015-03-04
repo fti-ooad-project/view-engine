@@ -17,7 +17,6 @@ public:
 	{
 		if( isInited() ) return;
 		setInited( true );
-		LOG<<"init\n";
 		uint vbo , ibo;
 		static constexpr float quad[9][20] =
 		{
@@ -76,9 +75,9 @@ public:
 			glGenBuffers( 1 , &ibo );
 			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER_ARB , ibo );
 			glBufferData( GL_ELEMENT_ARRAY_BUFFER_ARB , 12 , indx , GL_STATIC_DRAW_ARB );
+			glBindVertexArray( 0 );
 			glDeleteBuffers( 1 , &vbo );
 			glDeleteBuffers( 1 , &ibo );
-			glBindVertexArray( 0 );
 			glBindBuffer( GL_ARRAY_BUFFER_ARB , 0 );
 			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
 		}
@@ -308,7 +307,7 @@ public:
 		glActiveTexture( GL_TEXTURE0 + 1 );
 		glBindTexture( GL_TEXTURE_2D , _panel_texture.__texture_pointer_array[0] );
 		glUniform1i( 1 , 1 );
-		PanelDrawler::getSingleton()->drawPanel( pos , size , 0.1f );
+		PanelDrawler::getSingleton()->drawPanel( pos , size , 0.05f );
 		glDisable( GL_BLEND );
 		glEnable( GL_DEPTH_TEST );
 	}
