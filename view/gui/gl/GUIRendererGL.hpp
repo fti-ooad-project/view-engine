@@ -1,6 +1,6 @@
 #ifndef GIRENDERERGL_H
 #define GIRENDERERGL_H
-#include "../../Gl.h"
+#include "../../GL.h"
 #include "../../../base/RBase.h"
 #include "../../3dgl/RTexturesGL.h"
 #include "../../../base/RFileloader.h"
