@@ -18,12 +18,20 @@ public:
 	RTextureHolderGL( RTextureHolderGL &&a ):
 	_count( a._count )
 	, _imgs( std::move( a._imgs ) )
+	, __tex_size( std::move( a.__tex_size ) )
+	, __texture_pointer_array( std::move( a.__texture_pointer_array ) )
 	{
+		setInited( a.isInited() );
+		a.setInited( false );
 	}
 	void operator=( RTextureHolderGL &&a )
 	{
 		_count = a._count;
 		_imgs = std::move( a._imgs );
+		__tex_size = std::move( a.__tex_size );
+		__texture_pointer_array = std::move( a.__texture_pointer_array );
+		setInited( a.isInited() );
+		a.setInited( false );
 	}
 	RTextureHolderGL() = default;
 	void init()

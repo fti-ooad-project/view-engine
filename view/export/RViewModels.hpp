@@ -75,7 +75,7 @@ struct RAnimationMixer
 		_event = event;
 	}
 };
-typedef std::tuple< RAnimationMixer , f4x4 > ViewInfo;
+typedef std::tuple< ViewTypes::RDrawablePTR , f4x4 > ViewInfo;
 class RDrawableState
 {
 public:

@@ -25,6 +25,7 @@ protected:
 	bool ignore_mmove = false;
 	FrameFunc _func;
 	ReleaseFunc _relf;
+	REventer *_eventer;
 	void holdCursor()
 	{
 		SDL_WarpMouseInWindow( mainwindow , _screen_width / 2 , _screen_height / 2 );
@@ -35,12 +36,13 @@ protected:
 		__mouse_pos.y() = 1.0f - float( y ) / _screen_height * 2.0f;
 	}
 public:
-	void init( FrameFunc func , ReleaseFunc relf )
+	void init( FrameFunc func , ReleaseFunc relf , REventer *eventer )
 	{
 		if( isInited() ) return;
 		setInited( true );
 		_func = func;
 		_relf = relf;
+		_eventer = eventer;
 		start();
 	}
 	void release() override
@@ -132,7 +134,8 @@ public:
 					break;
 				}
 			}
-			//__eventer->update( this->__key_state , this->__mouse_state , &this->__mouse_pos );
+			_eventer->update( this->__key_state , this->__mouse_state , &this->__mouse_pos );
+			_eventer->call();
 			SDL_GetWindowSize( mainwindow , &_screen_width , &_screen_height );
 			_func( _screen_width , _screen_height );
 			updateTime();

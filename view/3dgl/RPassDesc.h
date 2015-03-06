@@ -4,6 +4,7 @@
 #include "../export/RViewModels.hpp"
 class RBufferStoreType
 {
+public:
 	static const int RBUFFER_BYTE = 0 , RBUFFER_FLOAT = 1;
 };
 struct RRect

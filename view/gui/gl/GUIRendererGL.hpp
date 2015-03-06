@@ -232,6 +232,23 @@ public:
 	RTextureHolderGL _text_texture;
 	std::string _text;
 public:
+	GUITextHolderGL() = default;
+	GUITextHolderGL( const GUITextHolderGL & ) = delete;
+	void operator=( const GUITextHolderGL & ) = delete;
+	GUITextHolderGL( GUITextHolderGL &&a ):
+	_text( std::move( a._text ) )
+	, _text_texture( std::move( a._text_texture ) )
+	{
+		setInited( a.isInited() );
+		a.setInited( false );
+	}
+	void operator=( GUITextHolderGL &&a )
+	{
+		_text = std::move( a._text );
+		_text_texture = std::move( a._text_texture );
+		setInited( a.isInited() );
+		a.setInited( false );
+	}
 	void init( std::string text )
 	{
 		if( isInited() ) return;
@@ -249,6 +266,7 @@ public:
 		if( !isInited() ) return;
 		setInited( false );
 		_text_texture.release();
+		_text.clear();
 	}
 	~GUITextHolderGL()
 	{
@@ -262,6 +280,7 @@ private:
 	RGraphicProgrammGL _text_shader , _panel_shader;
 	RPolyQuadGL _gui_quad;
 	char chars_per_row = 16;
+	std::vector< GUITextHolderGL > _text_vector;
 public:
 	GUIRendererGL( const GUIRendererGL & ) = delete;
 	void operator=( const GUIRendererGL & ) = delete;
@@ -278,17 +297,22 @@ public:
 		_panel_texture = std::move( RTextureHolderGL( RFileLoader::loadImage( "res/view/images/panel.jpg" ) , 1 ) );
 		_panel_texture.init();
 	}
-	void drawText( std::string const text , f2 const &pos , f2 const &size )
+	uint genText( std::string const text )
+	{
+		GUITextHolderGL temp;
+		temp.init( text );
+		_text_vector.push_back( std::move( temp ) );
+		return _text_vector.size() - 1;
+	}
+	void drawText( uint i , f2 const &pos , f2 const &size )
 	{
 		glEnable( GL_BLEND );
 		glDisable( GL_DEPTH_TEST );
 		glBlendFunc( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
 		glBlendEquation( GL_FUNC_ADD );
 		_text_shader.bind();
-		GUITextHolderGL temp;
-		temp.init( text );
 		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D , temp.getTextureId() );
+		glBindTexture( GL_TEXTURE_2D , _text_vector[i].getTextureId() );
 		glUniform1i( 0 , 0 );
 		glUniform4f( 5 , pos.x() , pos.y() , size.x() , size.y() );
 		glUniform4f( 6 , 0.0f , 0.0f , 1.0f , 1.0f );
@@ -321,6 +345,7 @@ public:
 		_gui_quad.release();
 		_text_shader.release();
 		_panel_shader.release();
+		_text_vector.clear();
 	}
 	~GUIRendererGL()
 	{

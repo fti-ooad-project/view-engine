@@ -11,8 +11,10 @@ private:
 	uint N;
 	std::unique_ptr< uint[] > __texture_pointer_array;
 public:
-	void init( const RPassDesc &desc )
+	void init( const RPassDesc &desc ) override
 	{
+		if( isInited() ) return;
+		setInited( true );
 		_desc = desc;
 		N = desc._buffer_count;
 		glGenFramebuffers( 1 , &_framebuffer_id );
@@ -149,8 +151,14 @@ public:
 		glBindFramebuffer( GL_FRAMEBUFFER , _framebuffer_id );
 		glViewport( 0 , 0 , _desc._size._w , _desc._size._h );
 	}
+	ViewTypes::RDrawBufferPTR getDepthBufferPtr() const override
+	{
+		return _depth_buffer_pointer;
+	}
 	void release() override
 	{
+		if( !isInited() ) return;
+		setInited( false );
 		glDeleteTextures( N , __texture_pointer_array.get() );
 		if( _desc._depth_buffer_access )
 			glDeleteTextures( 1 , &_depth_buffer_pointer );

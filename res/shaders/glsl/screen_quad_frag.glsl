@@ -12,5 +12,5 @@ void main()
 {
 	//vec4 c = texture2D( SMTH_BUFFER , vec2( 0.5 , 0.5 ) );
 	float bright = 0.5;//abs( c.x + c.y + c.z ) / 3;
-	out_data = hdr( texture2D( BUFFER , frag_pos ) , max( 0.0 , bright - 0.5 ) , bright + 0.5 );
+	out_data = hdr( texture2D( BUFFER , vec2( frag_pos.x , 1.0 - frag_pos.y ) ) , max( 0.0 , bright - 0.5 ) , bright + 0.5 );
 }
