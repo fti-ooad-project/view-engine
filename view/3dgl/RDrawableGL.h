@@ -85,6 +85,18 @@ public:
 		//data[0].pos.print();
 		//LOG << _instanced_buf;
 	}
+	void drawInstancedPatches( std::vector< InstanceInfo > const &data )
+	{
+		bindRes( data[0] );
+		glBindVertexArray( _vao );
+		glBindBuffer( GL_ARRAY_BUFFER , _instanced_buf );
+		glBufferData( GL_ARRAY_BUFFER , sizeof( InstanceInfo ) * data.size() , &data[0] , GL_DYNAMIC_DRAW );
+		glDrawElementsInstanced( GL_PATCHES , _indx_count , GL_UNSIGNED_SHORT , 0 , data.size() );
+		glBindBuffer( GL_ARRAY_BUFFER , 0 );
+		glBindVertexArray( 0 );
+		//data[0].pos.print();
+		//LOG << _instanced_buf;
+	}
 };
 class RComplexPolyMeshGL : public RPolyMeshGL
 {

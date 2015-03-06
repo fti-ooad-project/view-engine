@@ -51,7 +51,6 @@ private:
 	RDrawPassGL  _pass[0x1];
 	int tri = 0;
 	RPolyQuadGL _screen_quad;
-	RShaderInput _shader_in;
 	REventer _eventer;
 	f4x4 viewproj = RCamera::perpLookUp1x1( f3( 0.0f , 10.0f , 10.0f ) , f3( 0.0f , -0.7f , -0.7f ) , f3( 0.0f , 0.0f , 1.0f ) );
 	//GUIRendererGL _guimng;
@@ -63,10 +62,20 @@ private:
 		{
 			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );glLineWidth( 0.01f );
 		}
-		ito( _view.size() )
+		if( tess )
 		{
-			if( info[i].size() < 1 ) continue;
-			_view[i]->drawInstanced( info[i] );
+			ito( _view.size() )
+			{
+				if( info[i].size() < 1 ) continue;
+				_view[i]->drawInstancedPatches( info[i] );
+			}
+		}else
+		{
+			ito( _view.size() )
+			{
+				if( info[i].size() < 1 ) continue;
+				_view[i]->drawInstanced( info[i] );
+			}
 		}
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
@@ -102,7 +111,6 @@ private:
 		}
 		int instancing = 1;
 		{
-			_shader_in.reset();
 			/*auto rend = TextRenderer::getSingleton();
 		//rend->init();
 		//RTextureHolderGL tex( rend->renderText( "hello" ) , 1 );
@@ -110,33 +118,41 @@ private:
 		//tex.init();
 		//_shader_in.add( 0 , RShaderInTypes::tex , &tex.__texture_pointer_array[0] );*/
 			updateTime();
+			_prog[0].bind();
 			if( _cur_scene )
-				_shader_in.add( 30 , RShaderInTypes::mat4 , _cur_scene->_main_cam.getViewProj().getPtr() );
+				glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
 			else
-				_shader_in.add( 30 , RShaderInTypes::mat4 , &viewproj );
-			int id = _shader_in.add( 15 , RShaderInTypes::ivec1 , &instancing );
-			_prog[0].bind( _shader_in );
-			//
+				glUniformMatrix4fv( 30 , 1 , GL_FALSE , viewproj.getPtr() );
 
+			glUniform1i( 15 , 1 );
+			glUniform1i( 12 , 1 );
+			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
+			//
 			_pass[0].bind();
 			_pass[0].clear();
-			drawInstances( data );
+			drawInstances( data , true );
 			instancing = 0;
 			f4x4 model( 100.0f );
-			_shader_in.add( 6 , RShaderInTypes::mat4 , &model );
-			_shader_in.set( 15 , id , RShaderInTypes::ivec1 , &instancing );
-			_prog[2].bind( _shader_in );
-			_screen_quad.draw( InstanceInfo() );
+			_prog[2].bind();
+			if( _cur_scene )
+				glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
+			else
+				glUniformMatrix4fv( 30 , 1 , GL_FALSE , viewproj.getPtr() );
+			glUniformMatrix4fv( 6 , 1 , GL_FALSE , model.getPtr() );
+			glUniform1i( 15 , 0 );
+			glUniform1i( 0 , 0 );
+			_screen_quad.draw();
 		}
 		glBindFramebuffer( GL_FRAMEBUFFER , 0 );
 		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 		glClearDepth( 1.0f );
 		glViewport( 0 , 0 , w , h );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		_shader_in.reset();
-		uint bufptr = _pass[0].getBufferPtr( 0 );
-		_shader_in.add( 0 , RShaderInTypes::tex , &bufptr );
-		_quad_prog.bind( _shader_in );
+
+		_quad_prog.bind();
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D , _pass[0].getBufferPtr( 3 ) );
+		glUniform1i( 0 , 0 );
 		_screen_quad.draw();
 		//_guimng.drawPanel( f2( 0.0f , 0.0f ) , f2( 0.2f , 0.2f ) + 0.1f * f2( sin( _cur_time ) , cos( _cur_time ) ) , 0 );
 		//_guimng.drawText( 0 , f2( 0.0f , 0.0f ) , f2( 0.2f , 0.1f ) );

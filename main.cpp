@@ -20,12 +20,12 @@ int main()
 	engine->init();
 	auto scene = engine->genScene();
 	auto eventer = engine->getEventer();
-	xfor( x , 100 )
-		xfor( y , 100 )
+	xfor( x , 10 )
+		xfor( y , 10 )
 		{
 			f4x4 temp( 1.0f );
-			temp( 3 , 0 ) = 2.0f * ( x - 50.0f );
-			temp( 3 , 1 ) = 2.0f * ( - y + 50.0f );
+			temp( 3 , 0 ) = 2.0f * ( x - 5.0f );
+			temp( 3 , 1 ) = 2.0f * ( - y + 5.0f );
 			scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 0 , temp } );
 			//data.push_back( { 0.2 * time , 0.0f , 0 , 0 , 0 , temp } );
 		}

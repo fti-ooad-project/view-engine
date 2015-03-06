@@ -32,7 +32,7 @@ void main()
 		else 
 			buf[2] = vec4( 0.0 );
 		//////////	
-		buf[0] = vec4( difo.xyz , ne.w );
+		buf[3] = vec4( difo.xyz , ne.w );
 	}else
 	{
 		buf[1] = vec4( pvo.normal , pvo.depth );
