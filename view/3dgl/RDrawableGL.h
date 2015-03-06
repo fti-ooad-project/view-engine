@@ -10,10 +10,12 @@ struct InstanceInfo
 {
 	float time;
 	float last_time;
+	float dist_to_cam;
 	int mixing;
 	int cur_anim;
 	int last_anim;
 	f4x4 model;
+
 };
 class RPolyMeshGL : public RInitable
 {
@@ -38,12 +40,12 @@ public:
 		int mc = 12;
 		for( int c = 7; c <= mc; ++c )
 			glEnableVertexAttribArray( c );
-		glVertexAttribPointer( 7 , 2 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 0 ) );
-		glVertexAttribPointer( 8 , 3 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 8 ) );
-		glVertexAttribPointer( 9 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 20 ) );
-		glVertexAttribPointer( 10 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 36 ) );
-		glVertexAttribPointer( 11 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 52 ) );
-		glVertexAttribPointer( 12 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 68 ) );
+		glVertexAttribPointer( 7 , 3 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 0 ) );
+		glVertexAttribPointer( 8 , 3 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 12 ) );
+		glVertexAttribPointer( 9 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 24 ) );
+		glVertexAttribPointer( 10 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 40 ) );
+		glVertexAttribPointer( 11 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 56 ) );
+		glVertexAttribPointer( 12 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 72 ) );
 		for( int c = 7; c <= mc; ++c )
 			glVertexAttribDivisor( c , 1 );
 		glBindBuffer( GL_ARRAY_BUFFER , 0 );

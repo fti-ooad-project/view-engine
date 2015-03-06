@@ -106,8 +106,11 @@ private:
 			float time = _cur_time - floorf( _cur_time );
 			for( RDrawableState const &ins : _cur_scene->_instances )
 			{
-				data[std::get< 0 >( ins._view[0] )].push_back( { 0.2 * time , 0.0f , 0 , 0 , 0 , std::get< 1 >( ins._view[0] ) } );
+				f4x4 const &m = std::get< 1 >( ins._view[0] );
+				data[std::get< 0 >( ins._view[0] )].push_back( { 0.2 * time , 0.0f , f3( m( 3 , 0 ) , m( 3 , 1 ) , m( 3 , 2 ) ).g_dist( _cur_scene->_main_cam._v3pos ) , 0 , 0 , 0 , m } );
 			}
+			if( time < 0.2f )
+				LOG << 1.0f / _dt << "\n";
 		}
 		int instancing = 1;
 		{
@@ -127,6 +130,15 @@ private:
 			glUniform1i( 15 , 1 );
 			glUniform1i( 12 , 1 );
 			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
+			_prog[2].bind();
+			if( _cur_scene )
+				glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
+			else
+				glUniformMatrix4fv( 30 , 1 , GL_FALSE , viewproj.getPtr() );
+			glUniform1i( 15 , 1 );
+			glUniform1i( 12 , 1 );
+			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
+
 			//
 			_pass[0].bind();
 			_pass[0].clear();
@@ -134,10 +146,6 @@ private:
 			instancing = 0;
 			f4x4 model( 100.0f );
 			_prog[2].bind();
-			if( _cur_scene )
-				glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
-			else
-				glUniformMatrix4fv( 30 , 1 , GL_FALSE , viewproj.getPtr() );
 			glUniformMatrix4fv( 6 , 1 , GL_FALSE , model.getPtr() );
 			glUniform1i( 15 , 0 );
 			glUniform1i( 0 , 0 );
@@ -154,6 +162,8 @@ private:
 		glBindTexture( GL_TEXTURE_2D , _pass[0].getBufferPtr( 3 ) );
 		glUniform1i( 0 , 0 );
 		_screen_quad.draw();
+
+
 		//_guimng.drawPanel( f2( 0.0f , 0.0f ) , f2( 0.2f , 0.2f ) + 0.1f * f2( sin( _cur_time ) , cos( _cur_time ) ) , 0 );
 		//_guimng.drawText( 0 , f2( 0.0f , 0.0f ) , f2( 0.2f , 0.1f ) );
 		//sleep( 0x1000 );
