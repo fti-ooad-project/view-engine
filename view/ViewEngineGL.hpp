@@ -115,7 +115,7 @@ private:
 			else
 				_shader_in.add( 30 , RShaderInTypes::mat4 , &viewproj );
 			int id = _shader_in.add( 15 , RShaderInTypes::ivec1 , &instancing );
-			_prog[2].bind( _shader_in );
+			_prog[0].bind( _shader_in );
 			//
 
 			_pass[0].bind();

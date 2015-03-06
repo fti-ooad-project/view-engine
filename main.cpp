@@ -30,6 +30,7 @@ int main()
 			//data.push_back( { 0.2 * time , 0.0f , 0 , 0 , 0 , temp } );
 		}
 	auto cam = scene->getCamera();
+	cam->lookAt( f3( 0.0f , -10.0f , 10.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
 	f3 cam_pos , cam_lookat;
 	eventer->addKeyFunc(
 			[cam]( const KeyStates &cs , const float dt )
