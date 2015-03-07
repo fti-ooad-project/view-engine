@@ -81,9 +81,9 @@ void main()
 	//vec3 ray = camRay( CAM , frag_pos );
 	//vec3 fg = fog( CAM.pos , ray );
 	vec3 norm = buf1.xyz;
-	vec3 l = light( pos , norm , CAM.pos );//* vec3( ssao( BUFFER1 , buf1 , frag_pos , 0.1 ) ) 
+	//vec3 l = light( pos , norm , CAM.pos );//* vec3( ssao( BUFFER1 , buf1 , frag_pos , 0.1 ) ) 
 	out_data = //abs( texture2D( ANIM_TEX , frag_pos ) );//
-	vec4(  buf3.xyz * l , 1.0 );//vec4( 1.0 );//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x  , 4.0 ) );//
+	vec4(  buf3.xyz * max( 0.0 , dot( norm , vec3( 0.0 , 0.0 , 1.0 ) ) ) , 1.0 );//vec4( 1.0 );//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x  , 4.0 ) );//
 	
 }//abs( getMatFromTex( frag_pos.y , frag_pos.x * 21.0 - fract( frag_pos.x * 21.0 ) , 21 , ANIM_TEX )[0] );
 //abs( texture2D( ANIM_TEX , frag_pos ) );abs( texture2D( ANIM_TEX , frag_pos ) );

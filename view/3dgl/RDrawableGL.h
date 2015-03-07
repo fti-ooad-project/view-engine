@@ -25,6 +25,7 @@ protected:
 	int _indx_count;
 public:
 	int _flags = 0;
+	f3 _size;
 public:
 	bool isInstanced() const
 	{
@@ -59,7 +60,7 @@ public:
 		glBindVertexArray( _vao );
 		glDrawElements( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 );
 	}
-	void draw() const
+	virtual void draw() const
 	{
 		glBindVertexArray( _vao );
 		glDrawElements( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 );
@@ -113,6 +114,7 @@ public:
 	, __mesh( std::move( mesh ) )///ORDER
 	, _bone_count( __mesh->_bone_count )
 	{
+		_size = __mesh->_v3size;
 	}
 	void init() override
 	{
@@ -309,6 +311,56 @@ struct RPolyBoxGL : public RPolyMeshGL
 		_indx_count = 36;
 	}
 	~RPolyBoxGL()
+	{
+		release();
+	}
+	void bindRes( InstanceInfo const &stat ) const override
+	{
+		glUniform1i( 0 , _flags );
+	}
+};
+struct RSkyBoxGL : public RPolyMeshGL
+{
+	void init()
+	{
+		static constexpr float quad[] =
+		{
+			-1.0f , -1.0f , 1.0f ,
+			1.0f , -1.0f , 1.0f ,
+			1.0f , 1.0f , 1.0f ,
+			-1.0f , 1.0f , 1.0f ,
+
+			-1.0f , -1.0f , -1.0f ,
+			1.0f , -1.0f , -1.0f ,
+			1.0f , 1.0f , -1.0f ,
+			-1.0f , 1.0f , -1.0f
+		};
+		static constexpr ushort indx[] =
+		{
+			0 , 2 , 3 , 0 , 1 , 2 ,
+			4 , 7 , 6 , 4 , 6 , 5 ,
+			1 , 6 , 2 , 1 , 5 , 6 ,
+			0 , 3 , 7 , 0 , 7 , 4 ,
+			2 , 7 , 3 , 2 , 6 , 7 ,
+			1 , 0 , 4 , 1 , 4 , 5
+		};
+		glGenVertexArrays( 1 , &_vao );
+		glBindVertexArray( _vao );
+		uint vbo , ibo;
+		glGenBuffers( 1 , &vbo );
+		glBindBuffer( GL_ARRAY_BUFFER_ARB , vbo );
+		glBufferData( GL_ARRAY_BUFFER_ARB , 96 , quad , GL_STATIC_DRAW_ARB );
+		glEnableVertexAttribArray( 0 );
+		glVertexAttribPointer( 0 , 3 , GL_FLOAT , GL_FALSE , 12 , reinterpret_cast< void* >( 0 ) );
+		glGenBuffers( 1 , &ibo );
+		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER_ARB , ibo );
+		glBufferData( GL_ELEMENT_ARRAY_BUFFER_ARB , 72 , indx , GL_STATIC_DRAW_ARB );
+		glBindVertexArray( 0 );
+		glDeleteBuffers( 1 , &vbo );
+		glDeleteBuffers( 1 , &ibo );
+		_indx_count = 36;
+	}
+	~RSkyBoxGL()
 	{
 		release();
 	}

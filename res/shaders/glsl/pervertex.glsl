@@ -6,4 +6,5 @@ struct PerVertex
 	float depth;
 	vec3 binormal;
 	vec3 tangentnormal;
+	float dist_to_cam;
 };

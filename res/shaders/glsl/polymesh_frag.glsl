@@ -15,10 +15,14 @@ void main()
 		vec4 ne = vec4( 0.0 );
 		//////////diff
 		if( bool( FLAGS & MASK_TEXTURED_DIF ) )
+		{
+			//float mipmapLevel = textureQueryLod( RGB_DIFFUSE_A_OPACITY_TEXTURE , pvo.texcoord.xy ).x;
 			difo = texture2D( RGB_DIFFUSE_A_OPACITY_TEXTURE , pvo.texcoord.xy );
+			//textureLod( RGB_DIFFUSE_A_OPACITY_TEXTURE , pvo.texcoord.xy , TIME * 40.0 );
+		}
 		if( difo.w < 0.5 ) discard;
 		//////////norm
-		if( bool( FLAGS & MASK_TEXTURED_NOR ) )
+		if( bool( FLAGS & MASK_TEXTURED_NOR ) && pvo.dist_to_cam < 30.0 )
 		{
 			ne = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvo.texcoord.xy );
 			vec4 bump = -1.0 + ne * 2.0;

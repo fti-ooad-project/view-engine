@@ -15,6 +15,7 @@ layout( location = 15 ) uniform int INSTANSING;
 
 layout( location = 11 ) uniform vec3 CAM_POS;
 layout( location = 12 ) uniform int TESSELATE;
+layout( location = 16 ) uniform float DIST_TO_CAM;
 
 layout( location = 20 ) uniform sampler2D ANIM_TEX[10];
 

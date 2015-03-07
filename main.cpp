@@ -20,8 +20,8 @@ int main()
 	engine->init();
 	auto scene = engine->genScene();
 	auto eventer = engine->getEventer();
-	xfor( x , 100 )
-		xfor( y , 100 )
+	xfor( x , 10 )
+		xfor( y , 10 )
 		{
 			f4x4 temp( 1.0f );
 			temp( 3 , 0 ) = 2.0f * ( x - 5.0f );

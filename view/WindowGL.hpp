@@ -64,9 +64,9 @@ public:
 		maincontext = SDL_GL_CreateContext( mainwindow );
 		glewInit();
 		glEnable( GL_POINT_SMOOTH );
-		glDisable( GL_CULL_FACE );
-		//glCullFace( GL_BACK );
-		//glFrontFace( GL_CCW );
+		glEnable( GL_CULL_FACE );
+		glCullFace( GL_BACK );
+		glFrontFace( GL_CCW );
 		SDL_GL_SetAttribute( SDL_GL_RED_SIZE , 5 );
 		SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE , 5 );
 		SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE , 5 );

@@ -19,6 +19,7 @@ void main()
 		pvo.binormal = pvte[i].binormal;
 		pvo.tangentnormal = pvte[i].tangentnormal;
 		pvo.texcoord = pvte[i].texcoord;
+		pvo.dist_to_cam = pvte[i].dist_to_cam;
         EmitVertex();
     }
 	EndPrimitive();

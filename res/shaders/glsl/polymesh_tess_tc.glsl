@@ -18,6 +18,7 @@ void main()
 	pvtc[ID].binormal = pv[ID].binormal;
 	pvtc[ID].tangentnormal = pv[ID].tangentnormal;
 	pvtc[ID].texcoord = pv[ID].texcoord;
+	pvtc[ID].dist_to_cam = pv[ID].dist_to_cam;
 	gl_out[ID].gl_Position = gl_in[ID].gl_Position;
 	if( ID == 0 )
 	{

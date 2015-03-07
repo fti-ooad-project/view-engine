@@ -10,9 +10,15 @@ void main()
 	vec4 p = vec4( invertex_position , 1.0 );
 	mat4 m;
 	if( bool( INSTANSING ) )
+	{
+		pv.dist_to_cam = INS_TIME.z;
 		m = INS_MODEL4x4;
+	}
 	else
+	{
 		m = MAT4X4_MODEL;
+		pv.dist_to_cam = DIST_TO_CAM;
+	}
 		
 	$include anim_func.glsl
 	

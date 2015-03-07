@@ -1,8 +1,6 @@
 if( bool( FLAGS & MASK_ANIMATED ) )
 {
-	vec3 camdis = vec3( MAT4X4_VIEWPROJ[0][3].xyz );
-	vec3 modeldis = vec3( m[3].xyz );
-	if( length( modeldis + camdis ) < 50.0 )
+	if( INS_TIME.z < 50.0 )
 	{
 		mat4 ma = mat4( 0.0 );
 		float time , ltime;

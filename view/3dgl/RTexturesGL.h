@@ -41,29 +41,38 @@ public:
 		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
 		__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[_count] ) );
 		glGenTextures( _count , __texture_pointer_array.get() );
-		for ( uint i = 0; i < _count; i++ )
+		for( uint i = 0; i < _count; i++ )
 		{
 			__tex_size[i] = _imgs[i]._size;
 			glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[i] );
+			//glEnable( GL_TEXTURE_2D );
+			const int mipmaplevels = 10;
+			uint i_f , s;
 			switch( _imgs[i]._bytes_per_pixel )
 			{
 			case 4:
-				glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGBA8 , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
-					GL_RGBA , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
+			{
+				i_f = GL_RGBA8;
+				s = GL_RGBA;
+			}
 			break;
 			case 3:
-				glTexImage2D( GL_TEXTURE_2D , 0 , GL_RGB , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
-					GL_RGB , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
+				i_f = GL_RGB8;
+				s = GL_RGB;
 			break;
 			case 1:
-				glTexImage2D( GL_TEXTURE_2D , 0 , GL_LUMINANCE , _imgs[i]._size._w , _imgs[i]._size._h , 0 ,
-					GL_LUMINANCE , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
+				i_f = GL_LUMINANCE;
+				s = GL_LUMINANCE;
 			break;
 			}
+			glTexStorage2D( GL_TEXTURE_2D , mipmaplevels , i_f , _imgs[i]._size._w , _imgs[i]._size._h );
+			glTexSubImage2D( GL_TEXTURE_2D , 0 , 0 , 0 , _imgs[i]._size._w , _imgs[i]._size._h ,
+				s , GL_UNSIGNED_BYTE , _imgs[i].__data.get() );
+			glGenerateMipmap( GL_TEXTURE_2D );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER ,
 					GL_LINEAR );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER ,
-					GL_LINEAR );
+					GL_LINEAR_MIPMAP_LINEAR );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S ,
 					GL_CLAMP_TO_EDGE );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T ,
