@@ -5,7 +5,7 @@
 class RBufferStoreType
 {
 public:
-	static const int RBUFFER_BYTE = 0 , RBUFFER_FLOAT = 1;
+	static const int RBUFFER_BYTE = 0 , RBUFFER_FLOAT = 1 , RBUFFER_INT = 2;
 };
 struct RRect
 {

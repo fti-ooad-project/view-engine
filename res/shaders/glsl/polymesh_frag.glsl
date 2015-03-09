@@ -4,7 +4,7 @@ $include include.glsl
 $include pervertex.glsl
 in PerVertex pvo;
 
-out vec4 buf[4];
+out uvec4 buf;
 
 void main()
 {
@@ -22,14 +22,15 @@ void main()
 			vec3 newnormal = normalize( pvo.normal * bump.z-pvo.binormal * bump.y + pvo.tangentnormal * bump.x );
 			norm = vec4( newnormal.xyz , pvo.depth);
 		}
-		if( bool( FLAGS & MASK_TEXTURED_SPE ) )
-			buf[2] = vec4( texture2D( RGB_SPECULAR_A_GLOSSNESS_TEXTURE , pvo.texcoord.xy ) );
+		//if( bool( FLAGS & MASK_TEXTURED_SPE ) )
+		//	buf[2] = vec4( texture2D( RGB_SPECULAR_A_GLOSSNESS_TEXTURE , pvo.texcoord.xy ) );
 		//buf[3] = vec4( difo.xyz , ne.w );
 	}
-	buf[0].x = pvo.depth;
-	buf[0].y = pack4f( vec4( diff.xyz , 0.0 ) );
+	buf.x = uint( pvo.depth * 100.0 );
+	buf.y = pack4i( vec4( diff.xyz , 0.0 ) );
 	float sg = norm.z >= 0.0 ? 1.0 : -1.0;
-	buf[0].z = pack4f( vec4( 0.5 + 0.5 * norm.xy , 0.5 + 0.5 * sg , 0.0 ) );
+	buf.z = pack4i( vec4( 0.5 + 0.5 * norm.xy , 0.5 + 0.5 * sg , 0.0 ) );
+	buf.w = 1;
 	//buf[1] = vec4( pvo.normal , pvo.depth );
 	//buf[2] = vec4( 0.0 );
 	//buf[3] = vec4( vec3( 1.0 ) , 0.0 );

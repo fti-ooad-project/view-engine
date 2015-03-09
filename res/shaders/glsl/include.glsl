@@ -96,6 +96,20 @@ vec4 unpack4f( float data )
 	outv -= outv.yzww * vec4( 1.0 / _y , 1.0 / _y , 1.0 / _y , 0.0 );
 	return outv;
 }
+uint pack4i( vec4 data )
+{
+	uint outv = 0;
+	for( int i = 0; i < 4; i++ )
+		outv |= int( data[i] * 255.0 ) << ( i * 8 );
+	return outv;
+}
+vec4 unpack4i( uint data )
+{
+	vec4 outv;
+	for( int i = 0; i < 4; i++ )
+		outv[i] = float( ( data & ( 255 <<  ( i * 8 ) ) ) >> ( i * 8 ) ) / 255.0;
+	return outv;
+}
 float ssao( sampler2D norm_depth_buf , vec4 norm_depth , vec2 tx , float radius )
 {
 	float o = 0.0;

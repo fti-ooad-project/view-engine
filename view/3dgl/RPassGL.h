@@ -22,6 +22,7 @@ public:
 		int _gl_type;
 		int _gl_store;
 		int _gl_depth;
+		int _gl_format = GL_RGBA;
 		switch ( desc._store_type )
 		{
 			case RBufferStoreType::RBUFFER_BYTE:
@@ -33,6 +34,12 @@ public:
 				_gl_type = GL_RGBA32F;
 				_gl_store = GL_FLOAT;
 				_gl_depth = GL_DEPTH_COMPONENT32F;
+			break;
+			case RBufferStoreType::RBUFFER_INT:
+				_gl_type = GL_RGBA32UI;
+				_gl_store = GL_UNSIGNED_INT;
+				_gl_depth = GL_DEPTH_COMPONENT32F;//
+				_gl_format = GL_RGBA_INTEGER;
 			break;
 		}
 		if( N > 0 )
@@ -55,16 +62,16 @@ public:
 					glTexParameterf( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE );
 					for ( int j = 0; j < 6; j++ )
 					{
-						glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + j , 0 , _gl_type , _desc._size._w , _desc._size._h , 0 , GL_RGBA , _gl_store , 0 );
+						glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + j , 0 , _gl_type , _desc._size._w , _desc._size._h , 0 , _gl_format , _gl_store , 0 );
 					}
 					///glFramebufferTexture( GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i , __texture_pointer_array[i] , 0 );
 					glFramebufferTexture2D( GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i , GL_TEXTURE_CUBE_MAP_POSITIVE_X , __texture_pointer_array[i] , 0 );
 				}else
 				{
 					glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[i] );
-					glTexImage2D( GL_TEXTURE_2D , 0 , _gl_type , _desc._size._w , _desc._size._h , 0 , GL_RGBA , _gl_store , 0 );
-					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
-					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_LINEAR );
+					glTexImage2D( GL_TEXTURE_2D , 0 , _gl_type , _desc._size._w , _desc._size._h , 0 , _gl_format , _gl_store , 0 );
+					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_NEAREST );
+					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_NEAREST );
 					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S , GL_REPEAT );
 					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T , GL_REPEAT );
 					glFramebufferTexture2D( GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i , GL_TEXTURE_2D , __texture_pointer_array[i] , 0 );
@@ -142,7 +149,10 @@ public:
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER , _framebuffer_id );
 		glViewport( 0 , 0 , _desc._size._w , _desc._size._h );
-		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+		//if( _desc._store_type == RBufferStoreType::RBUFFER_INT )
+		//	glClearColorIuiEXT( 100 , 0 , 0 , 0 );
+		//else
+		glClearColor( 0.0f , 0.0f , 0.0f , 0.0f );
 		if( cd )
 		{
 			glClearDepth( 1.0f );

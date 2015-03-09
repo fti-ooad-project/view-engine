@@ -128,7 +128,7 @@ private:
 			}
 
 			_quad_prog.init( "res/shaders/glsl/screen_quad_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
-			_pass[0].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 4 , -1 , false , false } );
+			_pass[0].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false } );
 			_pass[1].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
 			_prog[0].init( "res/shaders/glsl/polymesh_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/polymesh_tess_geom.glsl" , "res/shaders/glsl/polymesh_tess_tc.glsl" , "res/shaders/glsl/polymesh_tess_te.glsl" );
 			_prog[2].init( "res/shaders/glsl/polymesh_frag.glsl" , "res/shaders/glsl/polymesh_vertex.glsl" , "" );
@@ -184,7 +184,6 @@ private:
 		//tex.init();
 		//_shader_in.add( 0 , RShaderInTypes::tex , &tex.__texture_pointer_array[0] );*/
 			updateTime();
-			_pass[0].bind();
 			_pass[0].clear();
 			_prog[0].bind();
 			glUniform1f( 7 , time );
@@ -203,7 +202,7 @@ private:
 
 			drawInstances( data , true );
 
-			/*f4x4 model( 100.0f );
+			f4x4 model( 100.0f );
 			_prog[2].bind();
 			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
 			glUniformMatrix4fv( 6 , 1 , GL_FALSE , model.getPtr() );
@@ -212,8 +211,8 @@ private:
 			glUniform1i( 1 , 0 );
 			glUniform1i( 15 , 0 );
 			glUniform1f( 16 , 0 );
-			glUniform1i( 0 , ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_NOR );
-			_screen_quad.draw();*/
+			glUniform1i( 0 , 0 );
+			_screen_quad.draw();
 		}
 		///lights
 		int caster_dir_light_count = 0 , caster_omni_light_count = 0;
@@ -262,22 +261,12 @@ private:
 			glUniform1i( 1 , 0 );
 			_screen_quad.draw();
 		}*/
-		_pass[1].bind();
 		_pass[1].clear();
 		_prog[1].bind();
 		{
 			glActiveTexture( GL_TEXTURE0 );
 			glBindTexture( GL_TEXTURE_2D , _pass[0].getBufferPtr( 0 ) );
 			glUniform1i( 0 , 0 );
-			glActiveTexture( GL_TEXTURE0 + 1 );
-			glBindTexture( GL_TEXTURE_2D , _pass[0].getBufferPtr( 1 ) );
-			glUniform1i( 1 , 1 );
-			glActiveTexture( GL_TEXTURE0 + 2 );
-			glBindTexture( GL_TEXTURE_2D , _pass[0].getBufferPtr( 2 ) );
-			glUniform1i( 2 , 2 );
-			glActiveTexture( GL_TEXTURE0 + 3 );
-			glBindTexture( GL_TEXTURE_2D , _pass[0].getBufferPtr( 3 ) );
-			glUniform1i( 3 , 3 );
 			//glActiveTexture( GL_TEXTURE0 + 4 );
 			//glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getPlaneBuffer() );
 			//glUniform1i( 11 , 4 );
