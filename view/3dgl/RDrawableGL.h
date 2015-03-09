@@ -25,7 +25,7 @@ protected:
 	int _indx_count;
 public:
 	int _flags = 0;
-	f3 _size;
+	f3 _size = f3( 1.0f , 1.0f , 1.0f );
 public:
 	bool isInstanced() const
 	{
@@ -228,10 +228,10 @@ struct RPolyQuadGL : public RPolyMeshGL
 	{
 		static constexpr float quad[] =
 		{
-			-1.0f , -1.0f , 0.0f , 0.0f , 1.0f , 0.0f , 0.0f , 1.0f ,
-			1.0f , -1.0f , 0.0f , 1.0f , 1.0f , 0.0f , 0.0f , 1.0f ,
-			1.0f , 1.0f , 0.0f , 1.0f , 0.0f , 0.0f , 0.0f , 1.0f ,
-			-1.0f , 1.0f , 0.0f , 0.0f , 0.0f , 0.0f , 0.0f , 1.0f
+			-1.0f , -1.0f , 0.0f , 0.0f , 1.0f , 0.0f , 0.0f , 1.0f , /*bn*/1.0f , 0.0f , 0.0f , /*tn*/0.0f , 1.0f , 0.0f ,
+			1.0f , -1.0f , 0.0f , 1.0f , 1.0f , 0.0f , 0.0f , 1.0f , /*bn*/1.0f , 0.0f , 0.0f , /*tn*/0.0f , 1.0f , 0.0f ,
+			1.0f , 1.0f , 0.0f , 1.0f , 0.0f , 0.0f , 0.0f , 1.0f , /*bn*/1.0f , 0.0f , 0.0f , /*tn*/0.0f , 1.0f , 0.0f ,
+			-1.0f , 1.0f , 0.0f , 0.0f , 0.0f , 0.0f , 0.0f , 1.0f , /*bn*/1.0f , 0.0f , 0.0f , /*tn*/0.0f , 1.0f , 0.0f
 		};
 		static constexpr ushort indx[] =
 		{
@@ -242,13 +242,17 @@ struct RPolyQuadGL : public RPolyMeshGL
 		uint vbo , ibo;
 		glGenBuffers( 1 , &vbo );
 		glBindBuffer( GL_ARRAY_BUFFER_ARB , vbo );
-		glBufferData( GL_ARRAY_BUFFER_ARB , 128 , quad , GL_STATIC_DRAW_ARB );
+		glBufferData( GL_ARRAY_BUFFER_ARB , 224 , quad , GL_STATIC_DRAW_ARB );
 		glEnableVertexAttribArray( 0 );
 		glEnableVertexAttribArray( 1 );
 		glEnableVertexAttribArray( 2 );
-		glVertexAttribPointer( 0 , 3 , GL_FLOAT , GL_FALSE , 32 , reinterpret_cast< void* >( 0 ) );
-		glVertexAttribPointer( 1 , 2 , GL_FLOAT , GL_FALSE , 32 , reinterpret_cast< void* >( 12 ) );
-		glVertexAttribPointer( 2 , 3 , GL_FLOAT , GL_FALSE , 32 , reinterpret_cast< void* >( 20 ) );
+		glEnableVertexAttribArray( 3 );
+		glEnableVertexAttribArray( 4 );
+		glVertexAttribPointer( 0 , 3 , GL_FLOAT , GL_FALSE , 56 , reinterpret_cast< void* >( 0 ) );
+		glVertexAttribPointer( 1 , 2 , GL_FLOAT , GL_FALSE , 56 , reinterpret_cast< void* >( 12 ) );
+		glVertexAttribPointer( 2 , 3 , GL_FLOAT , GL_FALSE , 56 , reinterpret_cast< void* >( 20 ) );
+		glVertexAttribPointer( 3 , 3 , GL_FLOAT , GL_FALSE , 56 , reinterpret_cast< void* >( 32 ) );
+		glVertexAttribPointer( 4 , 3 , GL_FLOAT , GL_FALSE , 56 , reinterpret_cast< void* >( 44 ) );
 		glGenBuffers( 1 , &ibo );
 		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER_ARB , ibo );
 		glBufferData( GL_ELEMENT_ARRAY_BUFFER_ARB , 12 , indx , GL_STATIC_DRAW_ARB );
@@ -311,56 +315,6 @@ struct RPolyBoxGL : public RPolyMeshGL
 		_indx_count = 36;
 	}
 	~RPolyBoxGL()
-	{
-		release();
-	}
-	void bindRes( InstanceInfo const &stat ) const override
-	{
-		glUniform1i( 0 , _flags );
-	}
-};
-struct RSkyBoxGL : public RPolyMeshGL
-{
-	void init()
-	{
-		static constexpr float quad[] =
-		{
-			-1.0f , -1.0f , 1.0f ,
-			1.0f , -1.0f , 1.0f ,
-			1.0f , 1.0f , 1.0f ,
-			-1.0f , 1.0f , 1.0f ,
-
-			-1.0f , -1.0f , -1.0f ,
-			1.0f , -1.0f , -1.0f ,
-			1.0f , 1.0f , -1.0f ,
-			-1.0f , 1.0f , -1.0f
-		};
-		static constexpr ushort indx[] =
-		{
-			0 , 2 , 3 , 0 , 1 , 2 ,
-			4 , 7 , 6 , 4 , 6 , 5 ,
-			1 , 6 , 2 , 1 , 5 , 6 ,
-			0 , 3 , 7 , 0 , 7 , 4 ,
-			2 , 7 , 3 , 2 , 6 , 7 ,
-			1 , 0 , 4 , 1 , 4 , 5
-		};
-		glGenVertexArrays( 1 , &_vao );
-		glBindVertexArray( _vao );
-		uint vbo , ibo;
-		glGenBuffers( 1 , &vbo );
-		glBindBuffer( GL_ARRAY_BUFFER_ARB , vbo );
-		glBufferData( GL_ARRAY_BUFFER_ARB , 96 , quad , GL_STATIC_DRAW_ARB );
-		glEnableVertexAttribArray( 0 );
-		glVertexAttribPointer( 0 , 3 , GL_FLOAT , GL_FALSE , 12 , reinterpret_cast< void* >( 0 ) );
-		glGenBuffers( 1 , &ibo );
-		glBindBuffer( GL_ELEMENT_ARRAY_BUFFER_ARB , ibo );
-		glBufferData( GL_ELEMENT_ARRAY_BUFFER_ARB , 72 , indx , GL_STATIC_DRAW_ARB );
-		glBindVertexArray( 0 );
-		glDeleteBuffers( 1 , &vbo );
-		glDeleteBuffers( 1 , &ibo );
-		_indx_count = 36;
-	}
-	~RSkyBoxGL()
 	{
 		release();
 	}

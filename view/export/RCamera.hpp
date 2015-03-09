@@ -8,12 +8,12 @@
 class RCamera : public REntity
 {
 private:
-	mutable float		_fovx = 1.4f;
-	mutable float		_fovy = 1.4f;
 	float		_nearplane = 0.1f;
 	float		_farplane = 1000.0f;
 	f4x4 _view_proj_matrix = f4x4( 1.0f );
 public:
+	mutable float		_fovx = 1.4f;
+	mutable float		_fovy = 1.4f;
 	f4x4 const &getViewProj() const
 	{
 		return _view_proj_matrix;
@@ -135,6 +135,17 @@ public:
 		out[3] = RCamera::perpLookUp1x1( pos , f3( 0.0f, -1.0f, 0.0f ) , f3( 0.0f, 0.0f, 1.0f ) );
 		out[4] = RCamera::perpLookUp1x1( pos , f3( 0.0f, 0.0f, 1.0f ) , f3( 0.0f, 1.0f, 0.0f ) );
 		out[5] = RCamera::perpLookUp1x1( pos , f3( 0.0f, 0.0f, -1.0f ) , f3( 0.0f, 1.0f, 0.0f ) );
+	}
+	bool fristrum( f3 const &p ) const
+	{
+		f3 np = p - _v3pos;
+		float z = np * _v3local_z;
+		float x = np * _v3local_x;
+		float y = np * _v3local_y;
+		if( z < _nearplane || z > _farplane ) return false;
+		if( fabs( x / z ) > tanf( _fovx / 2.0f + 0.2 ) ) return false;
+		if( fabs( y / z ) > tanf( _fovy / 2.0f + 0.2 ) ) return false;
+		return true;
 	}
 };
 #endif // RCAMERA_H

@@ -177,8 +177,10 @@ release/main.o: main.cpp view/ViewEngineGL.hpp \
 		../../../ProgrammingLibs/SDL2/image/SDL/SDL.h \
 		../../../ProgrammingLibs/SDL2/image/SDL/SDL_cdrom.h \
 		view/gui/gl/GUIRendererGL.hpp \
-		view/Gl.h \
-		../../../ProgrammingLibs/SDL2-2.0.3/i686-w64-mingw32/include/SDL2/SDL_ttf.h
+		../../../ProgrammingLibs/SDL2-2.0.3/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
+		view/3dgl/RPassGL.h \
+		view/3dgl/RPassDesc.h \
+		view/3dgl/WaterSimulator.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\main.o main.cpp
 
 ####### Install

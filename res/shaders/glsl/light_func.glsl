@@ -24,7 +24,8 @@ float VectorToDepthValue( vec3 v )
 float lightedDir( vec4 loc , sampler2D tex )
 {
     //loc = loc / loc.w;
-	if( abs( loc.x ) > 1.0 || abs( loc.y ) > 1.0 ) return 1.0;
+	loc = scalel( loc );//
+	if( abs( loc.x ) > 0.99 || abs( loc.y ) > 0.99 ) return 1.0;
 	loc = ( 1.0 + loc ) * 0.5;
 	//return abs( loc.z - texture2D( tex , loc.xy ).x );
 	if( loc.z - 0.0001 < texture2D( tex , loc.xy ).x ) return 1.0;
@@ -46,7 +47,7 @@ float smoothLightDir( vec3 p , vec3 n , float samp_r , mat4 vp , sampler2D tex )
 		if( dot( rand , n ) < 0.0 ) rand *= -1.0;
 		rand = rand + n * 0.7;
 		vec3 np = p + rand * samp_r;
-		o += lightedDir( scalel( vp * vec4( np , 1.0 ) ) , tex );
+		o += lightedDir( vp * vec4( np , 1.0 ) , tex );
 		//o += lightedDir( scalel( vp * vec4( rand , 1.0 ) ) , tex ) > -0.001? 1.0 : 0.0;
 	}
 	return o / NUM_TAPS;

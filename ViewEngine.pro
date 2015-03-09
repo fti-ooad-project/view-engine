@@ -51,5 +51,7 @@ HEADERS += \
     view/gui/gl/GUIRendererGL.hpp \
     view/export/ViewInterface.hpp \
     view/export/RViewModels.hpp \
-    view/export/RCamera.hpp
+    view/export/RCamera.hpp \
+    view/3dgl/WaterSimulator.hpp \
+    view/3dgl/HeighMapDrawler.hpp
 

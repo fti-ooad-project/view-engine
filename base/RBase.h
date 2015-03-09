@@ -35,7 +35,7 @@ std::fstream Log::file;*/
 #define LOG std::cout
 class RTimer
 {
-protected:
+public:
 	float _dt = 0.0f , _last_time = 0.0f , _cur_time = 0.0f;
 	void updateTime()
 	{

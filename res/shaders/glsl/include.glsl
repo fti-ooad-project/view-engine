@@ -3,7 +3,8 @@ const int MASK_TEXTURED_DIF			= 1 << 1;
 const int MASK_TEXTURED_NOR 	= 1 << 2;
 const int MASK_TEXTURED_SPE		= 1 << 3;
 const int MASK_ANIMATED			= 1 << 4;
-const int MAX_LIGHTS 			= 10;
+#define MAX_LIGHTS_CASTER 3
+#define MAX_LIGHTS 10
 #define pi 3.1415
 const int NUM_TAPS = 12;
 vec2 poisson[NUM_TAPS];
@@ -14,6 +15,10 @@ struct Camera
 	vec3 left;
 	vec3 up;
 };
+vec3 posFromZ( vec2 tx , float z , struct Camera cam )
+{
+	return ( cam.look + cam.left * tx.x + cam.up * tx.y ) * z + cam.pos;
+}
 vec3 camRay( struct Camera cam , vec2 tx )
 {
 	vec2 p2 = vec2( 2.0 , -2.0 ) * tx - 1.0;
@@ -71,15 +76,25 @@ vec3 nfrom2d( vec2 v )
 	float st = sqrt( 1 - ct * ct );
 	return vec3( st * ca , st * sa , ct ); 
 }
+const float _x = 1.0;
+const float _y = 256.0;//255.0;
+const float _z =  _y * _y;
+const float _w = _y * _y * _y;
+vec4 roundf4( vec4 a )
+{
+	a = floor( a * 255.0 ) / 256.0;
+	return a;
+}
 float pack4f( vec4 data )
 {
-	return dot( data , vec4( 1.0 , 1 / 255.0 , 1 / 65025.0 , 1 / 160581375.0 ) );
+	return dot( roundf4( data ) , vec4( 1.0 , 1.0 / _y , 1.0 / _z , 1.0 / _w ) );
 }
 vec4 unpack4f( float data )
 {
-	vec4 outv = vec4( 1.0 , 255.0 , 65025.0 , 160581375.0 ) * data;
+	vec4 outv = vec4( _x , _y , _z , _w ) * data;
 	outv = fract( outv );
-	return outv - outv.yzww * vec4( 1.0 / 255.0 , 1.0 / 255.0 , 1.0 / 255.0 , 0.0 );
+	outv -= outv.yzww * vec4( 1.0 / _y , 1.0 / _y , 1.0 / _y , 0.0 );
+	return outv;
 }
 float ssao( sampler2D norm_depth_buf , vec4 norm_depth , vec2 tx , float radius )
 {
@@ -94,10 +109,11 @@ float ssao( sampler2D norm_depth_buf , vec4 norm_depth , vec2 tx , float radius 
 }
 float lfunc( float p )
 {
-	return sin( p * pi * 0.5 );
+	return sign( p ) * ( 1.0 - pow( 1.0 - abs( p ) , 4.0 ) );
 }
 vec4 scalel( vec4 p )
 {
 	p /= p.w;
-	return p;//vec4( vec2( lfunc( p.x ) , lfunc( p.y ) ) , p.zw );
+	if( abs( p.x ) > 1.0 || abs( p.y ) > 1.0 ) return p;
+	return vec4( vec2( lfunc( p.x ) , lfunc( p.y ) ) , p.zw );
 }

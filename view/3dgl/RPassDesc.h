@@ -25,7 +25,7 @@ class RPass : public RInitable
 public:
 	virtual void init( const RPassDesc & ) = 0;
 	virtual void update( const RSize & ) = 0;
-	virtual void clear() = 0;
+	virtual void clear( bool ) = 0;
 	virtual void bind() const = 0;
 	virtual ViewTypes::RDrawBufferPTR getBufferPtr( int ) const = 0;
 	virtual ViewTypes::RDrawBufferPTR getDepthBufferPtr() const = 0;

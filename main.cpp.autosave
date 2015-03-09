@@ -87,13 +87,13 @@ int main()
 	{
 		t += 1.0f / 0x20;
 		sleep( 0x20 );
-		xfor( x , 3 )
+		/*xfor( x , 3 )
 		xfor( y , 3 )
 		{
 			scene->getInstanceStatePtr( x + y * 3 )->_view[0].model( 3 , 0 ) += 0.1f * sinf( 4.0f * t );
 			scene->getInstanceStatePtr( x + y * 3 )->_view[0].model( 3 , 1 ) += 0.1f * cosf( 4.0f * t );
 			scene->getInstanceStatePtr( x + y * 3 )->_view[0].model( 3 , 2 ) = -1.0f;
-		}
+		}*/
 		//ls->_pos = f3( sinf( t ) , cosf( t ) , 1.0f ) * 50.0f;
 		//ls->_dir = -ls->_pos.g_norm();
 		//ls->_dir.print();

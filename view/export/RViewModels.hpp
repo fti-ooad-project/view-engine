@@ -17,6 +17,16 @@ public:
 	typedef uint RDrawInstancePTR;
 	typedef uint RBoneAnimInTexPTR;
 };
+class RLightSourceType
+{
+public:
+	static const int RLIGHT_OMNI = 0 , RLIGHT_DIRECT = 1;
+};
+class RLightSourceShape
+{
+public:
+	static const int RLIGHTSHAPE_CIRCLE = 0 , RLIGHTSHAPE_CIRCLE_SMOOTH = 1;
+};
 struct RAnimationMixer
 {
 	struct RMoment
@@ -75,7 +85,12 @@ struct RAnimationMixer
 		_event = event;
 	}
 };
-typedef std::tuple< ViewTypes::RDrawablePTR , f4x4 > ViewInfo;
+typedef struct
+{
+	ViewTypes::RDrawablePTR view_id;
+	f4x4 model;
+}
+ViewInfo;
 class RDrawableState
 {
 public:

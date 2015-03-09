@@ -25,7 +25,7 @@ public:
 		switch ( desc._store_type )
 		{
 			case RBufferStoreType::RBUFFER_BYTE:
-				_gl_type = GL_RGBA;
+				_gl_type = GL_RGBA8;
 				_gl_store = GL_UNSIGNED_BYTE;
 				_gl_depth = GL_DEPTH_COMPONENT16;
 			break;
@@ -65,8 +65,8 @@ public:
 					glTexImage2D( GL_TEXTURE_2D , 0 , _gl_type , _desc._size._w , _desc._size._h , 0 , GL_RGBA , _gl_store , 0 );
 					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
 					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_LINEAR );
-					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S , GL_CLAMP_TO_EDGE );
-					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T , GL_CLAMP_TO_EDGE );
+					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S , GL_REPEAT );
+					glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T , GL_REPEAT );
 					glFramebufferTexture2D( GL_FRAMEBUFFER , GL_COLOR_ATTACHMENT0 + i , GL_TEXTURE_2D , __texture_pointer_array[i] , 0 );
 				}
 			}
@@ -138,13 +138,18 @@ public:
 	{
 		return N;
 	}
-	void clear() override
+	void clear( bool cd = true ) override
 	{
 		glBindFramebuffer( GL_FRAMEBUFFER , _framebuffer_id );
 		glViewport( 0 , 0 , _desc._size._w , _desc._size._h );
 		glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-		glClearDepth( 1.0f );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		if( cd )
+		{
+			glClearDepth( 1.0f );
+			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		}
+		else
+			glClear( GL_COLOR_BUFFER_BIT );
 	}
 	void bind() const override
 	{
