@@ -110,14 +110,35 @@ vec4 unpack4i( uint data )
 		outv[i] = float( ( data & ( 255 <<  ( i * 8 ) ) ) >> ( i * 8 ) ) / 255.0;
 	return outv;
 }
-float ssao( sampler2D norm_depth_buf , vec4 norm_depth , vec2 tx , float radius )
+float depthFromi( uvec4 r )
 {
-	float o = 0.0;
+	return float( r.x ) / 100.0;
+}
+vec3 normFromi( uvec4 r )
+{
+	vec4 unpacked_n = -1.0 + 2.0 * unpack4i( r.z );
+	return vec3( unpacked_n.xy , sign( unpacked_n.z ) * sqrt( max( 0.0 , 1.0 - pow( abs( unpacked_n.x ) , 2.0 ) - pow( abs( unpacked_n.y ) , 2.0 ) ) ) );
+}
+float ssao( usampler2D norm_depth_buf , vec4 norm_depth , vec2 tx , float radius )
+{
+	float o = NUM_TAPS;
 	for( int i = 0; i < NUM_TAPS; ++i )
 	{
-		vec4 temp = texture2D( norm_depth_buf , tx + rot2d( poisson[i] , nrand( tx * 123.0 ) ) * radius / norm_depth.w );// 
-		if( abs( temp.w - norm_depth.w ) > 1.0 || temp.w > norm_depth.w - 0.1 )//|| dot( temp.xyz , norm_depth.xyz ) > 0.2 )
-			o += 1.0;
+		vec2 ntx = tx + rot2d( poisson[i] , nrand( tx ) * 2.0 * pi ) * radius / norm_depth.w;
+		if( ntx.x > 1.0 || ntx.x < 0.0 || ntx.y > 1.0 || ntx.y < 0.0 )
+		{
+			continue;
+		}else
+		{
+			uvec4 temp = texture( norm_depth_buf , ntx );
+			float depth = depthFromi( temp );
+			vec3 norm = normFromi( temp );
+			if( norm_depth.w - depth > 0.0
+			&& dot( norm , norm_depth.xyz ) < 0.7
+			&& norm_depth.w - depth < 2.0
+			)
+				o -= 1.0;
+		}
 	}
 	return o / NUM_TAPS;
 }

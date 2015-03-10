@@ -24,19 +24,22 @@ int main()
 		xfor( y , 3 )
 		{
 			f4x4 temp( 1.0f );
-			temp( 3 , 0 ) = 2.0f * ( x - 5.0f );
-			temp( 3 , 1 ) = 2.0f * ( - y + 5.0f );
-			temp( 3 , 2 ) = -2.0f;
+			temp( 3 , 0 ) = 2.0f * ( x );
+			temp( 3 , 1 ) = 2.0f * ( -y - 4.0f );
+			//temp( 3 , 2 ) = -2.0f;
 			scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 0 , temp } );
 		}
+	f4x4 temp( 1.0f );
+	scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 2 , temp } );
+
 	RLightState *ls = scene->getLightStatePtr( scene->genLight() );
 	ls->_cast_shadow = true;
 	ls->_colori = f4( 1.0f , 1.0f , 1.0f , 1.0f );
-	ls->_dir = f3( 0.0f , -0.7 , -0.7f );
-	ls->_pos = f3( 0.0f , 70.0f , 70.0f );
+	ls->_dir = f3( -0.7f , 0.0f , -0.7f );
+	ls->_pos = f3( 70.0f , 0.0f , 70.0f );
 	ls->_type = RLightSourceType::RLIGHT_DIRECT;
 	auto cam = scene->getCamera();
-	cam->lookAt( f3( 0.0f , -10.0f , 10.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
+	cam->lookAt( f3( 0.0f , -2.0f , 2.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
 	f3 cam_pos , cam_lookat;
 	eventer->addKeyFunc(
 			[cam,ls]( const KeyStates &cs , const float dt )

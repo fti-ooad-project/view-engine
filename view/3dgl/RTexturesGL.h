@@ -8,7 +8,7 @@ private:
 	std::unique_ptr< RSize[] > __tex_size;
 	std::unique_ptr< RImage[] > _imgs;
 public:
-	uint _count;
+	uint _count = 0;
 	std::unique_ptr< uint[] > __texture_pointer_array;
 	RTextureHolderGL( std::unique_ptr< RImage[] > &&imgs , int count ):
 	_count( count )
@@ -36,7 +36,7 @@ public:
 	RTextureHolderGL() = default;
 	void init()
 	{
-		if( isInited() ) return;
+		if( isInited() || _count == 0 ) return;
 		setInited( true );
 		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
 		__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[_count] ) );

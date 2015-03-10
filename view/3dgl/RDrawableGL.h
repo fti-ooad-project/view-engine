@@ -108,13 +108,15 @@ public:
 	RBoneAnimInTexHolderGL __anim_intex;
 	std::unique_ptr< RPolymesh > __mesh;
 	int _bone_count;
-	RComplexPolyMeshGL( std::unique_ptr< RPolymesh > &&mesh ):
-	__textures( std::move( mesh->_textures ) , mesh->_texture_count )
-	, __anim_intex( std::move( mesh->__mat4anim ) , mesh->_anim_count )
-	, __mesh( std::move( mesh ) )///ORDER
-	, _bone_count( __mesh->_bone_count )
+	RComplexPolyMeshGL( std::unique_ptr< RPolymesh > &&mesh )
 	{
-		_size = __mesh->_v3size;
+		if( mesh->_texture_count > 0 )
+			__textures = std::move( RTextureHolderGL( std::move( mesh->_textures ) , mesh->_texture_count ) );
+		if( mesh->_anim_count > 0 )
+			__anim_intex = std::move( RBoneAnimInTexHolderGL( std::move( mesh->__mat4anim ) , mesh->_anim_count ) );
+		__mesh= std::move( mesh );
+		_bone_count = __mesh->_bone_count;
+		_size = __mesh->_v3size * 2.0f;
 	}
 	void init() override
 	{
@@ -144,6 +146,24 @@ public:
 				glVertexAttribPointer( 1 , 2 , GL_FLOAT , GL_FALSE , RVertexOffsets::Base , reinterpret_cast< void* >( RVertexOffsets::TextureCoordinate ) );
 				glVertexAttribPointer( 5 , 3 , GL_FLOAT , GL_FALSE , RVertexOffsets::Base , reinterpret_cast< void* >( RVertexOffsets::BoneWeights ) );
 				glVertexAttribPointer( 6 , 4 , GL_FLOAT , GL_FALSE , RVertexOffsets::Base , reinterpret_cast< void* >( RVertexOffsets::BoneIndex ) );
+				__anim_intex.init();
+			}
+			break;
+			case RPolymesh::RPolyMeshType::RSTATIC_PMESH:
+			{
+				glBufferData( GL_ARRAY_BUFFER_ARB ,
+											__mesh->_vertex_count * RStaticVertexOffsets::Base , __mesh->__vertices.get() ,
+											GL_STATIC_DRAW_ARB );
+				glEnableVertexAttribArray( 0 );
+				glEnableVertexAttribArray( 1 );
+				glEnableVertexAttribArray( 2 );
+				glEnableVertexAttribArray( 3 );
+				glEnableVertexAttribArray( 4 );
+				glVertexAttribPointer( 0 , 3 , GL_FLOAT , GL_FALSE , RStaticVertexOffsets::Base , reinterpret_cast< void* >( 0 ) );
+				glVertexAttribPointer( 2 , 3 , GL_FLOAT , GL_FALSE , RStaticVertexOffsets::Base , reinterpret_cast< void* >( RStaticVertexOffsets::Normal ) );
+				glVertexAttribPointer( 3 , 3 , GL_FLOAT , GL_FALSE , RStaticVertexOffsets::Base , reinterpret_cast< void* >( RStaticVertexOffsets::BiNormal ) );
+				glVertexAttribPointer( 4 , 3 , GL_FLOAT , GL_FALSE , RStaticVertexOffsets::Base , reinterpret_cast< void* >( RStaticVertexOffsets::TangentNormal ) );
+				glVertexAttribPointer( 1 , 2 , GL_FLOAT , GL_FALSE , RStaticVertexOffsets::Base , reinterpret_cast< void* >( RStaticVertexOffsets::TextureCoordinate ) );
 			}
 			break;
 		}
@@ -170,7 +190,6 @@ public:
 					GL_REPEAT );
 		}*/
 
-		__anim_intex.init();
 		__textures.init();
 #ifdef RLOG
 		LOG << "_________________________\n" << "polymesh generated:vao:" << _vao << "\n";

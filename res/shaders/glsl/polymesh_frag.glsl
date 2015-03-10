@@ -8,8 +8,9 @@ out uvec4 buf;
 
 void main()
 {
-	vec4 diff = vec4( 1.0 );
+	vec4 diff = vec4( 0.5 );
 	vec4 norm = vec4( pvo.normal , pvo.depth );
+	vec4 spec = vec4( vec3( 0.1 ) , 0.1 );
 	if( bool( FLAGS & MASK_TEXTURED ) )
 	{
 		if( bool( FLAGS & MASK_TEXTURED_DIF ) )
@@ -22,15 +23,15 @@ void main()
 			vec3 newnormal = normalize( pvo.normal * bump.z-pvo.binormal * bump.y + pvo.tangentnormal * bump.x );
 			norm = vec4( newnormal.xyz , pvo.depth);
 		}
-		//if( bool( FLAGS & MASK_TEXTURED_SPE ) )
-		//	buf[2] = vec4( texture2D( RGB_SPECULAR_A_GLOSSNESS_TEXTURE , pvo.texcoord.xy ) );
+		if( bool( FLAGS & MASK_TEXTURED_SPE ) )
+			spec= vec4( texture2D( RGB_SPECULAR_A_GLOSSNESS_TEXTURE , pvo.texcoord.xy ) );
 		//buf[3] = vec4( difo.xyz , ne.w );
 	}
 	buf.x = uint( pvo.depth * 100.0 );
 	buf.y = pack4i( vec4( diff.xyz , 0.0 ) );
 	float sg = norm.z >= 0.0 ? 1.0 : -1.0;
 	buf.z = pack4i( vec4( 0.5 + 0.5 * norm.xy , 0.5 + 0.5 * sg , 0.0 ) );
-	buf.w = 1;
+	buf.w = pack4i( spec );
 	//buf[1] = vec4( pvo.normal , pvo.depth );
 	//buf[2] = vec4( 0.0 );
 	//buf[3] = vec4( vec3( 1.0 ) , 0.0 );

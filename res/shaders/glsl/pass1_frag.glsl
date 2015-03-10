@@ -13,14 +13,16 @@ layout( location = 20 ) uniform OmniLight OLIGHT[MAX_LIGHTS_CASTER];
 layout( location = 32 ) uniform DirectedLight DLIGHT[MAX_LIGHTS_CASTER];
 
 //layout( location = 11 ) uniform sampler2D ANIM_TEX;
-
+//specw.r - metallness
+//specw.g - more fresnel
+//specw.a - exponent
 in vec2 frag_pos;
 out vec4 out_data;
-vec3 light( vec3 p , vec3 n , vec3 v )
+vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 {
 	vec3 lightness = vec3( 0.0 );
 	vec3 refl = reflect( normalize( p - v ) , n );
-	
+	float freshnel = mix( 1.0 , mix( 1.0 , 3.0 * max( 0.0 , 1.0 - dot( -normalize( p - v ) , n ) ) , 0.5 * specw.y ) , 1.0 - specw.x );
 	/*for( int i = 0; i < 1; i++ )//COUNT!!!
 	{
 		vec3 to_light = p - OLIGHT[i].pos;
@@ -38,8 +40,9 @@ vec3 light( vec3 p , vec3 n , vec3 v )
 		float k;
 		if( dot( n , n ) == 0.0 )
 			k = 1.0;
-		else//+ max( 0.0 , dot( refl , -DLIGHT[i].dir ) )
-			k = pow( max( 0.0 , dot( n , -DLIGHT[i].dir )  ) , 0.8 );
+		else//+ 
+			k = pow( freshnel * mix( max( 0.0 , dot( refl , -DLIGHT[i].dir ) ) , max( 0.0 , dot( n , -DLIGHT[i].dir ) ) , 1.0 - specw.w ) , specw.w * 10.0 );
+		
 		lightness += DLIGHT[i].colori.xyz * DLIGHT[i].colori.w *
 		smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) * 
 		k;
@@ -50,9 +53,7 @@ void main()
 {
 	definePoisson();
 	uvec4 buf0 = texture( BUFFER0 , frag_pos );
-	float depth = float( buf0.x ) / 100.0; 
-	//return;
-	vec3 unpacked_n = -1.0 + 2.0 * unpack4i( buf0.z ).xyz;
+	float depth = depthFromi( buf0 );
 	/*if( buf0.x > 10000 )
 	{
 		out_data = vec4( 0.0 );
@@ -61,9 +62,11 @@ void main()
 	}*/
 	vec3 l;
 	vec3 pos = posFromZ( vec2( -1.0 + 2.0 * frag_pos.x , -1.0 + 2.0 * frag_pos.y ) , depth , CAM );
-	vec3 norm = vec3( unpacked_n.xy , sign( unpacked_n.z ) * sqrt( max( 0.0 , 1.0 - pow( abs( unpacked_n.x ) , 2.0 ) - pow( abs( unpacked_n.y ) , 2.0 ) ) ) );
+	vec4 specw = unpack4i( buf0.w );
+	vec3 norm = normFromi( buf0 );
 	vec3 diff = unpack4i( buf0.y ).xyz;
-	l = vec3( 0.2 ) + light( pos , norm , CAM.pos );
-	out_data = vec4( l * diff , 1.0 );
+	l = vec3( 0.3 ) + light( pos , norm , CAM.pos , specw ) * mix( vec3( 1.0 ) , diff , specw.x );
+	float ao = ssao( BUFFER0 , vec4( norm , depth ) , frag_pos , 0.3 );
+	out_data = vec4( ao * l * diff , 1.0 );
 	//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 1.0 ) );
 }

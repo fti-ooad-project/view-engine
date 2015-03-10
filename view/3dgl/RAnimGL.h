@@ -3,15 +3,16 @@
 #include "RAnim.h"
 #include "../GL.h"
 #include "view/export/RViewModels.hpp"
-class RBoneAnimInTexHolderGL
+class RBoneAnimInTexHolderGL : public RInitable
 {
 public:
 	std::unique_ptr< RAnimationset[] > __sets;
 public:
-	int _count;
+	int _count = 0;
 	int _bone_count;
 	std::unique_ptr< uint[] > __texture_pointer_array;
 	std::unique_ptr< int[] > __frame_count;
+	RBoneAnimInTexHolderGL() = default;
 	RBoneAnimInTexHolderGL( std::unique_ptr< RAnimationset[] > &&sets , int count ):
 	_count( count )
 	, __sets( std::move( sets ) )
@@ -29,6 +30,8 @@ public:
 	}
 	void init()
 	{
+		if( isInited() || _count == 0 ) return;
+		setInited( true );
 		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
 		glGenTextures( _count , __texture_pointer_array.get() );
 		ito( _count )
@@ -46,6 +49,8 @@ public:
 	}
 	void release()
 	{
+		if( !isInited() ) return;
+		setInited( false );
 		glDeleteTextures( _count , __texture_pointer_array.get() );
 		__frame_count.reset();
 		__texture_pointer_array.reset();

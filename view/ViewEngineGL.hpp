@@ -140,6 +140,8 @@ private:
 			_view.push_back( std::move( std::unique_ptr< RPolyMeshGL >(
 				new RComplexPolyMeshGL( RFileLoader::loadPolyMeshBin( RFileLoader::getStream( "res/view/polymodels/monkey.bin" ) , RPolymesh::RPolyMeshType::RBONED_PMESH ) ) ) ) );
 			_view.push_back( std::move( std::unique_ptr< RPolyMeshGL >( new RPolyBoxGL ) ) );
+			_view.push_back( std::move( std::unique_ptr< RPolyMeshGL >(
+				new RComplexPolyMeshGL( RFileLoader::loadPolyMeshBin( RFileLoader::getStream( "res/view/polymodels/tower.bin" ) , RPolymesh::RPolyMeshType::RSTATIC_PMESH ) ) ) ) );
 			for( std::unique_ptr< RPolyMeshGL > &i : _view )
 			{
 				i->init();
@@ -154,22 +156,27 @@ private:
 		float time = _cur_time - floorf( _cur_time );
 		if( _cur_scene )
 		{
+			_cur_scene->_main_cam.setAspect( float( w ) / std::max( w , h ) * RVectorFactory::PI * 0.5f , float( h ) / std::max( w , h ) * RVectorFactory::PI * 0.5f );
 			for( RDrawableState const &ins : _cur_scene->_instances )
 			{
 				f4x4 const &m = ins._view[0].model;
 				f3 pos = f3( m( 3 , 0 ) , m( 3 , 1 ) , m( 3 , 2 ) );
-				if( !_cur_scene->_main_cam.fristrum( pos ) ) continue;
-				float cam_dist = pos.g_dist( _cur_scene->_main_cam._v3pos );
+
+				float cam_dist = pos.g_dist( _cur_scene->_main_cam._v3pos ) / _view[ins._view[0].view_id]->_size.z() * 2.0f;
 				if( cam_dist < 10.0f && _tess )
 					data[ins._view[0].view_id*2].push_back( { 0.2 * time , 0.0f , cam_dist , 0 , 0 , 0 , m } );
 				else
-				if( cam_dist < 130.0f )
-					data[ins._view[0].view_id*2 + 1].push_back( { 0.2 * time , 0.0f , cam_dist , 0 , 0 , 0 , m } );
-				else
 				{
-					f4x4 mn = m;
-					mn.scale( _view[ins._view[0].view_id]->_size );
-					data[3].push_back( { 0.2 * time , 0.0f , cam_dist , 0 , 0 , 0 , mn } );
+					if( !_cur_scene->_main_cam.fristrum( pos , _view[ins._view[0].view_id]->_size.z() ) ) continue;
+
+					if( cam_dist < 130.0f )
+						data[ins._view[0].view_id*2 + 1].push_back( { 0.2 * time , 0.0f , cam_dist , 0 , 0 , 0 , m } );
+					else
+					{
+						f4x4 mn = m;
+						mn.scale( _view[ins._view[0].view_id]->_size );
+						data[3].push_back( { 0.2 * time , 0.0f , cam_dist , 0 , 0 , 0 , mn } );
+					}
 				}
 			}
 			if( time < 0.01f )

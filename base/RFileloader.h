@@ -3,6 +3,7 @@
 #include <cstring>
 #include "view/3dgl/RTextures.h"
 #include "view/3dgl/RDrawable.h"
+#include "view/3dgl/ShaderSpecs.h"
 #include <string>
 #include <stdexcept>
 #include <memory>
@@ -78,20 +79,29 @@ public:
 				stream->read( ( char * )&out->_vertex_count, sizeof( unsigned int ) );
 				out->__vertices = std::move( std::unique_ptr< char[] >( reinterpret_cast< char* >( new RStaticVertex[out->_vertex_count] ) ) );
 				out->__indeces = std::move( std::unique_ptr< unsigned short[] >( new unsigned short[out->_face_count * 3] ) );
-				stream->read( ( char * )out->__vertices.get(), sizeof( RVertex )*out->_vertex_count );
+				stream->read( ( char * )out->__vertices.get(), sizeof( RStaticVertex )*out->_vertex_count );
 				stream->read( ( char * )out->__indeces.get(), sizeof( unsigned short )*out->_face_count * 3 );
 			break;
 		}
 		int img_count;
 		stream->read( ( char* )&img_count , sizeof( int ) );
 		out->_texture_count = img_count;
-		if( img_count > 1 )
+		out->_anim_count = 0;
+		if( img_count > 0 )
 		{
-			out->_flags |= ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_DIF | ShaderMask::MASK_TEXTURED_NOR;
+			out->_flags |=
+			ShaderMask::MASK_TEXTURED
+			| ShaderMask::MASK_TEXTURED_DIF
+			| ShaderMask::MASK_TEXTURED_NOR
+			| ShaderMask::MASK_TEXTURED_SPE
+			;
 			out->_textures = std::move( loadImageBin( stream  , img_count ) );
 		}
 		if( type != RPolymesh::RPolyMeshType::RBONED_PMESH )
+		{
+			stream->close();
 			return std::move( out );
+		}
 		int anim_count;
 		stream->read( ( char * )&anim_count, sizeof( uint ) );
 		out->_anim_count = anim_count;
@@ -99,9 +109,10 @@ public:
 		{
 			out->_flags |= ShaderMask::MASK_OWN_ANIMATED;
 			out->__mat4anim = std::move( loadAnimSetBin( stream , anim_count ) );
-			//LOG<<anim_count;
+
 		}
 		//LOG<<out->__mat4anim[0]._bone_count;
+		stream->close();
 		return std::move( out );
     }
 	static uint binarize( uint c )

@@ -136,15 +136,15 @@ public:
 		out[4] = RCamera::perpLookUp1x1( pos , f3( 0.0f, 0.0f, 1.0f ) , f3( 0.0f, 1.0f, 0.0f ) );
 		out[5] = RCamera::perpLookUp1x1( pos , f3( 0.0f, 0.0f, -1.0f ) , f3( 0.0f, 1.0f, 0.0f ) );
 	}
-	bool fristrum( f3 const &p ) const
+	bool fristrum( f3 const &p , float size ) const
 	{
 		f3 np = p - _v3pos;
 		float z = np * _v3local_z;
 		float x = np * _v3local_x;
 		float y = np * _v3local_y;
 		if( z < _nearplane || z > _farplane ) return false;
-		if( fabs( x / z ) > tanf( _fovx / 2.0f + 0.2 ) ) return false;
-		if( fabs( y / z ) > tanf( _fovy / 2.0f + 0.2 ) ) return false;
+		if( fabsf( x / z ) > tanf( _fovx / 2.0f ) ) return false;
+		if( fabsf( y ) / z > tanf( _fovy / 2.0f ) ) return false;
 		return true;
 	}
 };
