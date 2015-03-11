@@ -8,6 +8,10 @@ out uvec4 buf;
 
 void main()
 {
+	if( bool( LIGHTPASS ) )
+	{
+		return;
+	}
 	vec4 diff = vec4( 0.5 );
 	vec4 norm = vec4( pvo.normal , pvo.depth );
 	vec4 spec = vec4( vec3( 0.1 ) , 0.1 );

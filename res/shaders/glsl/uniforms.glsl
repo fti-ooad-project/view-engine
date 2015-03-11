@@ -12,7 +12,7 @@ layout( location = 10 ) uniform int BONE_COUNT;
 layout( location = 13 ) uniform int CUR_ANIM;
 layout( location = 14 ) uniform int LAST_ANIM;
 layout( location = 15 ) uniform int INSTANSING;
-layout( location = 17 ) uniform int HEIGTMAP;
+layout( location = 17 ) uniform int LIGHTPASS;
 
 layout( location = 11 ) uniform vec3 CAM_POS;
 layout( location = 16 ) uniform float DIST_TO_CAM;

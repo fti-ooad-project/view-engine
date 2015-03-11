@@ -43,6 +43,7 @@ public:
 		return &_main_cam;
 	}
 };
+bool _tri = false;
 class ViewEngineGL : public ViewManager , public RTimer
 {
 private:
@@ -51,15 +52,14 @@ private:
 	RWindowGL win;
 	RGraphicProgrammGL _quad_prog;
 	RGraphicProgrammGL _prog[0x3];
-	RGraphicProgrammGL _light_cube_prog;
-	RGraphicProgrammGL _light_dir_prog;
-	RGraphicProgrammGL _skybox_shader;
+	//RGraphicProgrammGL _light_cube_prog;
+	//RGraphicProgrammGL _light_dir_prog;
 	HeightMapDrawler _heigmap_drawl;
 	RDrawPassGL _light_dir_passes[LIGHT_CASTER_COUNT];
 	RDrawPassGL _light_cube_passes[LIGHT_CASTER_COUNT];
 	RDrawPassGL  _pass[0x2];
 
-	bool _tri = false;
+
 	bool _tess = true;
 	RPolyQuadGL _screen_quad;
 	REventer _eventer;
@@ -106,6 +106,8 @@ private:
 				}
 			}
 		}
+		_heigmap_drawl.bindToDraw();
+		_heigmap_drawl.draw( true );
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
 	inline void drawInstancesToLight( std::vector< InstanceInfo > const *info )
@@ -127,16 +129,15 @@ private:
 				_light_dir_passes[i].init( { { 2048 , 2048 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , false } );
 				_light_cube_passes[i].init( { { 512 , 512 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , true } );
 			}
-
 			_quad_prog.init( "res/shaders/glsl/screen_quad_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
 			_pass[0].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false } );
 			_pass[1].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
 			_prog[0].init( "res/shaders/glsl/polymesh_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/polymesh_tess_geom.glsl" , "res/shaders/glsl/polymesh_tess_tc.glsl" , "res/shaders/glsl/polymesh_tess_te.glsl" );
 			_prog[2].init( "res/shaders/glsl/polymesh_frag.glsl" , "res/shaders/glsl/polymesh_vertex.glsl" , "" );
 			_prog[1].init( "res/shaders/glsl/pass1_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
-			_skybox_shader.init( "res/shaders/glsl/skybox_fragment.glsl" , "res/shaders/glsl/skybox_vertex.glsl" );
-			_light_cube_prog.init( "res/shaders/glsl/depth_allpass_fragment.glsl" , "res/shaders/glsl/depth_cubepass_vertex.glsl" , "res/shaders/glsl/depth_cubepass_geometry.glsl" );
-			_light_dir_prog.init( "res/shaders/glsl/depth_allpass_fragment.glsl" , "res/shaders/glsl/depth_dirpass_vertex.glsl" );
+			//_skybox_shader.init( "res/shaders/glsl/skybox_fragment.glsl" , "res/shaders/glsl/skybox_vertex.glsl" );
+			//_light_cube_prog.init( "res/shaders/glsl/depth_allpass_fragment.glsl" , "res/shaders/glsl/depth_cubepass_vertex.glsl" , "res/shaders/glsl/depth_cubepass_geometry.glsl" );
+			//_light_dir_prog.init( "res/shaders/glsl/depth_allpass_fragment.glsl" , "res/shaders/glsl/depth_dirpass_vertex.glsl" );
 			_screen_quad.init();
 			_view.push_back( std::move( std::unique_ptr< RPolyMeshGL >(
 				new RComplexPolyMeshGL( RFileLoader::loadPolyMeshBin( RFileLoader::getStream( "res/view/polymodels/monkey.bin" ) , RPolymesh::RPolyMeshType::RBONED_PMESH ) ) ) ) );
@@ -198,18 +199,20 @@ private:
 			_prog[0].bind();
 			glUniform1f( 7 , time );
 			glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
-
+			glUniform1i( 17 , 0 );
 			glUniform1i( 15 , 1 );
-			glUniform1i( 12 , 1 );
+			//glUniform1i( 12 , 1 );
 			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
 			_prog[2].bind();
 			glUniform1f( 7 , time );
 			glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
 			glUniform1i( 15 , 1 );
-			glUniform1i( 12 , 1 );
+			glUniform1i( 17 , 0 );
+			//glUniform1i( 12 , 1 );
 			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
 			//
 			_heigmap_drawl.bindToDraw();
+			glUniform1i( 17 , 0 );
 			glUniform1i( 0 , 0 );
 			glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
 			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
@@ -217,8 +220,7 @@ private:
 			drawInstances( data , _tess );
 			//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 			//glLineWidth( 0.01f );
-			_heigmap_drawl.bindToDraw();
-			_heigmap_drawl.draw( true );
+
 			//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 			/*f4x4 model( 100.0f );
 			_prog[2].bind();
@@ -246,19 +248,19 @@ private:
 					caster_dir_light_ptr[caster_dir_light_count] = &l;
 					_light_dir_passes[caster_dir_light_count].bind();
 					_light_dir_passes[caster_dir_light_count].clear();
-					_light_dir_prog.bind();
-					glUniform1i( 15 , 1 );
+
 					dir_lights_viewproj[caster_dir_light_count] = RCamera::orthographic( l._pos , l._dir , f3( 0.0f , 0.0f , 1.0f ) );
-					glUniformMatrix4fv( 30 , 1 , GL_FALSE , dir_lights_viewproj[caster_dir_light_count].getPtr() );
-					glUniform1i( 17 , 0 );
-					drawInstancesToLight( data );
+
+					_prog[2].bind();
 					glUniform1i( 17 , 1 );
-					//_heigmap_drawl.bindHeightTexture();
-					//_heigmap_drawl.draw( false );
+					glUniformMatrix4fv( 30 , 1 , GL_FALSE , dir_lights_viewproj[caster_dir_light_count].getPtr() );
+					drawInstancesToLight( data );
+
 					_heigmap_drawl.bindToDraw();
+					glUniform1i( 17 , 1 );
 					glUniformMatrix4fv( 30 , 1 , GL_FALSE , dir_lights_viewproj[caster_dir_light_count].getPtr() );
 					_heigmap_drawl.draw( true );
-					//dir_lights_viewproj[caster_dir_light_count].print();
+
 					caster_dir_light_count++;
 				}else
 				{

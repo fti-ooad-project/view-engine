@@ -145,11 +145,11 @@ float ssao( usampler2D norm_depth_buf , vec4 norm_depth , vec2 tx , float radius
 }
 float lfunc( float p )
 {
-	return sign( p ) * ( 1.0 - pow( 1.0 - abs( p ) , 4.0 ) );
+	return sign( p ) * ( 1.0 - pow( 1.0 - abs( p ) , 2.0 ) );
 }
 vec4 scalel( vec4 p )
 {
 	p /= p.w;
 	if( abs( p.x ) > 1.0 || abs( p.y ) > 1.0 ) return p;
-	return p;//vec4( vec2( lfunc( p.x ) , lfunc( p.y ) ) , p.zw );
+	return vec4( vec2( lfunc( p.x ) , lfunc( p.y ) ) , p.zw );
 }

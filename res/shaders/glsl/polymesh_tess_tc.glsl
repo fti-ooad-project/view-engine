@@ -10,8 +10,8 @@ float getTessLevel( float dist )
 {
 	dist *= 0.5;
 	if( dist < 1.0 )
-		return 4.0;
-	return 4.0 / dist;
+		return 10.0;
+	return 10.0 / dist;
 }
 void main()
 {
@@ -23,11 +23,6 @@ void main()
 	gl_out[ID].gl_Position = gl_in[ID].gl_Position;
 	if( ID == 0 )
 	{
-		//vec3 p = ( gl_in[0].gl_Position.xyz + gl_in[1].gl_Position.xyz + gl_in[2].gl_Position.xyz ) * 0.333333;
-		//vec3 v = -normalize( p - CAM_POS );
-		//vec3 n = ( pv[0].normal + pv[1].normal + pv[2].normal ) * 0.333333;
-		//float k = 0.6;//0.3 * pow( 1.0 + dot( v , n ) , 2.0 );
-		//float dist = distance( p , CAM_POS );
 		float dist0 = distance( gl_in[0].gl_Position.xyz , CAM_POS );
 		float dist1 = distance( gl_in[1].gl_Position.xyz , CAM_POS );
 		float dist2 = distance( gl_in[2].gl_Position.xyz , CAM_POS );

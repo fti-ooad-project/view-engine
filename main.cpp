@@ -44,8 +44,12 @@ int main()
 	eventer->addKeyFunc(
 			[cam,ls]( const KeyStates &cs , const float dt )
 			{
-				const float dr = dt * 30.0f;
+				const float dr = dt * 5.0f;
 				f3 v( 0.0f , 0.0f , 0.0f );
+				if( cs.__cur_states[SDL_SCANCODE_X] )
+					_tri = true;
+				else
+					_tri = false;
 				if( cs.__cur_states[SDL_SCANCODE_W] )//w
 					v += cam->_v3local_z;
 				if( cs.__cur_states[SDL_SCANCODE_S] )//s
@@ -60,9 +64,9 @@ int main()
 				cam->calc();
 				f2 clook = f2( cam->_v3local_z.x() , cam->_v3local_z.y() ).g_norm() * 10.0f;
 
-				ls->_pos = f3( 70.0f , 0.0f , 30.0f );
+				ls->_pos = f3( 70.0f , 0.0f , 70.0f );
 				ls->_dir = -ls->_pos.g_norm();
-				ls->_pos += f3( cam->_v3pos.x() + cam->_v3local_z.x() * 20.0f , cam->_v3pos.y() + cam->_v3local_z.y() * 20.0f , 0.0f );
+				ls->_pos += f3( cam->_v3pos.x() , cam->_v3pos.y() , 0.0f );
 				//cam->$getViewProj().print();
 			}
 		);

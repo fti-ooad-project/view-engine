@@ -12,7 +12,11 @@
 #endif
 #include <fstream>
 #include <sstream>
+#ifdef _WIN32
 #include <SDL/SDL_image.h>
+#else
+#include <SDL2/SDL_image.h>
+#endif
 //==========================
 //	RData class 1.04.14 schreiner
 //==========================

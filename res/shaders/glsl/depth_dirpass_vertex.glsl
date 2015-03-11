@@ -6,11 +6,11 @@ $include uniforms.glsl
 void main() 
 {
 	vec4 p;
-	if( bool( HEIGTMAP ) )
+	/*if( bool( HEIGTMAP ) )
 	{
 		float h = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , 0.5 + 0.5 * invertex_position.xy ).x;
 		p = vec4( 100.0 * invertex_position.xy , ( h - 0.5 ) * 100.0 , 1.0 );
-	}else
+	}else*/
 	{
 		p = vec4( invertex_position , 1.0 );
 		mat4 m;

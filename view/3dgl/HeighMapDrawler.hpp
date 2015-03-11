@@ -12,6 +12,7 @@ private:
 	uint _vao;
 	int _indx_count;
 	RGraphicProgrammGL _prog;
+	RGraphicProgrammGL _lightprog;
 	RTextureHolderGL _htex;
 public:
 	f2 _size;

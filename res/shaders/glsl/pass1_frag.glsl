@@ -68,5 +68,5 @@ void main()
 	l = vec3( 0.3 ) + light( pos , norm , CAM.pos , specw ) * mix( vec3( 1.0 ) , diff , specw.x );
 	float ao = ssao( BUFFER0 , vec4( norm , depth ) , frag_pos , 0.3 );
 	out_data = vec4( diff * l * ao , 1.0  );
-	//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 1.0 ) );
+	//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );
 }
