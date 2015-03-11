@@ -22,7 +22,7 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 {
 	vec3 lightness = vec3( 0.0 );
 	vec3 refl = reflect( normalize( p - v ) , n );
-	float freshnel = mix( 1.0 , mix( 1.0 , 3.0 * max( 0.0 , 1.0 - dot( -normalize( p - v ) , n ) ) , 0.5 * specw.y ) , 1.0 - specw.x );
+	float freshnel = mix( 1.0 , mix( 1.0 , 5.0 * max( 0.0 , 1.0 - dot( -normalize( p - v ) , n ) ) , 0.5 * specw.y ) , 1.0 - specw.x );
 	/*for( int i = 0; i < 1; i++ )//COUNT!!!
 	{
 		vec3 to_light = p - OLIGHT[i].pos;
@@ -41,7 +41,7 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 		if( dot( n , n ) == 0.0 )
 			k = 1.0;
 		else//+ 
-			k = pow( freshnel * mix( max( 0.0 , dot( refl , -DLIGHT[i].dir ) ) , max( 0.0 , dot( n , -DLIGHT[i].dir ) ) , 1.0 - specw.w ) , specw.w * 10.0 );
+			k = pow( mix( freshnel * max( 0.0 , dot( refl , -DLIGHT[i].dir ) ) , max( 0.0 , dot( n , -DLIGHT[i].dir ) ) , 1.0 - specw.w ) , specw.w * 10.0 );
 		
 		lightness += DLIGHT[i].colori.xyz * DLIGHT[i].colori.w *
 		smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) * 
@@ -54,12 +54,12 @@ void main()
 	definePoisson();
 	uvec4 buf0 = texture( BUFFER0 , frag_pos );
 	float depth = depthFromi( buf0 );
-	/*if( buf0.x > 10000 )
+	if( buf0.x == 0 )
 	{
-		out_data = vec4( 0.0 );
+		//out_data = vec4( 0.0 );
 		//return;
 		discard;
-	}*/
+	}
 	vec3 l;
 	vec3 pos = posFromZ( vec2( -1.0 + 2.0 * frag_pos.x , -1.0 + 2.0 * frag_pos.y ) , depth , CAM );
 	vec4 specw = unpack4i( buf0.w );
@@ -67,6 +67,6 @@ void main()
 	vec3 diff = unpack4i( buf0.y ).xyz;
 	l = vec3( 0.3 ) + light( pos , norm , CAM.pos , specw ) * mix( vec3( 1.0 ) , diff , specw.x );
 	float ao = ssao( BUFFER0 , vec4( norm , depth ) , frag_pos , 0.3 );
-	out_data = vec4( ao * l * diff , 1.0 );
+	out_data = vec4( diff * l * ao , 1.0  );
 	//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 1.0 ) );
 }

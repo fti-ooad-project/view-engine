@@ -15,7 +15,6 @@ struct InstanceInfo
 	int cur_anim;
 	int last_anim;
 	f4x4 model;
-
 };
 class RPolyMeshGL : public RInitable
 {

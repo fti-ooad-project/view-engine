@@ -180,7 +180,8 @@ debug/main.o: main.cpp view/ViewEngineGL.hpp \
 		../../../ProgrammingLibs/SDL2-2.0.3/i686-w64-mingw32/include/SDL2/SDL_ttf.h \
 		view/3dgl/RPassGL.h \
 		view/3dgl/RPassDesc.h \
-		view/3dgl/WaterSimulator.hpp
+		view/3dgl/WaterSimulator.hpp \
+		view/3dgl/HeighMapDrawler.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\main.o main.cpp
 
 ####### Install

@@ -110,7 +110,7 @@ public:
 		float farp = 100.0f, nearp = 1.0f;
 		float Q = 1.0f / 300.0f;//1.0f / ( farp - nearp );
 		proj = f4x4( 0.0f );
-		float k = 1.0f / 50.0f;
+		float k = 1.0f / 300.0f;
 		proj( 0 , 0 ) = k;
 		proj( 1 , 1 ) = k;
 		proj( 2 , 2 ) = Q;
@@ -143,8 +143,8 @@ public:
 		float x = np * _v3local_x;
 		float y = np * _v3local_y;
 		if( z < _nearplane || z > _farplane ) return false;
-		if( fabsf( x / z ) > tanf( _fovx / 2.0f ) ) return false;
-		if( fabsf( y ) / z > tanf( _fovy / 2.0f ) ) return false;
+		if( fabsf( x / z ) > tanf( _fovx / 2.0f + 0.2f ) ) return false;
+		if( fabsf( y ) / z > tanf( _fovy / 2.0f + 0.2f ) ) return false;
 		return true;
 	}
 };

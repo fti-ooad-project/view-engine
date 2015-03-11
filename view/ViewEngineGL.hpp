@@ -9,6 +9,7 @@
 #include "gui/gl/GUIRendererGL.hpp"
 #include "view/3dgl/RPassGL.h"
 #include "3dgl/WaterSimulator.hpp"
+#include "3dgl/HeighMapDrawler.hpp"
 class Scene3DGL : public Scene3D
 {
 public:
@@ -53,7 +54,7 @@ private:
 	RGraphicProgrammGL _light_cube_prog;
 	RGraphicProgrammGL _light_dir_prog;
 	RGraphicProgrammGL _skybox_shader;
-
+	HeightMapDrawler _heigmap_drawl;
 	RDrawPassGL _light_dir_passes[LIGHT_CASTER_COUNT];
 	RDrawPassGL _light_cube_passes[LIGHT_CASTER_COUNT];
 	RDrawPassGL  _pass[0x2];
@@ -123,7 +124,7 @@ private:
 		{
 			ito( LIGHT_CASTER_COUNT )
 			{
-				_light_dir_passes[i].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , false } );
+				_light_dir_passes[i].init( { { 2048 , 2048 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , false } );
 				_light_cube_passes[i].init( { { 512 , 512 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , true } );
 			}
 
@@ -149,6 +150,8 @@ private:
 			}
 			_inited = true;
 			WaterSimulator::getSingleton()->init( _pass[0].getDepthBufferPtr() );
+
+			_heigmap_drawl.init( 100 , std::move( RFileLoader::loadImage( "res/view/images/h.png" ) ) , f2( 100.0f , 100.0f ) , f2( 0.0f , 0.0f ) );
 			//_guimng.init();
 			//_guimng.genText( "start game" );
 		}
@@ -163,7 +166,7 @@ private:
 				f3 pos = f3( m( 3 , 0 ) , m( 3 , 1 ) , m( 3 , 2 ) );
 
 				float cam_dist = pos.g_dist( _cur_scene->_main_cam._v3pos ) / _view[ins._view[0].view_id]->_size.z() * 2.0f;
-				if( cam_dist < 10.0f && _tess )
+				if( cam_dist < 10.0f )
 					data[ins._view[0].view_id*2].push_back( { 0.2 * time , 0.0f , cam_dist , 0 , 0 , 0 , m } );
 				else
 				{
@@ -206,10 +209,18 @@ private:
 			glUniform1i( 12 , 1 );
 			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
 			//
+			_heigmap_drawl.bindToDraw();
+			glUniform1i( 0 , 0 );
+			glUniformMatrix4fv( 30 , 1 , GL_FALSE , _cur_scene->_main_cam.getViewProj().getPtr() );
+			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
 
-			drawInstances( data , true );
-
-			f4x4 model( 100.0f );
+			drawInstances( data , _tess );
+			//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+			//glLineWidth( 0.01f );
+			_heigmap_drawl.bindToDraw();
+			_heigmap_drawl.draw( true );
+			//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+			/*f4x4 model( 100.0f );
 			_prog[2].bind();
 			glUniform3fv( 11 , 1 , _cur_scene->_main_cam._v3pos.getArray() );
 			glUniformMatrix4fv( 6 , 1 , GL_FALSE , model.getPtr() );
@@ -219,7 +230,7 @@ private:
 			glUniform1i( 15 , 0 );
 			glUniform1f( 16 , 0 );
 			glUniform1i( 0 , 0 );
-			_screen_quad.draw();
+			_screen_quad.draw();*/
 		}
 		///lights
 		int caster_dir_light_count = 0 , caster_omni_light_count = 0;
@@ -239,7 +250,14 @@ private:
 					glUniform1i( 15 , 1 );
 					dir_lights_viewproj[caster_dir_light_count] = RCamera::orthographic( l._pos , l._dir , f3( 0.0f , 0.0f , 1.0f ) );
 					glUniformMatrix4fv( 30 , 1 , GL_FALSE , dir_lights_viewproj[caster_dir_light_count].getPtr() );
+					glUniform1i( 17 , 0 );
 					drawInstancesToLight( data );
+					glUniform1i( 17 , 1 );
+					//_heigmap_drawl.bindHeightTexture();
+					//_heigmap_drawl.draw( false );
+					_heigmap_drawl.bindToDraw();
+					glUniformMatrix4fv( 30 , 1 , GL_FALSE , dir_lights_viewproj[caster_dir_light_count].getPtr() );
+					_heigmap_drawl.draw( true );
 					//dir_lights_viewproj[caster_dir_light_count].print();
 					caster_dir_light_count++;
 				}else
@@ -339,6 +357,7 @@ public:
 		if( !isInited() ) return;
 		setInited( false );
 		//_guimng.release();
+		_heigmap_drawl.release();
 		_quad_prog.release();
 		_screen_quad.release();
 		ito( 3 )

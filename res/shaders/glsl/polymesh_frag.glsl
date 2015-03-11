@@ -14,17 +14,17 @@ void main()
 	if( bool( FLAGS & MASK_TEXTURED ) )
 	{
 		if( bool( FLAGS & MASK_TEXTURED_DIF ) )
-			diff = texture2D( RGB_DIFFUSE_A_OPACITY_TEXTURE , pvo.texcoord.xy );
-		if( diff.w < 0.5 ) discard;
-		if( bool( FLAGS & MASK_TEXTURED_NOR ) && pvo.dist_to_cam < 30.0 )
+			diff = texture2D( RGB_DIFFUSE_A_OPACITY_TEXTURE , pvo.texcoord );
+		//if( diff.w < 0.5 ) discard;
+		if( bool( FLAGS & MASK_TEXTURED_NOR ) && pvo.dist_to_cam < 10.0 )
 		{
-			vec4 ne = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvo.texcoord.xy );
+			vec4 ne = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvo.texcoord );
 			vec4 bump = -1.0 + ne * 2.0;
 			vec3 newnormal = normalize( pvo.normal * bump.z-pvo.binormal * bump.y + pvo.tangentnormal * bump.x );
 			norm = vec4( newnormal.xyz , pvo.depth);
 		}
 		if( bool( FLAGS & MASK_TEXTURED_SPE ) )
-			spec= vec4( texture2D( RGB_SPECULAR_A_GLOSSNESS_TEXTURE , pvo.texcoord.xy ) );
+			spec= vec4( texture2D( RGB_SPECULAR_A_GLOSSNESS_TEXTURE , pvo.texcoord ) );
 		//buf[3] = vec4( difo.xyz , ne.w );
 	}
 	buf.x = uint( pvo.depth * 100.0 );

@@ -46,8 +46,9 @@ public:
 			__tex_size[i] = _imgs[i]._size;
 			glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[i] );
 			//glEnable( GL_TEXTURE_2D );
-			const int mipmaplevels = 10;
+			const int mipmaplevels = 4;
 			uint i_f , s;
+			LOG<<_imgs[i]._bytes_per_pixel;
 			switch( _imgs[i]._bytes_per_pixel )
 			{
 			case 4:

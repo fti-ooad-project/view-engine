@@ -152,7 +152,7 @@ public:
 		//if( _desc._store_type == RBufferStoreType::RBUFFER_INT )
 		//	glClearColorIuiEXT( 100 , 0 , 0 , 0 );
 		//else
-		glClearColor( 0.0f , 0.0f , 0.0f , 0.0f );
+		glClearColor( 0.0f , 0.0f , 0.0f , 1.0f );
 		if( cd )
 		{
 			glClearDepth( 1.0f );

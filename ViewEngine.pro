@@ -23,6 +23,7 @@ LIBS += -L"C://!!!!!!!!!!!!!!!!!!!!!!!!!!!//PROGRAMMING_BOX//ProgrammingLibs//fr
 HEADERS += \
     base/Parallel.h \
     base/RBase.h \
+	view/3dgl/HeighMapDrawler.hpp \
     base/REventer.h \
     base/RFileloader.h \
     base/RFileParser.hpp \
@@ -52,6 +53,6 @@ HEADERS += \
     view/export/ViewInterface.hpp \
     view/export/RViewModels.hpp \
     view/export/RCamera.hpp \
-    view/3dgl/WaterSimulator.hpp \
-    view/3dgl/HeighMapDrawler.hpp
+	view/3dgl/WaterSimulator.hpp
+
 

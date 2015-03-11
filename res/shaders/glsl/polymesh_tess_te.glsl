@@ -33,7 +33,9 @@ void main()
 	pvte.normal = interpolate3D( pvtc[0].normal , pvtc[1].normal , pvtc[2].normal );
 	vec4 pos = vec4( p.xyz , 1.0 );
 	pvte.position = p.xyz;
-	//pvte.depth = pos.z;
+	//float h = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvte.texcoord ).w;
+	//vec4 npos = MAT4X4_VIEWPROJ[0] * vec4( p.xyz + pvte.normal * 0.08 * ( -0.3 + h ) , 1.0 );
+	//pvte.depth = npos.z;
 	
 	gl_Position = pos;
 }

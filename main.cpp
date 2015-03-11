@@ -20,12 +20,12 @@ int main()
 	engine->init();
 	auto scene = engine->genScene();
 	auto eventer = engine->getEventer();
-	xfor( x , 3 )
-		xfor( y , 3 )
+	xfor( x , 30 )
+		xfor( y , 30 )
 		{
 			f4x4 temp( 1.0f );
-			temp( 3 , 0 ) = 2.0f * ( x );
-			temp( 3 , 1 ) = 2.0f * ( -y - 4.0f );
+			temp( 3 , 0 ) = 2.0f * ( x - 15.0f );
+			temp( 3 , 1 ) = 2.0f * ( -y + 15.0f );
 			//temp( 3 , 2 ) = -2.0f;
 			scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 0 , temp } );
 		}
@@ -59,7 +59,10 @@ int main()
 					cam->pos( cam->_v3pos + v.g_norm() * dr );
 				cam->calc();
 				f2 clook = f2( cam->_v3local_z.x() , cam->_v3local_z.y() ).g_norm() * 10.0f;
-				//ls->_pos = f3( cam->_v3pos.x() , cam->_v3pos.y() , 0.0f ) + f3( clook.x() , clook.y() , 100.0f );
+
+				ls->_pos = f3( 70.0f , 0.0f , 30.0f );
+				ls->_dir = -ls->_pos.g_norm();
+				ls->_pos += f3( cam->_v3pos.x() + cam->_v3local_z.x() * 20.0f , cam->_v3pos.y() + cam->_v3local_z.y() * 20.0f , 0.0f );
 				//cam->$getViewProj().print();
 			}
 		);

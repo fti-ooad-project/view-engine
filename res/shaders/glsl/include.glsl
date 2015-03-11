@@ -133,9 +133,10 @@ float ssao( usampler2D norm_depth_buf , vec4 norm_depth , vec2 tx , float radius
 			uvec4 temp = texture( norm_depth_buf , ntx );
 			float depth = depthFromi( temp );
 			vec3 norm = normFromi( temp );
-			if( norm_depth.w - depth > 0.0
+			if(
+			norm_depth.w - depth > 0.0
 			&& dot( norm , norm_depth.xyz ) < 0.7
-			&& norm_depth.w - depth < 2.0
+			&&  norm_depth.w - depth < 1.0
 			)
 				o -= 1.0;
 		}
@@ -150,5 +151,5 @@ vec4 scalel( vec4 p )
 {
 	p /= p.w;
 	if( abs( p.x ) > 1.0 || abs( p.y ) > 1.0 ) return p;
-	return vec4( vec2( lfunc( p.x ) , lfunc( p.y ) ) , p.zw );
+	return p;//vec4( vec2( lfunc( p.x ) , lfunc( p.y ) ) , p.zw );
 }
