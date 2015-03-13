@@ -9,14 +9,18 @@ out PerVertex pvtc[];
 float getTessLevel( float dist )
 {
 	dist *= 0.5;
-	if( dist < 10.0 )
-		return 10.0;
-	return 100.0 / dist;
+	if( dist < 50.0 )
+		return 20.0;
+	if( dist < 100.0 )
+		return 5.0;
+	if( dist < 150.0 )
+		return 2.0;
+	return 1.0;
 }
 void main()
 {
-	/*pvtc[ID].normal = pv[ID].normal;
-	pvtc[ID].binormal = pv[ID].binormal;
+	pvtc[ID].normal = pv[ID].normal;
+	/*pvtc[ID].binormal = pv[ID].binormal;
 	pvtc[ID].tangentnormal = pv[ID].tangentnormal;*/
 	pvtc[ID].texcoord = pv[ID].texcoord;
 	//pvtc[ID].dist_to_cam = pv[ID].dist_to_cam;

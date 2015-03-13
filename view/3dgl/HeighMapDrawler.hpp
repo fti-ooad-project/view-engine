@@ -8,28 +8,27 @@
 class HeightMapDrawler : public RInitable
 {
 private:
-
 	uint _vao;
 	int _indx_count;
 	RGraphicProgrammGL _prog;
 	RGraphicProgrammGL _lightprog;
 	RTextureHolderGL _htex;
+	RTextureHolderGL _dirttex;
+	HeightMapDrawler() = default;
 public:
 	f2 _size;
 	f2 _pos;
-	HeightMapDrawler() = default;
+	HeightMapDrawler( HeightMapDrawler const & ) = delete;
+	void operator=( HeightMapDrawler const & ) = delete;
 	void bindToDraw()
 	{
 		_prog.bind();
 		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D , _htex.__texture_pointer_array[0] );
+		glBindTexture( GL_TEXTURE_2D , _htex.getTexture( 0 ) );
 		glUniform1i( 1 , 0 );
-	}
-	void bindHeightTexture()
-	{
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D , _htex.__texture_pointer_array[0] );
-		glUniform1i( 1 , 0 );
+		glActiveTexture( GL_TEXTURE0 + 1 );
+		glBindTexture( GL_TEXTURE_2D , _dirttex.getTexture( 0 ) );
+		glUniform1i( 2 , 1 );
 	}
 	void draw( bool tess )
 	{
@@ -39,15 +38,16 @@ public:
 		else
 			glDrawElements( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 );
 	}
-	void init( uint density , std::unique_ptr< RImage[] > &&heightmap , f2 const &size , f2 const &bpos )
+	void init( uint density , f2 const &size , f2 const &bpos )
 	{
 		if( isInited() ) return;
 		setInited( true );
 		_size = size;
 		_pos = bpos;
-		_htex = std::move( RTextureHolderGL( std::move( heightmap ) , 1 ) );
+		_htex = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/h.png" ) ) , 1 ) );
 		_htex.init();
-		LOG<<_htex.__texture_pointer_array[0]<<"GGGGGGGGGGGGGGGGGGG\n";
+		_dirttex = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/ground.jpg" ) ) , 1 ) );
+		_dirttex.init();
 		std::unique_ptr< f3[] > pos( new f3[ density * density ] );
 		_indx_count = ( density - 1 ) * ( density - 1 ) * 6;
 		std::unique_ptr< unsigned short[] > index( new unsigned short[ _indx_count ] );
@@ -90,6 +90,14 @@ public:
 		setInited( false );
 		glDeleteVertexArrays( 1 , &_vao );
 		_prog.release();
+		_lightprog.release();
+		_htex.release();
+		_dirttex.release();
+	}
+	static HeightMapDrawler *getSingleton()
+	{
+		static HeightMapDrawler sng[1];
+		return sng;
 	}
 };
 #endif // HEIGHMAPDRAWLER_HPP

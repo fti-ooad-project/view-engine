@@ -102,12 +102,50 @@ public:
 };
 class RComplexPolyMeshGL : public RPolyMeshGL
 {
-public:
+private:
 	RTextureHolderGL __textures;
 	RBoneAnimInTexHolderGL __anim_intex;
 	std::unique_ptr< RPolymesh > __mesh;
 	int _bone_count;
+public:
+
+	RComplexPolyMeshGL() = default;
+	RComplexPolyMeshGL( RComplexPolyMeshGL &&mesh )
+	{
+		*this = std::move( mesh );
+	}
+	void operator=( RComplexPolyMeshGL &&mesh )
+	{
+		release();
+		setInited( mesh.isInited() );
+		if( mesh.isInited() )
+		{
+			if( mesh.__textures.getCount() > 0 )
+				__textures = std::move( mesh.__textures );
+			if( mesh.__anim_intex.getCount() > 0 )
+				__anim_intex = std::move( mesh.__anim_intex );
+			_vao = mesh._vao;
+			_instanced_buf = mesh._instanced_buf;
+			_bone_count = mesh._bone_count;
+			_size = mesh._size;
+		}else
+		{
+			__mesh = std::move( mesh.__mesh );
+			_bone_count = __mesh->_bone_count;
+			_size = __mesh->_v3size * 2.0f;
+		}
+	}
 	RComplexPolyMeshGL( std::unique_ptr< RPolymesh > &&mesh )
+	{
+		if( mesh->_texture_count > 0 )
+			__textures = std::move( RTextureHolderGL( std::move( mesh->_textures ) , mesh->_texture_count ) );
+		if( mesh->_anim_count > 0 )
+			__anim_intex = std::move( RBoneAnimInTexHolderGL( std::move( mesh->__mat4anim ) , mesh->_anim_count ) );
+		__mesh = std::move( mesh );
+		_bone_count = __mesh->_bone_count;
+		_size = __mesh->_v3size * 2.0f;
+	}
+	void init( std::unique_ptr< RPolymesh > &&mesh )
 	{
 		if( mesh->_texture_count > 0 )
 			__textures = std::move( RTextureHolderGL( std::move( mesh->_textures ) , mesh->_texture_count ) );
@@ -116,9 +154,13 @@ public:
 		__mesh= std::move( mesh );
 		_bone_count = __mesh->_bone_count;
 		_size = __mesh->_v3size * 2.0f;
+		init();
 	}
-	void init() override
+	void init()
 	{
+		if( !__mesh ) return;
+		if( isInited() ) return;
+		setInited( true );
 		_flags = __mesh->_flags;
 		glGenVertexArrays( 1 , &_vao );
 		glBindVertexArray( _vao );
@@ -188,7 +230,6 @@ public:
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T ,
 					GL_REPEAT );
 		}*/
-
 		__textures.init();
 #ifdef RLOG
 		LOG << "_________________________\n" << "polymesh generated:vao:" << _vao << "\n";
@@ -197,6 +238,8 @@ public:
 	}
 	void release() override
 	{
+		if( !isInited() ) return;
+		setInited( false );
 		glDeleteVertexArrays( 1 , &_vao );
 		__anim_intex.release();
 		__textures.release();
@@ -218,22 +261,22 @@ public:
 			glUniform1f( 14 , stat.last_anim );
 		}
 		int c = 0;
-		if( ( _flags & ShaderMask::MASK_TEXTURED ) && __textures._count )
+		if( ( _flags & ShaderMask::MASK_TEXTURED ) && __textures.getCount() )
 		{
-			ito( __textures._count )///<=3
+			ito( __textures.getCount() )///<=3
 			{
 				glActiveTexture( GL_TEXTURE0 + c );
-				glBindTexture( GL_TEXTURE_2D , __textures.__texture_pointer_array[i] );
+				glBindTexture( GL_TEXTURE_2D , __textures.getTexture( i ) );
 				glUniform1i( 1 + i , c );///1-layout of the first texture in shader
 				c++;
 			}
 		}
-		if( ( _flags & ShaderMask::MASK_OWN_ANIMATED ) && __anim_intex._count )
+		if( ( _flags & ShaderMask::MASK_OWN_ANIMATED ) && __anim_intex.getCount() )
 		{
-			ito( __anim_intex._count )
+			ito( __anim_intex.getCount() )
 			{
 				glActiveTexture( GL_TEXTURE0 + c );
-				glBindTexture( GL_TEXTURE_2D , __anim_intex.__texture_pointer_array[i] );
+				glBindTexture( GL_TEXTURE_2D , __anim_intex.getTexture( i ) );
 				glUniform1i( 20 + i , c );///20-location of anim texture
 				c++;
 			}

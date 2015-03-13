@@ -1,5 +1,5 @@
 #include <iostream>
-#define RLOG
+//#define RLOG
 #include "view/ViewEngineGL.hpp"
 VIEWAPI ViewManager * ViewManager::singletonGet( int type )
 {
@@ -24,8 +24,8 @@ int main()
 		xfor( y , 30 )
 		{
 			f4x4 temp( 1.0f );
-			temp( 3 , 0 ) = 2.0f * ( x - 15.0f );
-			temp( 3 , 1 ) = 2.0f * ( -y + 15.0f );
+			temp( 3 , 0 ) = 2.0f * ( x - 50.0f );
+			temp( 3 , 1 ) = 2.0f * ( -y + 50.0f );
 			//temp( 3 , 2 ) = -2.0f;
 			scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 0 , temp } );
 		}
@@ -44,12 +44,12 @@ int main()
 	eventer->addKeyFunc(
 			[cam,ls]( const KeyStates &cs , const float dt )
 			{
-				const float dr = dt * 5.0f;
+				const float dr = dt * 30.0f;
 				f3 v( 0.0f , 0.0f , 0.0f );
-				if( cs.__cur_states[SDL_SCANCODE_X] )
+				/*if( cs.__cur_states[SDL_SCANCODE_X] )
 					_tri = true;
 				else
-					_tri = false;
+					_tri = false;*/
 				if( cs.__cur_states[SDL_SCANCODE_W] )//w
 					v += cam->_v3local_z;
 				if( cs.__cur_states[SDL_SCANCODE_S] )//s

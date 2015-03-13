@@ -21,8 +21,11 @@ public:
 	void operator=( Scene3D const & ) = delete;
 	virtual ViewTypes::RDrawInstancePTR genInstance() = 0;
 	virtual RDrawableState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR ) = 0;
+	virtual std::vector< RDrawableState > const &getStateVector() const = 0;
+	virtual std::vector< RLightState > const &getLightVector() const = 0;
 	virtual ViewTypes::RLightSourcePTR genLight() = 0;
 	virtual RLightState *getLightStatePtr( ViewTypes::RLightSourcePTR ) = 0;
+	virtual RCamera const *getCamera() const = 0;
 	virtual RCamera *getCamera() = 0;
 };
 class GUILayout

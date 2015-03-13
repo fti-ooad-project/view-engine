@@ -53,6 +53,7 @@ HEADERS += \
     view/export/ViewInterface.hpp \
     view/export/RViewModels.hpp \
     view/export/RCamera.hpp \
-	view/3dgl/WaterSimulator.hpp
+	view/3dgl/WaterSimulator.hpp \
+    view/3dgl/DrawlerDeffered.hpp
 
 

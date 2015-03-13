@@ -7,46 +7,77 @@ class RTextureHolderGL : public RInitable
 private:
 	std::unique_ptr< RSize[] > __tex_size;
 	std::unique_ptr< RImage[] > _imgs;
-public:
 	uint _count = 0;
 	std::unique_ptr< uint[] > __texture_pointer_array;
-	RTextureHolderGL( std::unique_ptr< RImage[] > &&imgs , int count ):
-	_count( count )
-	, _imgs( std::move( imgs ) )
+public:
+	uint getCount() const
 	{
+		return _count;
 	}
-	RTextureHolderGL( RTextureHolderGL &&a ):
-	_count( a._count )
-	, _imgs( std::move( a._imgs ) )
-	, __tex_size( std::move( a.__tex_size ) )
-	, __texture_pointer_array( std::move( a.__texture_pointer_array ) )
+	uint getTexture( uint i ) const
 	{
-		setInited( a.isInited() );
-		a.setInited( false );
+		return __texture_pointer_array[i];
+	}
+	RTextureHolderGL( RTextureHolderGL &&a )
+	{
+		*this = std::move( a );
 	}
 	void operator=( RTextureHolderGL &&a )
 	{
+		release();
 		_count = a._count;
-		_imgs = std::move( a._imgs );
-		__tex_size = std::move( a.__tex_size );
-		__texture_pointer_array = std::move( a.__texture_pointer_array );
 		setInited( a.isInited() );
-		a.setInited( false );
+		if( a.isInited() )
+		{
+			__tex_size = std::move( a.__tex_size );
+			__texture_pointer_array = std::move( a.__texture_pointer_array );
+		}else
+		{
+			__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[_count] ) );
+			_imgs = std::move( a._imgs );
+			__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
+		}
+		a.release();
 	}
 	RTextureHolderGL() = default;
-	void init()
+	RTextureHolderGL( std::unique_ptr< RImage[] > &&imgs , int count )
 	{
-		if( isInited() || _count == 0 ) return;
-		setInited( true );
+		_count = count;
+		_imgs = std::move( _imgs );
 		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
 		__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[_count] ) );
+	}
+	void init( std::unique_ptr< RImage[] > &&imgs , int count )
+	{
+		release();
+		_count = count;
+		_imgs = std::move( _imgs );
+		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[_count] ) );
+		__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[_count] ) );
+		init();
+	}
+	void init()
+	{
+		if( !_imgs ) return;
+		if( isInited() || !_count ) return;
+		setInited( true );
+		auto pow2 = []( int n )
+		{
+			int out = 1;
+			ito( 32 )
+			{
+				if( n & ( 1 << i ) )
+					out = i;
+			}
+			return out;
+		};
 		glGenTextures( _count , __texture_pointer_array.get() );
 		for( uint i = 0; i < _count; i++ )
 		{
 			__tex_size[i] = _imgs[i]._size;
 			glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[i] );
 			//glEnable( GL_TEXTURE_2D );
-			const int mipmaplevels = 4;
+			const int mipmaplevels = std::min( 10 , pow2( std::min( __tex_size[i]._w , __tex_size[i]._h ) ) );
 			uint i_f , s;
 			LOG<<_imgs[i]._bytes_per_pixel;
 			switch( _imgs[i]._bytes_per_pixel )
@@ -75,9 +106,9 @@ public:
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER ,
 					GL_LINEAR_MIPMAP_LINEAR );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S ,
-					GL_CLAMP_TO_EDGE );
+					GL_REPEAT );
 			glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T ,
-					GL_CLAMP_TO_EDGE );
+					GL_REPEAT );
 #ifdef RLOG
 		LOG << "_________________________\n" << "texture generated:id:" << __texture_pointer_array[i] << "\n";
 #endif

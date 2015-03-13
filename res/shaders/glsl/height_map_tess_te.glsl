@@ -23,7 +23,7 @@ void main()
 	pvte.texcoord = interpolate2D( pvtc[0].texcoord , pvtc[1].texcoord , pvtc[2].texcoord );
 	//pvte.dist_to_cam = pvtc[0].dist_to_cam;
 	vec4 p = interpolate4D( gl_in[0].gl_Position , gl_in[1].gl_Position , gl_in[2].gl_Position );
-	//pvte.normal = interpolate3D( pvtc[0].normal , pvtc[1].normal , pvtc[2].normal );
+	pvte.normal = interpolate3D( pvtc[0].normal , pvtc[1].normal , pvtc[2].normal );
 	vec4 pos = vec4( p.xyz , 1.0 );
 	//pvte.position = p.xyz;
 	gl_Position = pos;

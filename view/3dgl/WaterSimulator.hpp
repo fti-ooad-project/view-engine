@@ -6,16 +6,16 @@
 #include "view/3dgl/RDrawableGL.h"
 class WaterSimulator : public RInitable
 {
-public:
+private:
 	RGraphicProgrammGL _water_surf_prog , _water_bump_prog , _water_plane_prog;
 	RDrawPassGL _water_bump_pass[2] , _water_surf_pass[2] , _final , _water_plane_pass;
 	int cur = 0 , last = 1;
 	RPolyQuadGL _screen_quad;
-public:
 	WaterSimulator() = default;
+public:
 	WaterSimulator( WaterSimulator const & ) = delete;
 	void operator=( WaterSimulator const & ) = delete;
-	void init( uint depth_buf )
+	void init( uint depth_buf , f2 const &size , f3 const &pos )
 	{
 		if( isInited() ) return;
 		setInited( true );

@@ -25,7 +25,7 @@ float lightedDir( vec4 loc , sampler2D tex )
 {
     //loc = loc / loc.w;
 	loc = scalel( loc );//
-	if( abs( loc.x ) > 0.99 || abs( loc.y ) > 0.99 ) return 1.0;
+	if( abs( loc.x ) > 0.97 || abs( loc.y ) > 0.97 ) return 1.0;
 	loc = ( 1.0 + loc ) * 0.5;
 	//return abs( loc.z - texture2D( tex , loc.xy ).x );
 	if( loc.z - 0.0001 < texture2D( tex , loc.xy ).x ) return 1.0;
@@ -40,6 +40,7 @@ float lightedCube( vec3 ftol , samplerCube cubemap )
 }
 float smoothLightDir( vec3 p , vec3 n , float samp_r , mat4 vp , sampler2D tex )
 {
+	return lightedDir( vp * vec4( p , 1.0 ) , tex );
 	float o = 0.0;
 	for( int i = 0; i < NUM_TAPS; ++i )
 	{

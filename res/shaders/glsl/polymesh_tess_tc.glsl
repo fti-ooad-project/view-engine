@@ -10,8 +10,8 @@ float getTessLevel( float dist )
 {
 	dist *= 0.5;
 	if( dist < 1.0 )
-		return 10.0;
-	return 10.0 / dist;
+		return 4.0;
+	return 4.0 / dist;
 }
 void main()
 {

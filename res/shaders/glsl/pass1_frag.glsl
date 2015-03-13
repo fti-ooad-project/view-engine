@@ -2,7 +2,7 @@
 $include include.glsl
 $include light_func.glsl
 layout( location = 0 ) uniform usampler2D BUFFER0;//pos cull
-//layout( location = 1 ) uniform sampler2D BUFFER1;//normal depth
+layout( location = 1 ) uniform sampler2D ENV;//normal depth
 //layout( location = 2 ) uniform sampler2D BUFFER2;//spec gloss
 //layout( location = 3 ) uniform sampler2D BUFFER3;//diff emiss
 //layout( location = 11 ) uniform sampler2D WATER_BUFFER3;//diff emiss
@@ -18,11 +18,19 @@ layout( location = 32 ) uniform DirectedLight DLIGHT[MAX_LIGHTS_CASTER];
 //specw.a - exponent
 in vec2 frag_pos;
 out vec4 out_data;
+vec3 env( vec3 n , float s )
+{
+	float alpha = atan( n.y , n.x );
+	float theta = atan( n.z , length( n.xy ) );
+	//return texture( ENV , vec2( 0.5 + alpha / pi * 0.5 , 0.5 - theta / pi ) ).xyz;
+	//float mipmapLevel = textureQueryLod( ENV , textureCoord ).x;
+	return textureLod( ENV , vec2( 0.5 + alpha / pi * 0.5 , 0.5 - theta / pi ) , s * 10.0 ).xyz;
+}
 vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 {
 	vec3 lightness = vec3( 0.0 );
 	vec3 refl = reflect( normalize( p - v ) , n );
-	float freshnel = mix( 1.0 , mix( 1.0 , 5.0 * max( 0.0 , 1.0 - dot( -normalize( p - v ) , n ) ) , 0.5 * specw.y ) , 1.0 - specw.x );
+	float freshnel = mix( 1.0 , mix( 1.0 , max( 0.0 , 1.0 - dot( -normalize( p - v ) , n ) ) , 0.5 * specw.y ) , 1.0 - specw.x );
 	/*for( int i = 0; i < 1; i++ )//COUNT!!!
 	{
 		vec3 to_light = p - OLIGHT[i].pos;
@@ -47,6 +55,7 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 		smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) * 
 		k;
 	}
+	lightness += freshnel * env( refl , 1.0 - specw.w );
 	return lightness.xyz;
 }
 void main()
@@ -56,9 +65,10 @@ void main()
 	float depth = depthFromi( buf0 );
 	if( buf0.x == 0 )
 	{
-		//out_data = vec4( 0.0 );
-		//return;
-		discard;
+		vec3 v = camRay( CAM , frag_pos );
+		out_data = vec4( env( v , 0.0 ) , 1.0 );
+		return;
+		//discard;
 	}
 	vec3 l;
 	vec3 pos = posFromZ( vec2( -1.0 + 2.0 * frag_pos.x , -1.0 + 2.0 * frag_pos.y ) , depth , CAM );

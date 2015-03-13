@@ -1,6 +1,6 @@
 if( bool( FLAGS & MASK_ANIMATED ) )
 {
-	if( INS_TIME.z < 50.0 )
+	if( INS_TIME.z < 10.0 )
 	{
 		mat4 ma = mat4( 0.0 );
 		float time , ltime;
