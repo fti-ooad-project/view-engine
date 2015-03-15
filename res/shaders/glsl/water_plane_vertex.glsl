@@ -4,11 +4,10 @@ $include uniforms.glsl
 $include attributes.glsl
 $include pervertex.glsl
 out PerVertex pvo;
-
+layout( location = 4 ) uniform vec4 pos_size;
 void main()
 {
-	vec4 p = vec4( invertex_position * 50.0 , 1.0 );
-	p = p;
+	vec4 p = vec4( pos_size.xyz + invertex_position * pos_size.w , 1.0 );
 	pvo.binormal = invertex_binormal ;
 	pvo.tangentnormal = invertex_tangentnormal;
 	pvo.texcoord = vec2( 0.5 - 0.5 * invertex_position.x , 0.5 + 0.5 * invertex_position.y );

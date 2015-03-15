@@ -1,6 +1,7 @@
 #ifndef RANIM_H
 #define RANIM_H
-#include "base/RBase.h"
+#include "../../base/RBase.h"
+#include <memory>
 class RAnimationset
 {
 public:

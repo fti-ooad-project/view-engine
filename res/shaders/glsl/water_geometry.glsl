@@ -4,12 +4,13 @@ $include pervertex.glsl
 layout(triangles, invocations = 1) in;
 layout(triangle_strip, max_vertices = 3) out;
 in PerVertex pvte[];
+layout( location = 4 ) uniform float waterz;
 void main()
 {
 	int p = 0 , n = 0;
 	for( int i = 0; i < 3; ++i )
 	{
-		if( gl_in[i].gl_Position.z > 0.0 )
+		if( gl_in[i].gl_Position.z > waterz )
 			p++;
 		else
 			n++;

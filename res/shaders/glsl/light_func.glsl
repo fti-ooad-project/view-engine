@@ -23,13 +23,18 @@ float VectorToDepthValue( vec3 v )
 }
 float lightedDir( vec4 loc , sampler2D tex )
 {
-    //loc = loc / loc.w;
-	loc = scalel( loc );//
+	loc = scalel( loc );
 	if( abs( loc.x ) > 0.97 || abs( loc.y ) > 0.97 ) return 1.0;
 	loc = ( 1.0 + loc ) * 0.5;
-	//return abs( loc.z - texture2D( tex , loc.xy ).x );
-	if( loc.z - 0.0001 < texture2D( tex , loc.xy ).x ) return 1.0;
+	if( ( loc.z - 0.0001 ) < texture2D( tex , loc.xy ).x ) return 1.0;
     else return 0.0;
+}
+float distlightedDir( vec4 loc , sampler2D tex )
+{
+	loc = scalel( loc );
+	if( abs( loc.x ) > 0.97 || abs( loc.y ) > 0.97 ) return -1.0;
+	loc = ( 1.0 + loc ) * 0.5;
+	return loc.z - texture2D( tex , loc.xy ).x;
 }
 float lightedCube( vec3 ftol , samplerCube cubemap )
 {
@@ -40,15 +45,18 @@ float lightedCube( vec3 ftol , samplerCube cubemap )
 }
 float smoothLightDir( vec3 p , vec3 n , float samp_r , mat4 vp , sampler2D tex )
 {
-	return lightedDir( vp * vec4( p , 1.0 ) , tex );
+	return distlightedDir( vp * vec4( p , 1.0 ) , tex ) < 0.001 ? 1.0 : 0.0;
+	//float r = distlightedDir( vp * vec4( p , 1.0 ) , tex );
 	float o = 0.0;
 	for( int i = 0; i < NUM_TAPS; ++i )
 	{
 		vec3 rand = nfrom2d( rot2d( poisson[i] , nrand( p.xy * 123.0 ) ) );
 		if( dot( rand , n ) < 0.0 ) rand *= -1.0;
-		rand = rand + n * 0.7;
-		vec3 np = p + rand * samp_r;
-		o += lightedDir( vp * vec4( np , 1.0 ) , tex );
+		rand = rand + n * 0.3;
+		vec3 np = p + rand * samp_r;// * pow( r * 100.0 , 2.0 );
+		vec4 campos = vp * vec4( np , 1.0 );
+		float r = distlightedDir( campos , tex );
+		o += r < 0.0 ? 1.0 : 0.0;
 		//o += lightedDir( scalel( vp * vec4( rand , 1.0 ) ) , tex ) > -0.001? 1.0 : 0.0;
 	}
 	return o / NUM_TAPS;

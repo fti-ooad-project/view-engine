@@ -63,12 +63,12 @@ void main()
 		buf += vec4( vec2( 0.0 ) , abs( cur.x - last.x ) , 0.0 );
 		vec2 pg = grad( frag_pos , dr );
 		float pdiv = div( frag_pos , dr );
-		buf += vec4( 0.1 * ( -pg ) , ( -buf.z * 0.9 + pdiv ) * 0.2 , 0.0 );
+		buf += vec4( 0.2 * ( -pg ) , ( -buf.z * 0.9 + pdiv ) * 0.3 , 0.0 );
 		//vec4 nbuf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.01 );
 		out_data = vec4( buf.xyz , 1.0 );
 		return;
 	}
 	vec4 buf = texture2D( Buffer_tex , frag_pos );
-	vec3 v = normalize( vec3( buf.xy , 0.6 ) );
+	vec3 v = normalize( vec3( -buf.xy , 0.6 ) );
 	out_data = vec4( 0.5 + 0.5 * v , 1.0 );
 }

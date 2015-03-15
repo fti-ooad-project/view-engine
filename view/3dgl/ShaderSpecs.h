@@ -1,6 +1,6 @@
 #ifndef SHADERSPECS_H
 #define SHADERSPECS_H
-#include "base/RBase.h"
+#include "../../base/RBase.h"
 struct RShaderInTypes
 {
 	static const int vec1 = 0 , vec2 = 1 , vec3 = 2 , ivec1 = 3 , mat4 = 4 , tex = 5 , cubemap = 6 , vec4 = 7 , none = -1;
@@ -21,7 +21,7 @@ struct RTuple
 	const void *__data;
 	uint _count;
 };
-struct RShaderInput
+/*struct RShaderInput
 {
 	static const uint MAX_INPUT = 50;
 	RTuple __tuple[MAX_INPUT];
@@ -58,10 +58,10 @@ struct RShaderInput
 		}
 		c = 0;
 	}
-};
-class RGraphicProgramm : public RInitable
+};*/
+/*class RGraphicProgramm : public RInitable
 {
 public:
 	virtual void bind( RShaderInput & ) = 0;
-};
+};*/
 #endif // SHADERSPECS_H

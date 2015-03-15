@@ -1,8 +1,9 @@
 #ifndef __RDRAWABLES_H__
 #define __RDRAWABLES_H__
-#include "base/RBase.h"
-#include "view/3dgl/RTextures.h"
-#include "view/3dgl/RAnim.h"
+#include "../../base/RBase.h"
+#include "RTextures.h"
+#include "RAnim.h"
+#include <memory>
 #include <list>
 enum RDrawableType
 {

@@ -1,7 +1,7 @@
 #ifndef __RBuffers_H__
 #define __RBuffers_H__
 //#include <conio.h>
-#include "linalg/vec.h"
+#include "../../linalg/vec.h"
 struct RVertex
 {
 	f3			Position;
