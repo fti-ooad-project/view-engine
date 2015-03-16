@@ -7,12 +7,13 @@ void WaterSimulator::init( int depth_buf , f2 const &size , f3 const &pos )
 	setInited( true );
 	_pos = pos;
 	_size = size;
+	dest = 2048;
 	water_viewproj = RCamera::orthographic( pos + f3( 0.0f , 0.0f , -10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , size.x() );
 	_screen_quad.init();
 	ito( 2 )
 	{
 		_water_surf_pass[ i ].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
-		_water_bump_pass[ i ].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
+		_water_bump_pass[ i ].init( { { dest , dest } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
 		_water_bump_pass[ i ].bind();
 		_water_bump_pass[ i ].clear();
 	}
@@ -54,7 +55,7 @@ void WaterSimulator::calc()
 	glBindTexture( GL_TEXTURE_2D , _water_bump_pass[ last ].getBufferPtr( 0 ) );
 	glUniform1i( 3 , 2 );
 	glUniform1i( 2 , 0 );
-	glUniform2f( 4 , 1.0f / 1024 , 1.0f / 1024 );
+	glUniform2f( 4 , 1.0f / dest , 1.0f / dest );
 	_screen_quad.draw();
 	_final.bind();
 	_final.clear();

@@ -13,6 +13,7 @@ private:
 	RPolyQuadGL _screen_quad;
 	f2 _size;
 	f3 _pos;
+	uint dest;
 	WaterSimulator() = default;
 	f4x4 water_viewproj;
 public:

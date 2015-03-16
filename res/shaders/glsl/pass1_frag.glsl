@@ -73,7 +73,7 @@ void main()
 		
 		float wdepth = depthFromi( wbuf );
 		vec2 screenspacewaternorm = 2.0 * wY.xy - 1.0;
-		distfragpos += screenspacewaternorm * 0.01;
+		//distfragpos += screenspacewaternorm * 0.01;
 		vec3 wpos = posFromZ( vec2( -1.0 + 2.0 * frag_pos.x , -1.0 + 2.0 * frag_pos.y ) , wdepth , CAM );
 		vec4 wspecw = unpack4i( wbuf.w );
 		vec3 wnorm = normFromi( wbuf );
