@@ -69,9 +69,14 @@ uint WaterSimulator::getBumpTexture() const
 {
 	return _final.getBufferPtr( 0 );
 }
+
 uint WaterSimulator::getPlaneBuffer() const
 {
 	return _water_plane_pass.getBufferPtr( 0 );
+}
+uint WaterSimulator::getSurfBuffer() const
+{
+	return _water_surf_pass[ cur ].getBufferPtr( 0 );
 }
 void WaterSimulator::release()
 {
@@ -84,7 +89,6 @@ void WaterSimulator::release()
 		_water_bump_pass[ i ].release();
 	}
 	_screen_quad.release();
-
 }
 WaterSimulator *WaterSimulator::getSingleton()
 {

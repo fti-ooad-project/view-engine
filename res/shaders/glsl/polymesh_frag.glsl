@@ -32,7 +32,7 @@ void main()
 		//buf[3] = vec4( difo.xyz , ne.w );
 	}
 	buf.x = uint( pvo.depth * 100.0 );
-	buf.y = pack4i( vec4( diff.xyz , 0.0 ) );
+	buf.y = pack4i( vec4( diff.xyz , pvo.select_id ) );
 	float sg = norm.z >= 0.0 ? 1.0 : -1.0;
 	buf.z = pack4i( vec4( 0.5 + 0.5 * norm.xy , 0.5 + 0.5 * sg , 0.0 ) );
 	buf.w = pack4i( spec );

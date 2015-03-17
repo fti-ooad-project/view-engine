@@ -38,6 +38,7 @@ void main()
 	if( bool( FLAGS & MASK_TEXTURED ) )
 		pvo.texcoord = invertex_texcoord;
 	pvo.normal = normalize( ( m * vec4( invertex_normal, 0.0 ) ).xyz );
+	pvo.select_id = INS_TIME.w;
 	pvo.position = p.xyz;
 	pvo.depth = pos.z;
 }

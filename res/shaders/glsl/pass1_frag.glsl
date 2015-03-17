@@ -3,6 +3,7 @@ $include include.glsl
 $include light_func.glsl
 layout( location = 0 ) uniform usampler2D BUFFER0;//pos cull
 layout( location = 1 ) uniform sampler2D ENV;//normal depth
+layout( location = 2 ) uniform sampler2D SELECTBUFF;//normal depth
 //layout( location = 2 ) uniform sampler2D BUFFER2;//spec gloss
 //layout( location = 3 ) uniform sampler2D BUFFER3;//diff emiss
 layout( location = 11 ) uniform usampler2D WATER_BUFFER3;//diff emiss
@@ -60,6 +61,9 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 }
 void main()
 {
+	vec4 selbuf = texture( SELECTBUFF , frag_pos );
+	out_data += selbuf;
+	//out_data = texture( WATER_BUFFER3 , frag_pos ); return;
 	definePoisson();
 	uvec4 buf0 = texture( BUFFER0 , frag_pos );
 	float depth = depthFromi( buf0 );
@@ -72,29 +76,29 @@ void main()
 	{
 		
 		float wdepth = depthFromi( wbuf );
-		vec2 screenspacewaternorm = 2.0 * wY.xy - 1.0;
+		//vec2 screenspacewaternorm = 2.0 * wY.xy - 1.0;
 		//distfragpos += screenspacewaternorm * 0.01;
 		vec3 wpos = posFromZ( vec2( -1.0 + 2.0 * frag_pos.x , -1.0 + 2.0 * frag_pos.y ) , wdepth , CAM );
 		vec4 wspecw = unpack4i( wbuf.w );
 		vec3 wnorm = normFromi( wbuf );
 		WATERK = vec3( 0.5 ) * dot( normalize( CAM.pos - wpos ) , wnorm ) + vec3( 0.1 , 0.1 , 0.1 );
 		vec3 wl = light( wpos , wnorm , CAM.pos , wspecw );
-		out_data += vec4( vec3( 0.5 , 0.7 , 0.9 ) * wl , 1.0 );//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );
+		out_data += vec4( vec3( 0.7 , 0.7 , 0.77 ) * wl , 1.0 );//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );
 	}
 	///
 	if( buf0.x == 0 )
 	{
 		vec3 v = camRay( CAM , frag_pos );
-		out_data = vec4( env( v , 0.0 ) , 1.0 );
+		out_data += vec4( WATERK * env( v , 0.0 ) , 1.0 );
 		return;
 		//discard;
 	}
 	vec3 pos = posFromZ( vec2( -1.0 + 2.0 * distfragpos.x , -1.0 + 2.0 * distfragpos.y ) , depth , CAM );
 	vec4 specw = unpack4i( buf0.w );
 	vec3 norm = normFromi( buf0 );
-	vec3 diff = unpack4i( buf0.y ).xyz;
-	vec3 l = light( pos , norm , CAM.pos , specw ) * mix( vec3( 1.0 ) , diff , specw.x );
-	float ao = ssao( BUFFER0 , vec4( norm , depth ) , distfragpos , 0.3 );
-	out_data += vec4( WATERK * diff * ao * l , 1.0  );
-	//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );
+	vec4 diff = unpack4i( buf0.y );
+	vec3 l = light( pos , norm , CAM.pos , specw ) * mix( vec3( 1.0 ) , diff.xyz , specw.x );
+	float ao = ssao( BUFFER0 , vec4( norm , depth ) , distfragpos , 0.8 );
+	out_data += vec4( WATERK * diff.xyz * ao * l , 1.0  );
+	//vec4( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );*/
 }

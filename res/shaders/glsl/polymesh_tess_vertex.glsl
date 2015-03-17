@@ -31,5 +31,6 @@ void main()
 	if( bool( FLAGS & MASK_TEXTURED ) )
 		pv.texcoord = invertex_texcoord;
 	pv.normal = normalize( ( m * vec4( invertex_normal , 0.0 ) ).xyz );
+	pv.select_id = INS_TIME.w;
     gl_Position = p;
 } 

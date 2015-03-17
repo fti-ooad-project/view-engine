@@ -20,6 +20,7 @@ void main()
 	pvtc[ID].tangentnormal = pv[ID].tangentnormal;
 	pvtc[ID].texcoord = pv[ID].texcoord;
 	pvtc[ID].dist_to_cam = pv[ID].dist_to_cam;
+	pvtc[ID].select_id = pv[ID].select_id;
 	gl_out[ID].gl_Position = gl_in[ID].gl_Position;
 	if( ID == 0 )
 	{

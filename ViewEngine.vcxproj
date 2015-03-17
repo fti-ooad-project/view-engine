@@ -76,6 +76,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Base.cpp" />
+    <ClCompile Include="src\Blurer.cpp" />
     <ClCompile Include="src\DrawableGL.cpp" />
     <ClCompile Include="src\DrawlerDeffered.cpp" />
     <ClCompile Include="src\HeighMapDrawler.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="src\RTexturesGL.cpp" />
     <ClCompile Include="src\RViewModels.cpp" />
     <ClCompile Include="src\RViewModelsGL.cpp" />
+    <ClCompile Include="src\SelectionDrawler.cpp" />
     <ClCompile Include="src\vec.cpp" />
     <ClCompile Include="src\ViewEngineGL.cpp" />
     <ClCompile Include="src\WaterSimulator.cpp" />
@@ -106,6 +108,7 @@
     <ClInclude Include="GlslDefines.h" />
     <ClInclude Include="linalg\mat.h" />
     <ClInclude Include="linalg\vec.h" />
+    <ClInclude Include="view\3dgl\Blurer.h" />
     <ClInclude Include="view\3dgl\DrawlerDeffered.h" />
     <ClInclude Include="view\3dgl\HeighMapDrawler.h" />
     <ClInclude Include="view\3dgl\RAnim.h" />
@@ -120,6 +123,7 @@
     <ClInclude Include="view\3dgl\RTexturesGL.h" />
     <ClInclude Include="view\3dgl\RVertex.h" />
     <ClInclude Include="view\3dgl\RViewModelsGL.h" />
+    <ClInclude Include="view\3dgl\SelectionDrawler.h" />
     <ClInclude Include="view\3dgl\ShaderSpecs.h" />
     <ClInclude Include="view\3dgl\WaterSimulator.h" />
     <ClInclude Include="view\export\RCamera.h" />

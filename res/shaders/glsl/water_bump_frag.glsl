@@ -54,9 +54,9 @@ vec2 VPoison( const vec2 tx , const float r ){
 }
 vec3 normfrp( const vec2 tx , const float r )
 {
-	return normalize( cross(
-	vec3( 2.0 * r , 0.0 , texture2D( Buffer_tex , tx + vec2( r , 0.0 ) ).z - texture2D( Buffer_tex , tx - vec2( r , 0.0 ) ).z )
-	, vec3( 0.0 , 2.0 * r , texture2D( Buffer_tex , tx + vec2( 0.0 , r ) ).z - texture2D( Buffer_tex , tx - vec2( 0.0 , r ) ).z )
+	return normalize( -cross(
+	vec3( 0.0 , 2.0 * r , -0.1 * ( texture2D( Buffer_tex , tx + vec2( r , 0.0 ) ).z - texture2D( Buffer_tex , tx - vec2( r , 0.0 ) ).z ) )
+	, vec3( 2.0 * r , 0.0 , -0.1 * ( texture2D( Buffer_tex , tx + vec2( 0.0 , r ) ).z - texture2D( Buffer_tex , tx - vec2( 0.0 , r ) ).z ) )
 	) );
 }
 void main()
@@ -65,13 +65,19 @@ void main()
 	if( PASS == 0 )
 	{
 		vec4 cur = texture2D( CUR_BUF , frag_pos );
+		/*if( cur.x > 0.9 )
+		{
+			out_data = vec4( vec2( 0.0 ) , 0.1 , 0.0 );
+			return;
+		}*/
 		vec4 last = texture2D( LAST_BUF , frag_pos );
 		vec4 buf = texture2D( Buffer_tex , frag_pos );
-		buf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.05 );
+		
+		buf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.01 );
 		buf += vec4( vec2( 0.0 ) , 0.1 * abs( cur.x - last.x ) , 0.0 );
 		vec2 pg = grad( frag_pos , dr );
-		float pdiv = div( frag_pos , dr );
-		buf += vec4( 0.1 * ( -pg ) , ( pdiv ) * 0.4 - buf.z * 0.5 , 0.0 );
+		float udiv = div( frag_pos , dr );
+		buf += vec4( 0.1 * ( -pg ) - buf.xy * 0.2 , udiv * 0.2 - buf.z * 0.05 , 0.0 );
 		//buf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.01 );
 		//vec4 nbuf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.01 );
 		out_data = vec4( buf.xyz , 1.0 );
@@ -79,5 +85,6 @@ void main()
 	}
 	vec4 buf = texture2D( Buffer_tex , frag_pos );
 	vec3 v = normfrp( frag_pos , dr );
+	//v.z = abs( v.z );
 	out_data = vec4( 0.5 + 0.5 * v , 1.0 );
 }

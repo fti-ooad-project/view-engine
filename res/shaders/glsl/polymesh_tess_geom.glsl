@@ -23,6 +23,7 @@ void main()
 		pvo.depth = p.z;
 		pvo.position = pvte[i].position;
 		pvo.normal = pvte[i].normal;
+		pvo.select_id = pvte[i].select_id;
 		pvo.binormal = pvte[i].binormal;
 		pvo.tangentnormal = pvte[i].tangentnormal;
 		pvo.texcoord = pvte[i].texcoord;

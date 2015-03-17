@@ -1,5 +1,3 @@
-layout( location = 10 ) uniform float RADIUS;
-layout( location = 11 ) uniform int COUNT;
 float fade( float dr )
 {
     return 1.0 - dr * dr;

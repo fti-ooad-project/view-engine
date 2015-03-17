@@ -7,4 +7,5 @@ struct PerVertex
 	vec3 binormal;
 	vec3 tangentnormal;
 	float dist_to_cam;
+	float select_id;
 };

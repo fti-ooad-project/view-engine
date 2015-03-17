@@ -11,6 +11,7 @@ struct InstanceInfo
 	float time;
 	float last_time;
 	float dist_to_cam;
+	float selection_id;
 	int mixing;
 	int cur_anim;
 	int last_anim;

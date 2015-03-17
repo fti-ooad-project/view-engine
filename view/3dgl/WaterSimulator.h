@@ -25,6 +25,7 @@ public:
 	void calc();
 	uint getBumpTexture() const;
 	uint getPlaneBuffer() const;
+	uint getSurfBuffer() const;
 	void release() override;
 	static WaterSimulator *getSingleton();
 };

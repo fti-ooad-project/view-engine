@@ -13,12 +13,12 @@ void RPolyMeshGL::genInstancedBuffer()
 	int mc = 12;
 	for( int c = 7; c <= mc; ++c )
 		glEnableVertexAttribArray( c );
-	glVertexAttribPointer( 7 , 3 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 0 ) );
-	glVertexAttribPointer( 8 , 3 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 12 ) );
-	glVertexAttribPointer( 9 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 24 ) );
-	glVertexAttribPointer( 10 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 40 ) );
-	glVertexAttribPointer( 11 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 56 ) );
-	glVertexAttribPointer( 12 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 72 ) );
+	glVertexAttribPointer( 7 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 0 ) );
+	glVertexAttribPointer( 8 , 3 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 16 ) );
+	glVertexAttribPointer( 9 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 28 ) );
+	glVertexAttribPointer( 10 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 44 ) );
+	glVertexAttribPointer( 11 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 60 ) );
+	glVertexAttribPointer( 12 , 4 , GL_FLOAT , GL_FALSE , datasize , reinterpret_cast< void* >( 76 ) );
 	for( int c = 7; c <= mc; ++c )
 		glVertexAttribDivisor( c , 1 );
 	glBindBuffer( GL_ARRAY_BUFFER , 0 );

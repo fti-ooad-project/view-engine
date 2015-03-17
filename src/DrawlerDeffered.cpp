@@ -19,17 +19,17 @@ void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info , boo
 		{
 			if( info[ 2 * i ].size() > 0 )
 			{
-				_prog[ 0 ].bind();
+				_storage_tess_prog.bind();
 				_view[ i ]->drawInstancedPatches( info[ i * 2 ] );
 			}
 			if( info[ 2 * i + 1 ].size() > 0 )
 			{
-				_prog[ 2 ].bind();
+				_storage_prog.bind();
 				_view[ i ]->drawInstanced( info[ i * 2 + 1 ] );
 			}
 		} else
 		{
-			_prog[ 2 ].bind();
+			_storage_prog.bind();
 			if( info[ 2 * i ].size() > 0 )
 			{
 				_view[ i ]->drawInstanced( info[ i * 2 ] );
@@ -60,16 +60,16 @@ void DrawlerDeffered::init()
 		return;
 	setInited( true );
 	_screen_quad.init();
-	_prog[ 0 ].init( "res/shaders/glsl/polymesh_frag.glsl" ,
+	_storage_tess_prog.init( "res/shaders/glsl/polymesh_frag.glsl" ,
 					 "res/shaders/glsl/polymesh_tess_vertex.glsl" ,
 					 "res/shaders/glsl/polymesh_tess_geom.glsl" ,
 					 "res/shaders/glsl/polymesh_tess_tc.glsl" ,
 					 "res/shaders/glsl/polymesh_tess_te.glsl" );
-	_prog[ 2 ].init( "res/shaders/glsl/polymesh_frag.glsl" ,
-					 "res/shaders/glsl/polymesh_vertex.glsl" , "" );
-	_prog[ 1 ].init( "res/shaders/glsl/pass1_frag.glsl" ,
-					 "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
-	_prog[ 3 ].init( "res/shaders/glsl/pass2_frag.glsl" ,
+	_storage_prog.init( //"res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl"
+					 "res/shaders/glsl/polymesh_frag.glsl" ,
+					 "res/shaders/glsl/polymesh_vertex.glsl"
+					 );
+	_process_prog.init( "res/shaders/glsl/pass1_frag.glsl" ,
 					 "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
 	_view.push_back(
 		std::move(
@@ -96,40 +96,41 @@ void DrawlerDeffered::init()
 	}
 	ito( LIGHT_CASTER_COUNT )
 	{
-		_light_dir_passes[ i ].init( { { 2048, 2048 },
+		_light_dir_passes[ i ].init( { { 1024 , 1024 },
 				RBufferStoreType::RBUFFER_FLOAT, 0, -1, true, false } );
 		//_light_cube_passes[i].init( { { 512 , 512 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , true } );
 	}
-	_pass[ 0 ].init( { { 1024, 1024 }, RBufferStoreType::RBUFFER_INT, 1, -1,
+	_storage_pass.init( { { 1024, 1024 }, RBufferStoreType::RBUFFER_INT, 1, -1,
 			false, false } );
-	_pass[ 1 ].init( { { 1024, 1024 }, RBufferStoreType::RBUFFER_FLOAT, 1, -1,
+	_process_pass.init( { { 1024, 1024 }, RBufferStoreType::RBUFFER_FLOAT, 1, -1,
 			false, false } );
-	_pass[ 2 ].init( { { 1024, 1024 }, RBufferStoreType::RBUFFER_FLOAT, 1, -1,
-					 false, false } );
 	_env_tex.init(
 		std::move(
 		RFileLoader::loadImage(
-		"res/view/images/ContactSheet_Stallersattel.jpg" ) ) ,
+		"res/view/images/winter.jpg" ) ) ,
 		1 );
 	HeightMapDrawler::getSingleton()->init( 100 , f2( 500.0f , 500.0f ) ,
 											f2( 0.0f , 0.0f ) );
-	WaterSimulator::getSingleton()->init( _pass[ 0 ].getDepthBufferPtr() ,
-										  f2( 50.0f , 50.0f ) , f3( 0.0f , 0.0f , -20.0f ) );
+	WaterSimulator::getSingleton()->init( _storage_pass.getDepthBufferPtr() ,
+										  f2( 250.0f , 250.0f ) , f3( 0.0f , 0.0f , -20.0f ) );
+	SelectionDrawler::getSingleton()->init();
 }
 void DrawlerDeffered::release()
 {
 	if( !isInited() )
 		return;
 	setInited( false );
-	ito( 3 )
-		_prog[ i ].release();
-	ito( 1 )
-		_pass[ i ].release();
+	_process_pass.release();
+	_storage_pass.release();
+	_storage_tess_prog.release();
+	_process_prog.release();
+	_storage_prog.release();
 	_view.clear();
 	_screen_quad.release();
 	_env_tex.release();
 	HeightMapDrawler::getSingleton()->release();
 	WaterSimulator::getSingleton()->release();
+	SelectionDrawler::getSingleton()->release();
 }
 uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 {
@@ -150,7 +151,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 			/ _view[ ins._view[ 0 ].view_id ]->_size.z() * 2.0f;
 		if( cam_dist < 3.0f )
 			data[ ins._view[ 0 ].view_id * 2 ].push_back( { 0.2f * time, 0.0f,
-					cam_dist, 0, 0, 0, m } );
+					cam_dist, 1.0f, 0, 0, 0, m } );
 		else
 		{
 			if( !scene->getCamera()->fristrum( pos ,
@@ -158,27 +159,27 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 				continue;
 
 			if( cam_dist < 50.0f )
-				data[ ins._view[ 0 ].view_id * 2 + 1 ].push_back( { 0.2f * time,
-						0.0f, cam_dist, 0, 0, 0, m } );
+				data[ ins._view[ 0 ].view_id * 2 + 1 ].push_back(
+			{ 0.2f * time, 0.0f, cam_dist, 1.0f , 0, 0, 0, m } );
 			else
 			{
 				f4x4 mn = m;
 				mn.scale( _view[ ins._view[ 0 ].view_id ]->_size );
-				data[ 3 ].push_back( { 0.2f * time, 0.0f, cam_dist, 0, 0, 0, mn } );
+				data[ 3 ].push_back( { 0.2f * time, 0.0f, cam_dist, 1.0f , 0, 0, 0, mn } );
 			}
 		}
 	}
 	if( time < 0.01f )
 		LOG << 1.0f / _dt << "\n";
-	_pass[ 0 ].clear();
-	_prog[ 0 ].bind();
+	_storage_pass.clear();
+	_storage_tess_prog.bind();
 	glUniform1f( TIME , time );
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
 						scene->getCamera()->getViewProj().getPtr() );
 	glUniform1i( LIGHTPASS , 0 );
 	glUniform1i( INSTANSING , 1 );
 	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
-	_prog[ 2 ].bind();
+	_storage_prog.bind();
 	glUniform1f( TIME , time );
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
 						scene->getCamera()->getViewProj().getPtr() );
@@ -230,7 +231,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 			dir_lights_viewproj[ caster_dir_light_count ] = RCamera::orthographic(
 				l._pos , l._dir , f3( 0.0f , 0.0f , 1.0f ) , 300.0f );
 
-			_prog[ 2 ].bind();
+			_storage_prog.bind();
 			glUniform1i( LIGHTPASS , 1 );
 			glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
 								dir_lights_viewproj[ caster_dir_light_count ].getPtr() );
@@ -256,7 +257,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	 glUniform1f( TIME , time );
 	 glUniform1i( INSTANSING , 1 );
 	 drawInstancesToLight( data.get() );
-
+	 //HeightMapDrawler::getSingleton()->draw( false );
 	 WaterSimulator::getSingleton()->calc();
 	 //_pass[0].bind();
 	 WaterSimulator::getSingleton()->bindToRenderPlane();
@@ -267,15 +268,22 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	 _screen_quad.draw();
 	 ///
 
-	_pass[ 1 ].clear();
-	_prog[ 1 ].bind();
+	 ///
+	 uint select_buff = SelectionDrawler::getSingleton()->process( _storage_pass.getBufferPtr( 0 ) );
+	 ///
+
+	_process_pass.clear();
+	_process_prog.bind();
 
 	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D , _pass[ 0 ].getBufferPtr( 0 ) );
+	glBindTexture( GL_TEXTURE_2D , _storage_pass.getBufferPtr( 0 ) );
 	glUniform1i( BUFFER0 , 0 );
 	glActiveTexture( GL_TEXTURE0 + 1 );
 	glBindTexture( GL_TEXTURE_2D , _env_tex.getTexture( 0 ) );
 	glUniform1i( ENV , 1 );
+	glActiveTexture( GL_TEXTURE0 + 2 );
+	glBindTexture( GL_TEXTURE_2D , select_buff );
+	glUniform1i( 2 , 2 );
 	///
 	glActiveTexture( GL_TEXTURE0 + 4 );
 	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getPlaneBuffer() );
@@ -302,7 +310,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 		glUniform1i( lid + 3 , 5 + i );
 	}
 	_screen_quad.draw();
-	return _pass[ 1 ].getBufferPtr( 0 );
+	return _process_pass.getBufferPtr( 0 );
 }
 DrawlerDeffered *DrawlerDeffered::getSingleton()
 {

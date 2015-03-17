@@ -21,8 +21,8 @@ VIEWAPI ViewManager * ViewManager::singletonGet( int type )
 	switch( type )
 	{
 		case ViewManager::API::GL:
-			return singleton = new ViewEngineGL;
-			break;
+		return singleton = new ViewEngineGL;
+		break;
 	}
 	return nullptr;
 }
@@ -33,16 +33,18 @@ int main()
 	engine->init();
 	auto scene = engine->genScene();
 	auto eventer = engine->getEventer();
-	xfor( x , 3 )
-		xfor( y , 3 )
+	xfor( x , 10 )
+		xfor( y , 10 )
 	{
 		f4x4 temp( 1.0f );
-		temp( 3 , 0 ) = 2.0f * ( x );
-		temp( 3 , 1 ) = 2.0f * ( -y );
-		//temp( 3 , 2 ) = -2.0f;
+		temp( 3 , 0 ) = 2.0f * ( x - 5.0f );
+		temp( 3 , 1 ) = 2.0f * ( y + 5.0f );
+		temp( 3 , 2 ) = -21.0f;
 		scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 0 , temp } );
 	}
 	f4x4 temp( 1.0f );
+	temp( 3 , 2 ) = -20.0f;
+	temp( 3 , 0 ) = 20.0f;
 	scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 2 , temp } );
 
 	RLightState *ls = scene->getLightStatePtr( scene->genLight() );
@@ -55,7 +57,7 @@ int main()
 	cam->lookAt( f3( 0.0f , -2.0f , 2.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
 	f3 cam_pos , cam_lookat;
 	eventer->addKeyFunc(
-		[cam , ls]( const KeyStates &cs , const float dt )
+		[ cam , ls ]( const KeyStates &cs , const float dt )
 	{
 		const float dr = dt * 30.0f;
 		f3 v( 0.0f , 0.0f , 0.0f );
@@ -84,7 +86,7 @@ int main()
 	}
 	);
 	eventer->addMouseFunc(
-		[cam]( const MouseStates &cs , const float dt )
+		[ cam ]( const MouseStates &cs , const float dt )
 	{
 		static float phi( 1.4f );
 		static float theta( 1.4f );
@@ -112,12 +114,12 @@ int main()
 	{
 		t += 1.0f / 0x20;
 		sleep( 0x10 );
-		xfor( x , 3 )
-		xfor( y , 3 )
+		xfor( x , 10 )
+		xfor( y , 10 )
 		{
-			scene->getInstanceStatePtr( x + y * 3 )->_view[0].model( 3 , 0 ) += 0.1f * sinf( 4.0f * t );
-			scene->getInstanceStatePtr( x + y * 3 )->_view[0].model( 3 , 1 ) += 0.1f * cosf( 4.0f * t );
-			scene->getInstanceStatePtr( x + y * 3 )->_view[0].model( 3 , 2 ) = -21.0f;
+			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 0 ) += 0.2f * sinf( 1.0f * t );
+			//scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 1 ) = 10.1f * cosf( 2.0f * t );
+			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 2 ) = -21.0f;
 		}
 		//ls->_pos = f3( sinf( t ) , cosf( t ) , 1.0f ) * 50.0f;
 		//ls->_dir = -ls->_pos.g_norm();
