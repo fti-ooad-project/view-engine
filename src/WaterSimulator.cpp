@@ -1,6 +1,7 @@
 #include "../view/3dgl/WaterSimulator.h"
 #include "../view/export/RCamera.h"
 #include "../GlslDefines.h"
+#include "../base/RFileloader.h"
 void WaterSimulator::init( int depth_buf , f2 const &size , f3 const &pos )
 {
 	if( isInited() ) return;
@@ -22,6 +23,7 @@ void WaterSimulator::init( int depth_buf , f2 const &size , f3 const &pos )
 	_water_plane_prog.init( "res/shaders/glsl/water_plane_fragment.glsl" , "res/shaders/glsl/water_plane_vertex.glsl" );
 	_water_bump_prog.init( "res/shaders/glsl/water_bump_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
 	_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );
+	_wave_normal.init( std::move( RFileLoader::loadImage( "res/view/images/wave.png" ) ) , 1 );
 }
 void WaterSimulator::bindToRenderPlane()
 {
@@ -40,7 +42,7 @@ void WaterSimulator::bindToRenderSurface()
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , water_viewproj.getPtr() );
 	glUniform1f( 4 , _pos.z() );
 }
-void WaterSimulator::calc()
+void WaterSimulator::calc( float time )
 {
 	_water_bump_prog.bind();
 	glDepthFunc( GL_LEQUAL );
@@ -60,16 +62,22 @@ void WaterSimulator::calc()
 	_final.bind();
 	_final.clear();
 	glUniform1i( 2 , 1 );
+
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D , _water_bump_pass[ cur ].getBufferPtr( 0 ) );
 	glUniform1i( 3 , 0 );
+
+	glActiveTexture( GL_TEXTURE0 + 1 );
+	glBindTexture( GL_TEXTURE_2D , _wave_normal.getTexture( 0 ) );
+	glUniform1i( 5 , 1 );
+
+	glUniform1f( 6 , time );
 	_screen_quad.draw();
 }
 uint WaterSimulator::getBumpTexture() const
 {
 	return _final.getBufferPtr( 0 );
 }
-
 uint WaterSimulator::getPlaneBuffer() const
 {
 	return _water_plane_pass.getBufferPtr( 0 );
@@ -89,6 +97,10 @@ void WaterSimulator::release()
 		_water_bump_pass[ i ].release();
 	}
 	_screen_quad.release();
+	_wave_normal.release();
+	_water_plane_prog.release();
+	_water_bump_prog.release();
+	_water_plane_pass.release();
 }
 WaterSimulator *WaterSimulator::getSingleton()
 {

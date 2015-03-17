@@ -3,7 +3,9 @@ layout( location = 0 ) uniform sampler2D CUR_BUF;
 layout( location = 1 ) uniform sampler2D LAST_BUF;
 layout( location = 2 ) uniform int PASS;
 layout( location = 3 ) uniform sampler2D Buffer_tex;
+layout( location = 5 ) uniform sampler2D Wave_tex;
 layout( location = 4 ) uniform vec2 WindowRatio;
+layout( location = 6 ) uniform float TIME;
 in vec2 frag_pos;
 out vec4 out_data;
 vec2 grad( const vec2 tx , const float r )
@@ -83,8 +85,13 @@ void main()
 		out_data = vec4( buf.xyz , 1.0 );
 		return;
 	}
-	vec4 buf = texture2D( Buffer_tex , frag_pos );
-	vec3 v = normfrp( frag_pos , dr );
+	/*vec4 buf = texture2D( Buffer_tex , frag_pos );
+	float time = TIME * 0.01 + frag_pos.x + frag_pos.y;
+	vec4 wnorm = texture2D( Wave_tex , frag_pos * 70.0 + vec2( sin( time ) , cos( time ) ) * 5.0  );
+	vec4 wnorm1 = texture2D( Wave_tex , frag_pos * 70.0 - vec2( cos( time ) , sin( time ) ) * 5.0  );
+	vec3 wavenorm = wnorm.xyz;
+	vec3 wavenorm1 = wnorm1.xyz;*/
+	vec3 v = /*wavenorm + wavenorm1 + */normfrp( frag_pos , dr );
 	//v.z = abs( v.z );
-	out_data = vec4( 0.5 + 0.5 * v , 1.0 );
+	out_data = vec4( 0.5 + 0.5 * normalize( v ) , 1.0 );
 }

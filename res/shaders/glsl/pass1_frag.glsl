@@ -61,12 +61,11 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 }
 void main()
 {
-	vec4 selbuf = texture( SELECTBUFF , frag_pos );
-	out_data += selbuf;
 	//out_data = texture( WATER_BUFFER3 , frag_pos ); return;
 	definePoisson();
-	uvec4 buf0 = texture( BUFFER0 , frag_pos );
-	float depth = depthFromi( buf0 );
+	vec4 selbuf = texture( SELECTBUFF , frag_pos );
+	out_data += selbuf;
+	
 	vec2 distfragpos = frag_pos;
 	///
 	uvec4 wbuf = texture( WATER_BUFFER3 , frag_pos );
@@ -76,8 +75,8 @@ void main()
 	{
 		
 		float wdepth = depthFromi( wbuf );
-		//vec2 screenspacewaternorm = 2.0 * wY.xy - 1.0;
-		//distfragpos += screenspacewaternorm * 0.01;
+		vec2 screenspacewaternorm = 2.0 * wY.xy - 1.0;
+		distfragpos += screenspacewaternorm * 0.01;
 		vec3 wpos = posFromZ( vec2( -1.0 + 2.0 * frag_pos.x , -1.0 + 2.0 * frag_pos.y ) , wdepth , CAM );
 		vec4 wspecw = unpack4i( wbuf.w );
 		vec3 wnorm = normFromi( wbuf );
@@ -86,6 +85,10 @@ void main()
 		out_data += vec4( vec3( 0.7 , 0.7 , 0.77 ) * wl , 1.0 );//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );
 	}
 	///
+	
+	
+	uvec4 buf0 = texture( BUFFER0 , distfragpos );
+	float depth = depthFromi( buf0 );
 	if( buf0.x == 0 )
 	{
 		vec3 v = camRay( CAM , frag_pos );

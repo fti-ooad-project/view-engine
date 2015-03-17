@@ -258,7 +258,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	 glUniform1i( INSTANSING , 1 );
 	 drawInstancesToLight( data.get() );
 	 //HeightMapDrawler::getSingleton()->draw( false );
-	 WaterSimulator::getSingleton()->calc();
+	 WaterSimulator::getSingleton()->calc( _cur_time );
 	 //_pass[0].bind();
 	 WaterSimulator::getSingleton()->bindToRenderPlane();
 	 glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );

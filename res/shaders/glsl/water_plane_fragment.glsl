@@ -13,8 +13,8 @@ void main()
 	buf.x = uint( pvo.depth * 100.0 );
 	float sg = newnormal.z >= 0.0 ? 1.0 : -1.0;
 	buf.z = pack4i( vec4( 0.5 + 0.5 * newnormal.xy , 0.5 + 0.5 * sg , 0.0 ) );
-	vec4 screenspacenormal = MAT4X4_VIEWPROJ[0] * vec4( newnormal , 0.0 );
-	sg = screenspacenormal.z >= 0.0 ? 1.0 : -1.0;
-	buf.y = pack4i( vec4( 0.5 + 0.5 * screenspacenormal.xy , 0.5 + 0.5 * sg , 1.0 ) );;
+	vec3 screenspacenormal = normalize( ( MAT4X4_VIEWPROJ[0] * vec4( newnormal , 0.0 ) ).xyz );
+	//sg = screenspacenormal.z >= 0.0 ? 1.0 : -1.0;
+	buf.y = pack4i( vec4( 0.5 + 0.5 * screenspacenormal.xy , 0.0 , 1.0 ) );
 	buf.w = pack4i( vec4( 0.0 , 0.0 , 0.0 , 0.9 ) );
 }
