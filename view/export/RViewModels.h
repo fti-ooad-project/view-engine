@@ -59,6 +59,7 @@ class RDrawableState
 {
 public:
 	std::vector< ViewInfo > _view;
+	int selectid;
 	RAnimationMixer _animstat;
 };
 struct RLightState
