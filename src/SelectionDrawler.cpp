@@ -1,5 +1,5 @@
-#include "..\view\3dgl\SelectionDrawler.h"
-#include "..\view\3dgl\Blurer.h"
+#include "../view/3dgl/SelectionDrawler.h"
+#include "../view/3dgl/Blurer.h"
 #include "../view/GL.h"
 SelectionDrawler::SelectionDrawler()
 {
