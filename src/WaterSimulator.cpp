@@ -2,18 +2,18 @@
 #include "../view/export/RCamera.h"
 #include "../GlslDefines.h"
 #include "../base/RFileloader.h"
-void WaterSimulator::init( int depth_buf , f2 const &size , f3 const &pos )
+void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 {
 	if( isInited() ) return;
 	setInited( true );
-	_pos = pos;
+	_height = height;
 	_size = size;
 	dest = 2048;
-	water_viewproj = RCamera::orthographic( pos + f3( 0.0f , 0.0f , -10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , size.x() );
+	
 	_screen_quad.init();
 	ito( 2 )
 	{
-		_water_surf_pass[ i ].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
+		_water_surf_pass[ i ].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false } );
 		_water_bump_pass[ i ].init( { { dest , dest } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
 		_water_bump_pass[ i ].bind();
 		_water_bump_pass[ i ].clear();
@@ -25,27 +25,45 @@ void WaterSimulator::init( int depth_buf , f2 const &size , f3 const &pos )
 	_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );
 	_wave_normal.init( std::move( RFileLoader::loadImage( "res/view/images/wave.png" ) ) , 1 );
 }
-void WaterSimulator::bindToRenderPlane()
+void WaterSimulator::bindToRenderPlane( bool nt )
 {
 	_water_plane_pass.bind();
 	_water_plane_pass.clear( false );
 	_water_plane_prog.bind();
-	glUniform4f( 4 , _pos.x() , _pos.y() , _pos.z() , _size.x() );
+	if( nt )
+	{
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D , _final.getBufferPtr( 0 ) );
+		glUniform1i( RGB_NORMAL_A_HEIGHT_TEXTURE , 0 );
+		glUniform1i( PASSID , 0 );
+		glUniform4f( 4 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
+	} else
+	{
+		glUniform1i( PASSID , 1 );
+		glUniform4f( 4 , 0.0f , 0.0f , _height , 500.0f );
+	}
 }
 void WaterSimulator::bindToRenderSurface()
 {
+	_water_surf_pass[ cur ].bind();
+	//_water_surf_prog.bind();
+	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , water_viewproj.getPtr() );
+	glUniform1f( WATER_Z , _height );
+}
+void WaterSimulator::switchSurfaceBuffer( f3 const & cam_pos )
+{
+	_last_cam_pos = _cam_pos;
+	_cam_pos = cam_pos;
+	water_viewproj = RCamera::orthographic( f3( cam_pos.x() , cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
 	last = cur;
 	cur = ( cur + 1 ) % 2;
-	_water_surf_pass[ cur ].bind();
 	_water_surf_pass[ cur ].clear();
-	_water_surf_prog.bind();
-	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , water_viewproj.getPtr() );
-	glUniform1f( 4 , _pos.z() );
 }
-void WaterSimulator::calc( float time )
+void WaterSimulator::calc( float time , float dt )
 {
 	_water_bump_prog.bind();
-	glDepthFunc( GL_LEQUAL );
+	glUniform1f( 6 , time );
+	glUniform1f( 8 , dt );
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D , _water_surf_pass[ cur ].getBufferPtr( 0 ) );
 	glUniform1i( 0 , 0 );
@@ -58,6 +76,9 @@ void WaterSimulator::calc( float time )
 	glUniform1i( 3 , 2 );
 	glUniform1i( 2 , 0 );
 	glUniform2f( 4 , 1.0f / dest , 1.0f / dest );
+	f2 dr = f2( _cam_pos.x() - _last_cam_pos.x() , _cam_pos.y() - _last_cam_pos.y() ) / _size.x() / 2.0f;
+	//dr.print();
+	glUniform2f( 7 , -dr.x() , dr.y() );
 	_screen_quad.draw();
 	_final.bind();
 	_final.clear();
@@ -71,7 +92,6 @@ void WaterSimulator::calc( float time )
 	glBindTexture( GL_TEXTURE_2D , _wave_normal.getTexture( 0 ) );
 	glUniform1i( 5 , 1 );
 
-	glUniform1f( 6 , time );
 	_screen_quad.draw();
 }
 uint WaterSimulator::getBumpTexture() const

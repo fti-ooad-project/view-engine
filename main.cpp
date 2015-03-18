@@ -56,8 +56,9 @@ int main()
 	auto cam = scene->getCamera();
 	cam->lookAt( f3( 0.0f , -2.0f , 2.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
 	f3 cam_pos , cam_lookat;
+	float X = 0.0f;
 	eventer->addKeyFunc(
-		[ cam , ls ]( const KeyStates &cs , const float dt )
+		[ cam , ls , &X ]( const KeyStates &cs , const float dt )
 	{
 		const float dr = dt * 30.0f;
 		f3 v( 0.0f , 0.0f , 0.0f );
@@ -73,6 +74,10 @@ int main()
 			v -= cam->_v3local_x;
 		if( cs.__cur_states[ SDL_SCANCODE_D ] )//d
 			v += cam->_v3local_x;
+		if( cs.__cur_states[ SDL_SCANCODE_X ] )//d
+			X += dr * 0.3f;
+		if( cs.__cur_states[ SDL_SCANCODE_Z ] )//d
+			X -= dr * 0.3f;
 		float l = v.g_mod();
 		if( l != 0.0f )
 			cam->pos( cam->_v3pos + v.g_norm() * dr );
@@ -117,9 +122,9 @@ int main()
 		xfor( x , 10 )
 		xfor( y , 10 )
 		{
-			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 0 ) += 0.2f * sinf( 1.0f * t );
-			//scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 1 ) = 10.1f * cosf( 2.0f * t );
-			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 2 ) = -21.0f;
+			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 0 ) = 2.0f * ( x - 5.0f ) + X;
+			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 1 ) = 2.0f * ( y + 5.0f );
+			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 2 ) = -24.0f;
 		}
 		//ls->_pos = f3( sinf( t ) , cosf( t ) , 1.0f ) * 50.0f;
 		//ls->_dir = -ls->_pos.g_norm();

@@ -14,17 +14,19 @@ private:
 	RTextureHolderGL _wave_normal;
 	RPolyQuadGL _screen_quad;
 	f2 _size;
-	f3 _pos;
+	float _height;
+	f3 _last_cam_pos , _cam_pos;
 	uint dest;
 	WaterSimulator() = default;
 	f4x4 water_viewproj;
 public:
 	WaterSimulator( WaterSimulator const & ) = delete;
 	void operator=( WaterSimulator const & ) = delete;
-	void init( int , f2 const & , f3 const & );
-	void bindToRenderPlane();
+	void init( int , f2 const & , float );
+	void bindToRenderPlane( bool );
 	void bindToRenderSurface();
-	void calc( float );
+	void switchSurfaceBuffer( f3 const & );
+	void calc( float , float );
 	uint getBumpTexture() const;
 	uint getPlaneBuffer() const;
 	uint getSurfBuffer() const;

@@ -1,11 +1,13 @@
 #version 430
-layout( location = 0 ) uniform sampler2D CUR_BUF;
-layout( location = 1 ) uniform sampler2D LAST_BUF;
+layout( location = 0 ) uniform usampler2D CUR_BUF;
+layout( location = 1 ) uniform usampler2D LAST_BUF;
 layout( location = 2 ) uniform int PASS;
 layout( location = 3 ) uniform sampler2D Buffer_tex;
 layout( location = 5 ) uniform sampler2D Wave_tex;
 layout( location = 4 ) uniform vec2 WindowRatio;
 layout( location = 6 ) uniform float TIME;
+layout( location = 7 ) uniform vec2 CAM_DR;
+layout( location = 8 ) uniform float DT;
 in vec2 frag_pos;
 out vec4 out_data;
 vec2 grad( const vec2 tx , const float r )
@@ -57,8 +59,8 @@ vec2 VPoison( const vec2 tx , const float r ){
 vec3 normfrp( const vec2 tx , const float r )
 {
 	return normalize( -cross(
-	vec3( 0.0 , 2.0 * r , -0.1 * ( texture2D( Buffer_tex , tx + vec2( r , 0.0 ) ).z - texture2D( Buffer_tex , tx - vec2( r , 0.0 ) ).z ) )
-	, vec3( 2.0 * r , 0.0 , -0.1 * ( texture2D( Buffer_tex , tx + vec2( 0.0 , r ) ).z - texture2D( Buffer_tex , tx - vec2( 0.0 , r ) ).z ) )
+	vec3( 0.0 , 2.0 * r , -0.01 * ( texture2D( Buffer_tex , tx + vec2( r , 0.0 ) ).z - texture2D( Buffer_tex , tx - vec2( r , 0.0 ) ).z ) )
+	, vec3( 2.0 * r , 0.0 , -0.01 * ( texture2D( Buffer_tex , tx + vec2( 0.0 , r ) ).z - texture2D( Buffer_tex , tx - vec2( 0.0 , r ) ).z ) )
 	) );
 }
 void main()
@@ -66,22 +68,30 @@ void main()
 	float dr = 1.0 * WindowRatio.x;
 	if( PASS == 0 )
 	{
-		vec4 cur = texture2D( CUR_BUF , frag_pos );
-		/*if( cur.x > 0.9 )
+				/*if( frag_pos.y > 0.9 )
 		{
-			out_data = vec4( vec2( 0.0 ) , 0.1 , 0.0 );
+			out_data = vec4( vec2( 0.0 , -0.1 ) , 0.1 , 0.0 );
 			return;
 		}*/
-		vec4 last = texture2D( LAST_BUF , frag_pos );
-		vec4 buf = texture2D( Buffer_tex , frag_pos );
-		
-		buf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.01 );
-		buf += vec4( vec2( 0.0 ) , 0.1 * abs( cur.x - last.x ) , 0.0 );
-		vec2 pg = grad( frag_pos , dr );
-		float udiv = div( frag_pos , dr );
-		buf += vec4( 0.1 * ( -pg ) - buf.xy * 0.2 , udiv * 0.2 - buf.z * 0.05 , 0.0 );
-		//buf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.01 );
-		//vec4 nbuf = texture2D( Buffer_tex , frag_pos - buf.xy * 0.01 );
+		vec2 newfragpos = frag_pos + CAM_DR.xy;
+		float cur = texture( CUR_BUF , frag_pos ).x;
+		float last = texture( LAST_BUF , newfragpos ).x;
+		bool still = true;//length( CAM_DR ) < 0.001;
+		if( still )
+			if( cur > 0.8 )
+			{
+				out_data = vec4( 0.0 , 0.0 , ( 0.8 + 0.2 * sin( TIME * 10.0 ) ) * 0.2 * cur + abs( cur - last ) , 0.0 );
+				return;
+			}
+		vec4 buf = texture2D( Buffer_tex , newfragpos );
+		if( still )
+		{
+			buf = texture2D( Buffer_tex , newfragpos);// - buf.xy * DT );
+			buf.z += 0.5 * abs( cur - last );
+		}
+		vec2 pg = grad( newfragpos , dr );
+		float udiv = div( newfragpos , dr );// - buf.xy * 0.2 udiv * 0.2
+		buf += 50.0 * vec4( -0.2 * pg - buf.xy * 0.02 , - buf.z * 0.1 + udiv * 0.1 , 0.0 ) * DT;
 		out_data = vec4( buf.xyz , 1.0 );
 		return;
 	}

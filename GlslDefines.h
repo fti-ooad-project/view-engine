@@ -39,7 +39,11 @@ layout( location = 32 ) uniform DirectedLight DLIGHT[MAX_LIGHTS_CASTER];
 #define RGB_SPECULAR_A_GLOSSNESS_TEXTURE 3
 #define TIME 7
 #define BONE_COUNT 10
-#define LIGHTPASS 17
+#define PASSID 17
+#define PASS_NORMAL 0
+#define PASS_LIGHT 1
+#define PASS_WATER 2
+#define WATER_Z 18
 #define CAM_POS 11
 #define ANIM_TEX 20
 #define INSTANSING 15

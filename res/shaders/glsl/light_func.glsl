@@ -45,7 +45,7 @@ float lightedCube( vec3 ftol , samplerCube cubemap )
 }
 float smoothLightDir( vec3 p , vec3 n , float samp_r , mat4 vp , sampler2D tex )
 {
-	return distlightedDir( vp * vec4( p , 1.0 ) , tex ) < 0.001 ? 1.0 : 0.0;
+	//return distlightedDir( vp * vec4( p , 1.0 ) , tex ) < 0.001 ? 1.0 : 0.0;
 	//float r = distlightedDir( vp * vec4( p , 1.0 ) , tex );
 	float o = 0.0;
 	for( int i = 0; i < NUM_TAPS; ++i )
@@ -56,7 +56,7 @@ float smoothLightDir( vec3 p , vec3 n , float samp_r , mat4 vp , sampler2D tex )
 		vec3 np = p + rand * samp_r;// * pow( r * 100.0 , 2.0 );
 		vec4 campos = vp * vec4( np , 1.0 );
 		float r = distlightedDir( campos , tex );
-		o += r < 0.0 ? 1.0 : 0.0;
+		o += r < 0.001 ? 1.0 : 0.0;
 		//o += lightedDir( scalel( vp * vec4( rand , 1.0 ) ) , tex ) > -0.001? 1.0 : 0.0;
 	}
 	return o / NUM_TAPS;

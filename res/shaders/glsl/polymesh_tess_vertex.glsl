@@ -22,15 +22,26 @@ void main()
 		
 	$include anim_func.glsl
 	
-	p = m * p;	
-	if( bool( FLAGS & MASK_TEXTURED_NOR ) )
+	p = m * p;
+	gl_Position = p;
+	switch( PASSID )
 	{
-		pv.binormal = normalize( ( m * vec4( invertex_binormal , 0.0 ) ).xyz );
-		pv.tangentnormal = normalize( ( m * vec4( invertex_tangentnormal , 0.0 ) ).xyz );
+		case PASS_LIGHT:
+		break;
+		case PASS_WATER:
+		break;
+		case PASS_NORMAL:
+			if( bool( FLAGS & MASK_TEXTURED_NOR ) )
+			{
+				pv.binormal = normalize( ( m * vec4( invertex_binormal , 0.0 ) ).xyz );
+				pv.tangentnormal = normalize( ( m * vec4( invertex_tangentnormal , 0.0 ) ).xyz );
+			}
+			if( bool( FLAGS & MASK_TEXTURED ) )
+				pv.texcoord = invertex_texcoord;
+			pv.normal = normalize( ( m * vec4( invertex_normal , 0.0 ) ).xyz );
+			pv.select_id = INS_TIME.w;
+		break;
+		default:
+		break;
 	}
-	if( bool( FLAGS & MASK_TEXTURED ) )
-		pv.texcoord = invertex_texcoord;
-	pv.normal = normalize( ( m * vec4( invertex_normal , 0.0 ) ).xyz );
-	pv.select_id = INS_TIME.w;
-    gl_Position = p;
 } 
