@@ -43,16 +43,6 @@ void definePoisson()
 	poisson[10] = vec2( -0.322 , -0.933 );
 	poisson[11] = vec2( -0.792 , -0.598 );
 }
-mat4 getMatFromTex( float time , float bone , float bone_count , sampler2D anim_buffer )
-{
-	vec2 step = vec2( 1.0 / ( 4.0 * bone_count ) , 0.0 );
-	vec2 tx = vec2( ( bone ) * step.x * 4.0 + step.x * 0.5 , time );
-	return mat4(
-		texture2D( anim_buffer , tx ) ,
-		texture2D( anim_buffer , tx + step ) ,
-		texture2D( anim_buffer , tx + 2.0 * step ) ,
-		texture2D( anim_buffer , tx + 3.0 * step ) );
-}
 vec4 dfdr( vec2 tx , float dr , sampler2D tex )
 {
 	vec4 dfdx = abs( texture2D( tex , tx + vec2( dr , 0.0 ) ) - texture2D( tex , tx + vec2( -dr , 0.0 ) ) );

@@ -12,9 +12,8 @@ private:
 	int _indx_count;
 	RGraphicProgrammGL _prog;
 	RGraphicProgrammGL _lightprog;
-	RTextureHolderGL _htex;
-	RTextureHolderGL _diff;
-	RTextureHolderGL _normtex;
+	RTextureHolderGL _textures;
+	RTextureHolderGL _hmap;
 	HeightMapDrawler() = default;
 public:
 	f2 _size;

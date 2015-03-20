@@ -1,5 +1,6 @@
 #version 430
 $include uniforms.glsl
+$include anim_include.glsl
 $include include.glsl
 $include attributes.glsl
 $include pervertex.glsl
@@ -19,9 +20,9 @@ void main()
 		m = MAT4X4_MODEL;
 		pv.dist_to_cam = DIST_TO_CAM;
 	}
-	/*	
+	
 	$include anim_func.glsl
-	*/
+	
 	p = m * p;
 	gl_Position = p;
 	switch( PASSID )

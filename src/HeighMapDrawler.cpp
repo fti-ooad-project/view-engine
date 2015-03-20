@@ -4,14 +4,11 @@ void HeightMapDrawler::bindToDraw()
 {
 	_prog.bind();
 	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D , _htex.getTexture() );
-	glUniform1i( 1 , 0 );
+	glBindTexture( GL_TEXTURE_2D , _hmap.getTexture() );
+	glUniform1i( 3 , 0 );
 	glActiveTexture( GL_TEXTURE0 + 1 );
-	glBindTexture( GL_TEXTURE_2D , _diff.getTexture() );
-	glUniform1i( 2 , 1 );
-	glActiveTexture( GL_TEXTURE0 + 2 );
-	glBindTexture( GL_TEXTURE_2D , _normtex.getTexture() );
-	glUniform1i( 3 , 2 );
+	glBindTexture( GL_TEXTURE_2D_ARRAY , _textures.getTexture() );
+	glUniform1i( 1 , 1 );
 	glUniform1i( FLAGS , ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_DIF );
 	glUniform4f( 4 , _pos.x() , _pos.y() , _size.x() , _size.y() );
 }
@@ -29,13 +26,11 @@ void HeightMapDrawler::init( uint density , f2 const &size , f2 const &bpos )
 	setInited( true );
 	_size = size;
 	_pos = bpos;
-	_htex = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/h.png" ) ) , 1 ) );
-	_htex.init();
-	std::string difftexname[] = { "res/view/images/dirtnorm.jpg" , "res/view/images/grass.jpg" , "res/view/images/snowdirt.jpg" };
-	_diff = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( difftexname , 3 ) ) , 3 ) );
-	_diff.init();
-	_normtex = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/dirtnorm.jpg" ) ) , 1 ) );
-	_normtex.init();
+	_hmap = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/h.png" ) ) , 1 ) );
+	_hmap.init();
+	std::string difftexname[] = { "res/view/images/dirtnorm.jpg" , "res/view/images/grass.jpg" , "res/view/images/snowdirt.jpg" , "res/view/images/ground.jpg" };
+	_textures = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( difftexname , 4 ) ) , 4 ) );
+	_textures.init();
 	std::unique_ptr< f3[] > pos( new f3[ density * density ] );
 	_indx_count = ( density - 1 ) * ( density - 1 ) * 6;
 	std::unique_ptr< unsigned short[] > index( new unsigned short[ _indx_count ] );
@@ -69,7 +64,7 @@ void HeightMapDrawler::init( uint density , f2 const &size , f2 const &bpos )
 	glBindVertexArray( 0 );
 	glDeleteBuffers( 1 , &vbo );
 	glDeleteBuffers( 1 , &ibo );
-	_prog.init( "res/shaders/glsl/polymesh_frag.glsl" , "res/shaders/glsl/height_map_vertex_tess.glsl" , "res/shaders/glsl/height_map_geom.glsl" , "res/shaders/glsl/height_map_tess_tc.glsl" , "res/shaders/glsl/height_map_tess_te.glsl" );
+	_prog.init( "res/shaders/glsl/height_map_frag.glsl" , "res/shaders/glsl/height_map_vertex_tess.glsl" , "res/shaders/glsl/height_map_geom.glsl" , "res/shaders/glsl/height_map_tess_tc.glsl" , "res/shaders/glsl/height_map_tess_te.glsl" );
 	LOG << "ef\n";
 }
 void HeightMapDrawler::release()
@@ -79,9 +74,8 @@ void HeightMapDrawler::release()
 	glDeleteVertexArrays( 1 , &_vao );
 	_prog.release();
 	_lightprog.release();
-	_htex.release();
-	_diff.release();
-	_normtex.release();
+	_textures.release();
+	_hmap.release();
 }
 HeightMapDrawler *HeightMapDrawler::getSingleton()
 {

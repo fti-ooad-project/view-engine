@@ -1,5 +1,7 @@
 layout( location = 0 ) uniform int FLAGS;
 layout( location = 1 ) uniform sampler2DArray  TEXTURE_ARRAY;
+layout( location = 2 ) uniform sampler2DArray ANIM_TEX_ARRAY;
+layout( location = 3 ) uniform sampler2D BUFFER1;
 
 layout( location = 6 ) uniform mat4 MAT4X4_MODEL;
 
@@ -18,6 +20,6 @@ layout( location = 18 ) uniform float WATERZ;
 layout( location = 11 ) uniform vec3 CAM_POS;
 layout( location = 16 ) uniform float DIST_TO_CAM;
 
-layout( location = 20 ) uniform sampler2D ANIM_TEX[10];
+
 
 layout( location = 30 ) uniform mat4 MAT4X4_VIEWPROJ[6];

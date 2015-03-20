@@ -190,6 +190,7 @@ void RComplexPolyMeshGL::init()
 #ifdef RLOG
 	LOG << "_________________________\n" << "polymesh generated:vao:" << _vao << "\n";
 #endif
+	auto y = reinterpret_cast< RVertex* >( __mesh->__vertices.get() );
 	__mesh.reset();
 }
 void RComplexPolyMeshGL::release()
@@ -219,17 +220,15 @@ void RComplexPolyMeshGL::bindRes( InstanceInfo const &stat ) const
 	int c = 0;
 	if( ( _flags & ShaderMask::MASK_TEXTURED ) && __textures.getCount() )
 	{
-		glActiveTexture( GL_TEXTURE0 + c );
+		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D_ARRAY , __textures.getTexture() );
-		glUniform1i( 1 , c );///1-layout of the first texture in shader
-		c++;
+		glUniform1i( 1 , 0 );///1-layout of the first texture in shader
 	}
 	if( ( _flags & ShaderMask::MASK_OWN_ANIMATED ) && __anim_intex.getCount() )
 	{
-		glActiveTexture( GL_TEXTURE0 + c );
+		glActiveTexture( GL_TEXTURE0 + 1 );
 		glBindTexture( GL_TEXTURE_2D_ARRAY , __anim_intex.getBufferPtr() );
-		glUniform1i( 20 , c );///20-location of anim texture
-		c++;
+		glUniform1i( 2 , 1 );///20-location of anim texture
 	}
 }
 void RPolyQuadGL::init()

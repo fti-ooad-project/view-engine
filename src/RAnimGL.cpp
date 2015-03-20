@@ -63,12 +63,12 @@ void RBoneAnimInTexHolderGL::init()
 	glTexStorage3D( GL_TEXTURE_2D_ARRAY , 1 , GL_RGBA32F , _bone_count * 4 , __sets[ 0 ]._frame_count , _count );
 	for( uint i = 0; i < _count; i++ )
 	{
-		glTexSubImage3D( GL_TEXTURE_2D_ARRAY , 0 , 0 , 0 , 0 , _bone_count * 4 , __sets[ 0 ]._frame_count , i , GL_RGBA , GL_FLOAT , __sets[ i ].__data.get() );
+		glTexSubImage3D( GL_TEXTURE_2D_ARRAY , 0 , 0 , 0 , i , _bone_count * 4 , __sets[ 0 ]._frame_count , 1 , GL_RGBA , GL_FLOAT , __sets[ i ].__data.get() );
 	}
-	glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S , GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T , GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MIN_FILTER , GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_S , GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_T , GL_REPEAT );
 	this->__sets.reset();
 }
 void RBoneAnimInTexHolderGL::release()

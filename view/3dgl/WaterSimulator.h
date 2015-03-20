@@ -11,7 +11,6 @@ private:
 	RGraphicProgrammGL _water_surf_prog , _water_bump_prog , _water_plane_prog;
 	RDrawPassGL _water_bump_pass[ 2 ] , _water_surf_pass[ 2 ] , _final , _water_plane_pass;
 	int cur = 0 , last = 1;
-	RTextureHolderGL _wave_normal;
 	RPolyQuadGL _screen_quad;
 	f2 _size;
 	float _height;

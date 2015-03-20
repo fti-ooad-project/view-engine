@@ -1,6 +1,8 @@
 #include <memory>
 #include "../view/3dgl/DrawlerDeffered.h"
 #include "../GlslDefines.h"
+#define LIGHTCASTERS
+#define RENDERWATER
 void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info , bool tess )
 {
 	if( false )
@@ -110,7 +112,7 @@ void DrawlerDeffered::init()
 		RFileLoader::loadImage(
 		"res/view/images/sky2.jpg" ) ) ,
 		1 );
-	//HeightMapDrawler::getSingleton()->init( 100 , f2( 500.0f , 500.0f ) , f2( 0.0f , 0.0f ) );
+	HeightMapDrawler::getSingleton()->init( 100 , f2( 500.0f , 500.0f ) , f2( 0.0f , 0.0f ) );
 #ifdef RENDERWATER
 	WaterSimulator::getSingleton()->init( _storage_pass.getDepthBufferPtr() ,
 										  f2( 100.0f , 100.0f ) , -20.0f );
@@ -130,7 +132,7 @@ void DrawlerDeffered::release()
 	_view.clear();
 	_screen_quad.release();
 	_env_tex.release();
-	//HeightMapDrawler::getSingleton()->release();
+	HeightMapDrawler::getSingleton()->release();
 #ifdef RENDERWATER
 	WaterSimulator::getSingleton()->release();
 #endif
@@ -195,12 +197,12 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	
 	drawInstances( data.get() , false );
 	//glDisable( GL_CULL_FACE );
-	/*HeightMapDrawler::getSingleton()->bindToDraw();
+	HeightMapDrawler::getSingleton()->bindToDraw();
 	glUniform1i( PASSID , PASS_NORMAL );
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
 						scene->getCamera()->getViewProj().getPtr() );
 	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
-	HeightMapDrawler::getSingleton()->draw( true );*/
+	HeightMapDrawler::getSingleton()->draw( true );
 
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	/*f4x4 model( 100.0f );
@@ -287,10 +289,11 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	//glDepthFunc( GL_LESS );
 	WaterSimulator::getSingleton()->bindToRenderPlane( true );
 	_screen_quad.draw();
+	glEnable( GL_CULL_FACE );
 	///
 #endif
 	///
-	uint select_buff = SelectionDrawler::getSingleton()->process( _storage_pass.getBufferPtr( 0 ) );
+	//uint select_buff = SelectionDrawler::getSingleton()->process( _storage_pass.getBufferPtr( 0 ) );
 	///
 
 	_process_pass.clear();
@@ -302,12 +305,12 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	glActiveTexture( GL_TEXTURE0 + 1 );
 	glBindTexture( GL_TEXTURE_2D , _env_tex.getTexture() );
 	glUniform1i( ENV , 1 );
-	glActiveTexture( GL_TEXTURE0 + 2 );
+	/*glActiveTexture( GL_TEXTURE0 + 2 );
 	glBindTexture( GL_TEXTURE_2D , select_buff );
-	glUniform1i( 2 , 2 );
-	glActiveTexture( GL_TEXTURE0 + 3 );
-	glBindTexture( GL_TEXTURE_2D , dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() )->__textures.getTexture() );
-	glUniform1i( 3 , 3 );
+	glUniform1i( 2 , 2 );*/
+	/*glActiveTexture( GL_TEXTURE0 + 3 );
+	glBindTexture( GL_TEXTURE_2D_ARRAY , dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() )->__anim_intex.getBufferPtr() );
+	glUniform1i( 3 , 3 );*/
 #ifdef RENDERWATER
 	glActiveTexture( GL_TEXTURE0 + 4 );
 	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getPlaneBuffer() );

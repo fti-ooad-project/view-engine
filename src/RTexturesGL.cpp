@@ -72,46 +72,32 @@ void RTextureHolderGL::init()
 			s = GL_LUMINANCE;
 		break;
 	}
-	/*glGenTextures( _count , __texture_pointer_array.get() );
-	for( uint i = 0; i < _count; i++ )
-	{
-		__tex_size[ i ] = _imgs[ i ]._size;
-		glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[ i ] );
-		//glEnable( GL_TEXTURE_2D );
-		const int mipmaplevels = std::min( 10 , pow2( std::min( __tex_size[ i ]._w , __tex_size[ i ]._h ) ) );
-		
-		LOG << _imgs[ i ]._bytes_per_pixel;
-		
-		glTexStorage2D( GL_TEXTURE_2D , mipmaplevels , i_f , _imgs[ i ]._size._w , _imgs[ i ]._size._h );
-		glTexSubImage2D( GL_TEXTURE_2D , 0 , 0 , 0 , _imgs[ i ]._size._w , _imgs[ i ]._size._h ,
-						 s , GL_UNSIGNED_BYTE , _imgs[ i ].__data.get() );
-		glGenerateMipmap( GL_TEXTURE_2D );
-		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER ,
-						 GL_LINEAR );
-		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER ,
-						 GL_LINEAR_MIPMAP_LINEAR );
-		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S ,
-						 GL_REPEAT );
-		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T ,
-						 GL_REPEAT )
-						 #ifdef RLOG
-						 LOG << "_________________________\n" << "texture generated:id:" << __texture_pointer_array[ i ] << "\n";
-						 #endif
-	}*/
-	const int mipmaplevels = std::min( 10 , pow2( std::min( _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h ) ) ) - 1;
+	const int mipmaplevels = std::min( 10 , pow2( std::min( _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h ) ) );
 	glGenTextures( 1 , &_texture_array_pointer );
-	glBindTexture( GL_TEXTURE_2D_ARRAY , _texture_array_pointer );
-	glTexStorage3D( GL_TEXTURE_2D_ARRAY , mipmaplevels , i_f , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h , _count );
-	for( uint i = 0; i < _count; i++ )
+	if( _count == 1 )
 	{
-		//auto tmp = &_imgs[ i ];
-		glTexSubImage3D( GL_TEXTURE_2D_ARRAY , 0 , 0 , 0 , 0 , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h , i , s , GL_UNSIGNED_BYTE , _imgs[ i ].__data.get() );
+		glBindTexture( GL_TEXTURE_2D , _texture_array_pointer );
+		glTexStorage2D( GL_TEXTURE_2D , mipmaplevels , i_f , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h );
+		glTexSubImage2D( GL_TEXTURE_2D , 0 , 0 , 0 , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h , s , GL_UNSIGNED_BYTE , _imgs[ 0 ].__data.get() );
+		glGenerateMipmap( GL_TEXTURE_2D );
+		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
+		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_MIN_FILTER , GL_LINEAR_MIPMAP_LINEAR );
+		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S , GL_REPEAT );
+		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T , GL_REPEAT );
+	} else
+	{
+		glBindTexture( GL_TEXTURE_2D_ARRAY , _texture_array_pointer );
+		glTexStorage3D( GL_TEXTURE_2D_ARRAY , mipmaplevels , i_f , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h , _count );
+		for( uint i = 0; i < _count; i++ )
+		{
+			glTexSubImage3D( GL_TEXTURE_2D_ARRAY , 0 , 0 , 0 , i , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h , 1 , s , GL_UNSIGNED_BYTE , _imgs[ i ].__data.get() );
+		}
+		glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
+		glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
+		glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MIN_FILTER , GL_LINEAR_MIPMAP_LINEAR );
+		glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_S , GL_REPEAT );
+		glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_T , GL_REPEAT );
 	}
-	glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
-	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MIN_FILTER , GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_S , GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_T , GL_REPEAT );
 	_imgs.reset();
 }
 RTextureHolderGL::~RTextureHolderGL()

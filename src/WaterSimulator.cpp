@@ -13,17 +13,16 @@ void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 	_screen_quad.init();
 	ito( 2 )
 	{
-		_water_surf_pass[ i ].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false } );
-		_water_bump_pass[ i ].init( { { dest , dest } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
+		_water_surf_pass[ i ].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false , 4 } );
+		_water_bump_pass[ i ].init( { { dest , dest } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 4 } );
 		_water_bump_pass[ i ].bind();
 		_water_bump_pass[ i ].clear();
 	}
-	_final.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false } );
-	_water_plane_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , depth_buf , false , false } );
+	_final.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 4 } );
+	_water_plane_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , depth_buf , false , false , 4 } );
 	_water_plane_prog.init( "res/shaders/glsl/water_plane_fragment.glsl" , "res/shaders/glsl/water_plane_vertex.glsl" );
 	_water_bump_prog.init( "res/shaders/glsl/water_bump_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
 	_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );
-	_wave_normal.init( std::move( RFileLoader::loadImage( "res/view/images/wave.png" ) ) , 1 );
 }
 void WaterSimulator::bindToRenderPlane( bool nt )
 {
@@ -33,7 +32,7 @@ void WaterSimulator::bindToRenderPlane( bool nt )
 	{
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D , _final.getBufferPtr( 0 ) );
-		glUniform1i( RGB_NORMAL_A_HEIGHT_TEXTURE , 0 );
+		glUniform1i( 3 , 0 );
 		glUniform1i( PASSID , 0 );
 		glUniform4f( 4 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
 	} else
@@ -104,10 +103,6 @@ void WaterSimulator::calc( float time , float dt )
 	glBindTexture( GL_TEXTURE_2D , _water_bump_pass[ cur ].getBufferPtr( 0 ) );
 	glUniform1i( 3 , 0 );
 
-	glActiveTexture( GL_TEXTURE0 + 1 );
-	glBindTexture( GL_TEXTURE_2D , _wave_normal.getTexture() );
-	glUniform1i( 5 , 1 );
-
 	_screen_quad.draw();
 }
 uint WaterSimulator::getBumpTexture() const
@@ -133,7 +128,6 @@ void WaterSimulator::release()
 		_water_bump_pass[ i ].release();
 	}
 	_screen_quad.release();
-	_wave_normal.release();
 	_water_plane_prog.release();
 	_water_bump_prog.release();
 	_water_plane_pass.release();

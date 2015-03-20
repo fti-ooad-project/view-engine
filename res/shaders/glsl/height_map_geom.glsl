@@ -6,14 +6,17 @@ layout(triangles, invocations = 1) in;
 layout(triangle_strip, max_vertices = 4) out;
 in PerVertex pvte[];
 out PerVertex pvo;
-/*vec2 grad( const vec2 tx , const float r , sampler2D Buffer_tex )
+vec3 norm( const vec2 tx , const float r , sampler2D Buffer_tex )
 {
-    float hx1 = texture2D( Buffer_tex , tx - vec2( r , 0.0 ) ).z;
-    float hx2 = texture2D( Buffer_tex , tx + vec2( r , 0.0 ) ).z;
-    float hy1 = texture2D( Buffer_tex , tx - vec2( 0.0 , r ) ).z;
-    float hy2 = texture2D( Buffer_tex , tx + vec2( 0.0 , r ) ).z;
-	return vec2( hx2 - hx1 , hy2 - hy1 );
-}*/
+    vec3 o = vec3( 0.0 );
+    float k = 1.01;
+    float hx1 = texture2D( Buffer_tex , tx - vec2( r * 0.5 , 0.0 ) ).x;
+    float hx2 = texture2D( Buffer_tex , tx + vec2( r * 0.5 , 0.0 ) ).x;
+    float hy1 = texture2D( Buffer_tex , tx - vec2( 0.0 , r * 0.5 ) ).x;
+    float hy2 = texture2D( Buffer_tex , tx + vec2( 0.0 , r * 0.5 ) ).x;
+
+    return normalize( cross( vec3( vec2( r , 0.0 ) , k * ( hx2 - hx1 ) )  , vec3( vec2( 0.0 , r ) , k * ( hy2 - hy1 ) ) ) );
+}
 vec3 getColwithWater( vec3 p0 , vec3 p1 , float waterlevel )
 {
 	vec3 v = p1 - p0;
@@ -29,7 +32,7 @@ void main()
 	vec4 pos[3];
 	for( int i = 0; i < 3; ++i )
 	{
-		float h = texture( RGB_NORMAL_A_HEIGHT_TEXTURE , pvte[i].texcoord , 0.0 ).x;
+		float h = texture( BUFFER1 , pvte[i].texcoord , 0.0 ).x;
 		height[i] = ( h - 0.5 ) * 100;
 		pos[i] = vec4( gl_in[i].gl_Position.xy , height[i] , 1.0 );
 		if( height[i] > WATERZ )
@@ -47,6 +50,7 @@ void main()
 				EmitVertex();
 			break;
 			case PASS_WATER:
+			{
 				if( n != 3 )
 				{
 					if( p == 1 )
@@ -80,26 +84,15 @@ void main()
 						EmitVertex();
 					}
 				}
+			}
 			break;
 			case PASS_NORMAL:
 				gl_Position = MAT4X4_VIEWPROJ[0] * pos[i];
-				pvo.normal = pvte[i].normal;
+				float camdist = distance( pos[i].xyz , CAM_POS );
+				pvo.normal = norm( pvte[i].texcoord , mix( DR , 10.0 * DR , max( 0.0 , min( 1.0 , camdist / 30.0 - 1.0 ) ) ) , BUFFER1 );
 				pvo.depth = gl_Position.z;
 				pvo.texcoord = pvte[i].texcoord * 100.0;
-				/*vec2 grad = grad( pvo.texcoord , DR , RGB_NORMAL_A_HEIGHT_TEXTURE );
-
-				float lg = length( grad );
-				if( lg < 0.0001 )
-				{
-					pvo.normal = vec3( 0.0 , 0.0 , 1.0 );
-				}else
-				{
-					vec2 dir = normalize( grad );
-					float h2 = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvte[i].texcoord + dir * DR ).x;
-					vec3 pn = normalize( vec3( dir , ( h2 - h ) * 100 ) );
-					pvo.normal = - normalize( cross( cross( vec3( 0.0 , 0.0 , 1.0 ) , pn ) , pn ) );
-				}*/
-				
+				pvo.position = pos[i].xyz;
 				EmitVertex();
 			break;
 			default:
