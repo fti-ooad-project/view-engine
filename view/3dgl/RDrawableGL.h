@@ -39,7 +39,7 @@ public:
 };
 class RComplexPolyMeshGL : public RPolyMeshGL
 {
-private:
+public:
 	RTextureHolderGL __textures;
 	RBoneAnimInTexHolderGL __anim_intex;
 	std::unique_ptr< RPolymesh > __mesh;

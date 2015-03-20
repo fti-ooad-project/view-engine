@@ -19,5 +19,6 @@ struct RPassDesc
 	int _foreight_depth_buffer;
 	bool _depth_buffer_access;
 	bool _cubemap;
+	int _component_number;
 };
 #endif /* __RPASSDESC_H__ */
