@@ -74,6 +74,7 @@ void WaterSimulator::clearPlaneBuf()
 }
 void WaterSimulator::calc( float time , float dt )
 {
+	//_height += sinf( time ) * 0.1f;
 	_water_bump_prog.bind();
 	glUniform1f( 6 , time );
 	glUniform1f( 8 , dt );

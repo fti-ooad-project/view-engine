@@ -92,7 +92,7 @@ void main()
 	vec4 wY = unpack4i( wbuf.y );
 	vec3 WATERK = vec3( 1.0 );
 	vec2 screenspacewaternorm = vec2( 0.0 );
-	float wdepth = 0.0;
+	float wdepth = 1000.0;
 	if( wY.w > 0.0 )
 	{
 		screenspacewaternorm = 2.0 * wY.xy - 1.0;
@@ -118,7 +118,10 @@ void main()
 	if( buf0.x == 0 )
 	{
 		vec3 v = camRay( CAM , frag_pos );
-		out_data += WATERK * env( v , 0.0 );
+		out_data += 
+		//mix( 
+		env( v , 0.0 );
+		//, vec3( 0.6 , 0.7 , 0.75 ) , 0.5 );
 		return;
 		//discard;
 	}
@@ -129,5 +132,6 @@ void main()
 	vec3 l = light( pos , norm , CAM.pos , specw ) * mix( vec3( 1.0 ) , diff.xyz , specw.x );
 	float ao = ssao( BUFFER0 , vec4( norm , depth ) , distfragpos , 0.8 );
 	out_data += WATERK * diff.xyz * ao * l;
+	//out_data = mix( out_data , vec3( 0.6 , 0.7 , 0.75 ) , 1.0 - exp( - min( depth , wdepth ) * 0.01 ) );
 	//vec3( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );
 }

@@ -89,7 +89,7 @@ void main()
 			case PASS_NORMAL:
 				gl_Position = MAT4X4_VIEWPROJ[0] * pos[i];
 				float camdist = distance( pos[i].xyz , CAM_POS );
-				pvo.normal = norm( pvte[i].texcoord , mix( DR , 10.0 * DR , max( 0.0 , min( 1.0 , camdist / 30.0 - 1.0 ) ) ) , BUFFER1 );
+				pvo.normal = norm( pvte[i].texcoord , mix( DR , 10.0 * DR , max( 0.0 , min( 1.0 , camdist / 30.0 - 2.0 ) ) ) , BUFFER1 );
 				pvo.depth = gl_Position.z;
 				pvo.texcoord = pvte[i].texcoord * 100.0;
 				pvo.position = pos[i].xyz;

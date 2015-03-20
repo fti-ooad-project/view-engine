@@ -5,18 +5,8 @@
 #define RENDERWATER
 void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info , bool tess )
 {
-	if( false )
-	{
-		glPolygonMode( GL_FRONT_AND_BACK , GL_LINE );
-		glLineWidth( 0.01f );
-	}
 	ito( _view.size() )
 	{
-		/*if( i == 1 )
-		 {
-		 glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-		 glLineWidth( 0.01f );
-		 }*/
 		if( tess )
 		{
 			if( info[ 2 * i ].size() > 0 )
@@ -42,9 +32,6 @@ void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info , boo
 			}
 		}
 	}
-	//_heigmap_drawl.bindToDraw();
-	//_heigmap_drawl.draw( true );
-	//glPolygonMode( GL_FRONT_AND_BACK , GL_FILL );
 }
 void DrawlerDeffered::drawInstancesToLight( std::vector<InstanceInfo> const *info )
 {
@@ -74,6 +61,8 @@ void DrawlerDeffered::init()
 						);
 	_process_prog.init( "res/shaders/glsl/pass1_frag.glsl" ,
 						"res/shaders/glsl/screen_quad_vertex.glsl" , "" );
+	_water_prog.init( "res/shaders/glsl/pass2_frag.glsl" ,
+						  "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
 	_view.push_back(
 		std::move(
 		std::unique_ptr < RPolyMeshGL
@@ -107,6 +96,8 @@ void DrawlerDeffered::init()
 						false , false , 4 } );
 	_process_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
 						false , false , 3 } );
+	_water_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
+						  false , false , 3 } );
 	_env_tex.init(
 		std::move(
 		RFileLoader::loadImage(
@@ -154,7 +145,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 		f3 pos = f3( m( 3 , 0 ) , m( 3 , 1 ) , m( 3 , 2 ) );
 
 		float cam_dist = pos.g_dist( scene->getCamera()->_v3pos )
-			/ _view[ ins._view[ 0 ].view_id ]->_size.z() * 2.0f;
+			/ _view[ ins._view[ 0 ].view_id ]->_size.z();
 		if( cam_dist < 3.0f )
 			data[ ins._view[ 0 ].view_id * 2 ].push_back( { 0.2f * time , 0.0f ,
 			cam_dist , 1.0f , 0 , 0 , 0 , m } );
@@ -194,8 +185,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	glUniform1i( PASSID , PASS_NORMAL );
 	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
 	//
-	
-	drawInstances( data.get() , false );
+	//glPolygonMode( GL_FRONT_AND_BACK , GL_LINE );
+	drawInstances( data.get() , true );
+	//glPolygonMode( GL_FRONT_AND_BACK , GL_FILL );
 	//glDisable( GL_CULL_FACE );
 	HeightMapDrawler::getSingleton()->bindToDraw();
 	glUniform1i( PASSID , PASS_NORMAL );
@@ -340,7 +332,26 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	}
 #endif
 	_screen_quad.draw();
-	return _process_pass.getBufferPtr( 0 );
+
+	_water_pass.clear();
+	_water_pass.bind();
+	_water_prog.bind();
+	glActiveTexture( GL_TEXTURE0 );
+	glBindTexture( GL_TEXTURE_2D , _process_pass.getBufferPtr( 0 ) );
+	glUniform1i( 0 , 0 );
+	glActiveTexture( GL_TEXTURE0 + 1 );
+	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getPlaneBuffer() );
+	glUniform1i( 2 , 1 );
+	glActiveTexture( GL_TEXTURE0 + 2 );
+	glBindTexture( GL_TEXTURE_2D , _storage_pass.getBufferPtr( 0 ) );
+	glUniform1i( 1 , 2 );
+	glUniform3fv( 3 , 1 , scene->getCamera()->_v3pos.getArray() );
+	glUniform3fv( 3 + 1 , 1 , scene->getCamera()->_v3local_z.getArray() );
+	glUniform3fv( 3 + 2 , 1 , cx.getArray() );
+	glUniform3fv( 3 + 3 , 1 , cy.getArray() );
+	_screen_quad.draw();
+
+	return _water_pass.getBufferPtr( 0 );
 }
 DrawlerDeffered *DrawlerDeffered::getSingleton()
 {
