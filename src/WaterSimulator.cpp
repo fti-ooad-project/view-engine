@@ -28,7 +28,6 @@ void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 void WaterSimulator::bindToRenderPlane( bool nt )
 {
 	_water_plane_pass.bind();
-	_water_plane_pass.clear( false );
 	_water_plane_prog.bind();
 	if( nt )
 	{
@@ -40,7 +39,8 @@ void WaterSimulator::bindToRenderPlane( bool nt )
 	} else
 	{
 		glUniform1i( PASSID , 1 );
-		glUniform4f( 4 , 0.0f , 0.0f , _height , 500.0f );
+		//glUniform4f( 4 , 0.0f , 0.0f , _height , 500.0f );
+		glUniform4f( 4 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
 	}
 }
 void WaterSimulator::bindToRenderSurface()
@@ -52,12 +52,26 @@ void WaterSimulator::bindToRenderSurface()
 }
 void WaterSimulator::switchSurfaceBuffer( f3 const & cam_pos )
 {
-	_last_cam_pos = _cam_pos;
-	_cam_pos = cam_pos;
-	water_viewproj = RCamera::orthographic( f3( cam_pos.x() , cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
+	if( !_caminit )
+	{
+		_caminit = true;
+		_last_cam_pos = cam_pos;
+		_cam_pos = cam_pos;
+		water_viewproj = RCamera::orthographic( f3( _cam_pos.x() , _cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
+	}
+	if( cam_pos.g_dist2( _cam_pos ) > 300.0f )
+	{
+		_last_cam_pos = _cam_pos;
+		_cam_pos = cam_pos;
+		water_viewproj = RCamera::orthographic( f3( _cam_pos.x() , _cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
+	}
 	last = cur;
 	cur = ( cur + 1 ) % 2;
 	_water_surf_pass[ cur ].clear();
+}
+void WaterSimulator::clearPlaneBuf()
+{
+	_water_plane_pass.clear( false );
 }
 void WaterSimulator::calc( float time , float dt )
 {
@@ -71,6 +85,7 @@ void WaterSimulator::calc( float time , float dt )
 	glBindTexture( GL_TEXTURE_2D , _water_surf_pass[ last ].getBufferPtr( 0 ) );
 	glUniform1i( 1 , 1 );
 	_water_bump_pass[ cur ].bind();
+	_water_bump_pass[ cur ].clear();
 	glActiveTexture( GL_TEXTURE0 + 2 );
 	glBindTexture( GL_TEXTURE_2D , _water_bump_pass[ last ].getBufferPtr( 0 ) );
 	glUniform1i( 3 , 2 );
@@ -80,6 +95,7 @@ void WaterSimulator::calc( float time , float dt )
 	//dr.print();
 	glUniform2f( 7 , -dr.x() , dr.y() );
 	_screen_quad.draw();
+	_last_cam_pos = _cam_pos;
 	_final.bind();
 	_final.clear();
 	glUniform1i( 2 , 1 );
@@ -89,7 +105,7 @@ void WaterSimulator::calc( float time , float dt )
 	glUniform1i( 3 , 0 );
 
 	glActiveTexture( GL_TEXTURE0 + 1 );
-	glBindTexture( GL_TEXTURE_2D , _wave_normal.getTexture( 0 ) );
+	glBindTexture( GL_TEXTURE_2D , _wave_normal.getTexture() );
 	glUniform1i( 5 , 1 );
 
 	_screen_quad.draw();

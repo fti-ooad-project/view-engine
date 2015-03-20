@@ -13,7 +13,7 @@ private:
 	RGraphicProgrammGL _prog;
 	RGraphicProgrammGL _lightprog;
 	RTextureHolderGL _htex;
-	RTextureHolderGL _dirttex;
+	RTextureHolderGL _diff;
 	RTextureHolderGL _normtex;
 	HeightMapDrawler() = default;
 public:

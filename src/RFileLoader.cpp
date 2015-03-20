@@ -2,20 +2,29 @@
 #include "../view/3dgl/RVertex.h"
 std::unique_ptr< RImage[] > RFileLoader::loadImage( std::string filename )
 {
+	return std::move( loadImage( &filename , 1 ) );
+}
+std::unique_ptr< RImage[] > RFileLoader::loadImage( std::string *filename , int count )
+{
 	if( !IMG_Init( IMG_INIT_PNG | IMG_INIT_JPG ) )
 	{
 		printf( "SDL_image could not initialize! SDL_image Error: %s\n" , IMG_GetError() );
 	}
-	SDL_Surface *loadedSurface = IMG_Load( filename.c_str() );
-	if( loadedSurface == NULL )
+	std::unique_ptr< RImage[] > out( new RImage[ count ] );
+	ito( count )
 	{
-		printf( "Unable to load image %s! SDL_image Error: %s\n" , filename.c_str() , IMG_GetError() );
+		SDL_Surface *loadedSurface = IMG_Load( filename[ i ].c_str() );
+		//IMG_LoadPNG_RW
+		if( loadedSurface == NULL )
+		{
+			printf( "Unable to load image %s! SDL_image Error: %s\n" , filename[ i ].c_str() , IMG_GetError() );
+		}
+		uint bpp = loadedSurface->pitch / loadedSurface->w;
+		std::unique_ptr< char[] > data( new char[ loadedSurface->h * loadedSurface->w * bpp ] );
+		memcpy( data.get() , loadedSurface->pixels , loadedSurface->h * loadedSurface->w * bpp );
+		out[ i ] = std::move( RImage( std::move( data ) , RSize{ uint( loadedSurface->w ) , uint( loadedSurface->h ) } , bpp ) );
+		SDL_FreeSurface( loadedSurface );
 	}
-	uint bpp = loadedSurface->pitch / loadedSurface->w;
-	std::unique_ptr< char[] > data( new char[ loadedSurface->h * loadedSurface->w * bpp ] );
-	memcpy( data.get() , loadedSurface->pixels , loadedSurface->h * loadedSurface->w * bpp );
-	std::unique_ptr< RImage[] > out( new RImage[ 1 ]{ { std::move( data ) , RSize{ uint( loadedSurface->w ) , uint( loadedSurface->h ) } , bpp } } );
-	SDL_FreeSurface( loadedSurface );
 	IMG_Quit();
 	return std::move( out );
 }
@@ -41,6 +50,7 @@ std::unique_ptr< RPolymesh > RFileLoader::loadPolyMeshBin( std::shared_ptr< std:
 	switch( type )
 	{
 		case RPolymesh::RPolyMeshType::RBONED_PMESH:
+		{
 			out->_flags |= ShaderMask::MASK_ANIMATED;
 			stream->read( ( char * )&out->_v3size , sizeof( float ) * 3 );
 			stream->read( ( char * )&out->_bone_count , sizeof( unsigned int ) );
@@ -52,8 +62,10 @@ std::unique_ptr< RPolymesh > RFileLoader::loadPolyMeshBin( std::shared_ptr< std:
 			//ito( out->_vertex_count )
 			//	PRINT( reinterpret_cast< RVertex* >( out->__vertices.get() )[i].BoneIndex[0] );
 			stream->read( ( char * )out->__indeces.get() , sizeof( unsigned short )*out->_face_count * 3 );
-			break;
+		}
+		break;
 		case RPolymesh::RPolyMeshType::RSTATIC_PMESH:
+		{
 			stream->read( ( char * )&out->_v3size , sizeof( float ) * 3 );
 			stream->read( ( char * )&out->_face_count , sizeof( unsigned int ) );
 			stream->read( ( char * )&out->_vertex_count , sizeof( unsigned int ) );
@@ -61,7 +73,8 @@ std::unique_ptr< RPolymesh > RFileLoader::loadPolyMeshBin( std::shared_ptr< std:
 			out->__indeces = std::move( std::unique_ptr< unsigned short[] >( new unsigned short[ out->_face_count * 3 ] ) );
 			stream->read( ( char * )out->__vertices.get() , sizeof( RStaticVertex )*out->_vertex_count );
 			stream->read( ( char * )out->__indeces.get() , sizeof( unsigned short )*out->_face_count * 3 );
-			break;
+		}
+		break;
 	}
 	int img_count;
 	stream->read( ( char* )&img_count , sizeof( int ) );
@@ -75,7 +88,19 @@ std::unique_ptr< RPolymesh > RFileLoader::loadPolyMeshBin( std::shared_ptr< std:
 			| ShaderMask::MASK_TEXTURED_NOR
 			| ShaderMask::MASK_TEXTURED_SPE
 			;
-		out->_textures = std::move( loadImageBin( stream , img_count ) );
+		std::unique_ptr< std::string[] > fnames( new std::string[ img_count ] );
+		ito( img_count )
+		{
+			int l;
+			stream->read( ( char* )&l , sizeof( int ) );
+			std::unique_ptr< char[] > fname( new char[ l + 1 ] );
+			stream->read( fname.get() , sizeof( char ) * l );
+			fname.get()[ l ] = '\0';
+			std::string respath( "res/view/images/" );
+			respath.append( std::string( fname.get() ) );
+			fnames[ i ] = std::move( std::string( respath ) );
+		}
+		out->_textures = std::move( loadImage( fnames.get() , img_count ) );
 	}
 	if( type != RPolymesh::RPolyMeshType::RBONED_PMESH )
 	{
@@ -186,14 +211,14 @@ std::string RFileLoader::loadFile( std::string filename )
 		std::cout << filename << " is loaded with " << out.str().size() << " char\n";
 #endif
 		return out.str();
-	} else
+		} else
 	{
 #ifdef RLOGERROR
 		std::cout << filename << " is not loaded\n";
 #endif
 		throw std::logic_error( filename );
 	}
-}
+	}
 std::string RFileLoader::append( std::string const &t1 , std::string const &t2 )
 {
 	char *temp = new char( t1.length() + t2.length() );

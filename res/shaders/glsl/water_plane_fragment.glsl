@@ -2,6 +2,7 @@
 $include uniforms.glsl
 $include include.glsl
 $include pervertex.glsl
+layout( location = 4 ) uniform vec4 pos_size;
 in PerVertex pvo;
 out uvec4 buf;
 
@@ -11,11 +12,15 @@ void main()
 	switch( PASSID )
 	{
 	case 0:
-		vec4 ne = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvo.texcoord.xy );
+		vec4 ne = vec4( 0.0 );//texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvo.texcoord.xy );
 		vec4 bump = -1.0 + ne * 2.0;
-		newnormal = normalize( pvo.normal * bump.z-pvo.binormal * bump.y + pvo.tangentnormal * bump.x );// , 
+		newnormal = mix( vec3( 0.0 , 0.0 , 1.0 ) ,
+		normalize( pvo.normal * bump.z-pvo.binormal * bump.y + pvo.tangentnormal * bump.x ) ,
+		1.0 - min( 1.0 , distance( pvo.position.xy , pos_size.xy ) / 100.0 ) );// , 
 	break;
 	case 1:
+		//if( distance( pvo.position.xy , pos_size.xy ) < 100.0 )
+		//	discard;
 		newnormal = vec3( 0.0 , 0.0 , 1.0 );
 	break;
 	}

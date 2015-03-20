@@ -87,7 +87,7 @@ public:
 	void drawPanel( f2 const &pos , f2 const &size , float border )
 	{
 		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D , _field_tex.getTexture( 0 ) );
+		glBindTexture( GL_TEXTURE_2D , _field_tex.getTexture() );
 		glUniform1i( 0 , 0 );
 		glUniform4f( 6 , 0.0f , 0.0f , 1.0f , 1.0f );
 		glUniform1f( 7 , 0.0 );
@@ -259,7 +259,7 @@ public:
 	}
 	uint getTextureId() const
 	{
-		return _text_texture.getTexture( 0 );
+		return _text_texture.getTexture();
 	}
 	void release()
 	{
@@ -329,7 +329,7 @@ public:
 		_panel_shader.bind();
 		glUniform4f( 5 , pos.x() , pos.y() , size.x() , size.y() );
 		glActiveTexture( GL_TEXTURE0 + 1 );
-		glBindTexture( GL_TEXTURE_2D , _panel_texture.getTexture( 0 ) );
+		glBindTexture( GL_TEXTURE_2D , _panel_texture.getTexture() );
 		glUniform1i( 1 , 1 );
 		PanelDrawler::getSingleton()->drawPanel( pos , size , 0.05f );
 		glDisable( GL_BLEND );

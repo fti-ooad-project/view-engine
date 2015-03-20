@@ -130,5 +130,6 @@ int main()
 		//ls->_dir = -ls->_pos.g_norm();
 		//ls->_dir.print();
 	}
+	return 0;
 }
 

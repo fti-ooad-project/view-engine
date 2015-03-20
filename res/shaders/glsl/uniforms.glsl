@@ -1,7 +1,5 @@
 layout( location = 0 ) uniform int FLAGS;
-layout( location = 1 ) uniform sampler2D  RGB_NORMAL_A_HEIGHT_TEXTURE;
-layout( location = 2 ) uniform sampler2D  RGB_DIFFUSE_A_OPACITY_TEXTURE;
-layout( location = 3 ) uniform sampler2D  RGB_SPECULAR_A_GLOSSNESS_TEXTURE;
+layout( location = 1 ) uniform sampler2DArray  TEXTURE_ARRAY;
 
 layout( location = 6 ) uniform mat4 MAT4X4_MODEL;
 

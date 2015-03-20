@@ -1,6 +1,5 @@
 c:\dev\c++\viewengine\debug\vc140.pdb
 c:\dev\c++\viewengine\debug\vc140.idb
-c:\dev\c++\viewengine\debug\base.obj
 c:\dev\c++\viewengine\debug\drawablegl.obj
 c:\dev\c++\viewengine\debug\drawlerdeffered.obj
 c:\dev\c++\viewengine\debug\heighmapdrawler.obj
@@ -16,11 +15,16 @@ c:\dev\c++\viewengine\debug\rtextures.obj
 c:\dev\c++\viewengine\debug\rtexturesgl.obj
 c:\dev\c++\viewengine\debug\rviewmodels.obj
 c:\dev\c++\viewengine\debug\rviewmodelsgl.obj
+c:\dev\c++\viewengine\debug\selectiondrawler.obj
 c:\dev\c++\viewengine\debug\vec.obj
 c:\dev\c++\viewengine\debug\viewenginegl.obj
 c:\dev\c++\viewengine\debug\watersimulator.obj
 c:\dev\c++\viewengine\debug\windowgl.obj
 c:\dev\c++\viewengine\debug\main.obj
+c:\dev\c++\viewengine\debug\base.obj
+c:\dev\c++\viewengine\debug\blurer.obj
+c:\dev\c++\viewengine\debug\viewengine.ilk
+c:\dev\c++\viewengine\debug\viewengine.exe
 c:\dev\c++\viewengine\debug\viewengine.pdb
 c:\dev\c++\viewengine\debug\viewengine.tlog\cl.command.1.tlog
 c:\dev\c++\viewengine\debug\viewengine.tlog\cl.read.1.tlog

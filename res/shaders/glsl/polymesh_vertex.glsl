@@ -19,9 +19,9 @@ void main()
 		m = MAT4X4_MODEL;
 		pvte.dist_to_cam = DIST_TO_CAM;
 	}
-
+/*
 	$include anim_func.glsl
-
+*/
 	p = m * p;
 	vec4 pos =vec4( p.xyz , 1.0 );
 	switch( PASSID )

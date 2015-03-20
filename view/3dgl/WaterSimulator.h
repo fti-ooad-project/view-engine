@@ -15,6 +15,7 @@ private:
 	RPolyQuadGL _screen_quad;
 	f2 _size;
 	float _height;
+	bool _caminit = false;
 	f3 _last_cam_pos , _cam_pos;
 	uint dest;
 	WaterSimulator() = default;
@@ -26,6 +27,7 @@ public:
 	void bindToRenderPlane( bool );
 	void bindToRenderSurface();
 	void switchSurfaceBuffer( f3 const & );
+	void clearPlaneBuf();
 	void calc( float , float );
 	uint getBumpTexture() const;
 	uint getPlaneBuffer() const;

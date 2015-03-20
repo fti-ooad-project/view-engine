@@ -4,9 +4,9 @@ uint RTextureHolderGL::getCount() const
 {
 	return _count;
 }
-uint RTextureHolderGL::getTexture( uint i ) const
+uint RTextureHolderGL::getTexture() const
 {
-	return __texture_pointer_array[ i ];
+	return _texture_array_pointer;// __texture_pointer_array[ i ];
 }
 RTextureHolderGL::RTextureHolderGL( RTextureHolderGL &&a )
 {
@@ -19,13 +19,14 @@ void RTextureHolderGL::operator=( RTextureHolderGL &&a )
 	setInited( a.isInited() );
 	if( a.isInited() )
 	{
-		__tex_size = std::move( a.__tex_size );
-		__texture_pointer_array = std::move( a.__texture_pointer_array );
+		_texture_array_pointer = a._texture_array_pointer;
+		a._texture_array_pointer = 0;
+		//__texture_pointer_array = std::move( a.__texture_pointer_array );
 	} else
 	{
-		__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[ _count ] ) );
+		//__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[ _count ] ) );
 		_imgs = std::move( a._imgs );
-		__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[ _count ] ) );
+		//__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[ _count ] ) );
 	}
 	a.release();
 }
@@ -33,8 +34,7 @@ RTextureHolderGL::RTextureHolderGL( std::unique_ptr< RImage[] > &&imgs , int cou
 {
 	_count = count;
 	_imgs = std::move( imgs );
-	__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[ _count ] ) );
-	__tex_size = std::move( std::unique_ptr< RSize[] >( new RSize[ _count ] ) );
+	//__texture_pointer_array = std::move( std::unique_ptr< uint[] >( new uint[ _count ] ) );
 }
 void RTextureHolderGL::init( std::unique_ptr< RImage[] > &&imgs , int count )
 {
@@ -56,32 +56,32 @@ void RTextureHolderGL::init()
 		}
 		return out;
 	};
-	glGenTextures( _count , __texture_pointer_array.get() );
+	uint i_f , s;
+	switch( _imgs[ 0 ]._bytes_per_pixel )
+	{
+		case 4:
+			i_f = GL_RGBA8;
+			s = GL_RGBA;
+		break;
+		case 3:
+			i_f = GL_RGB8;
+			s = GL_RGB;
+		break;
+		case 1:
+			i_f = GL_LUMINANCE;
+			s = GL_LUMINANCE;
+		break;
+	}
+	/*glGenTextures( _count , __texture_pointer_array.get() );
 	for( uint i = 0; i < _count; i++ )
 	{
 		__tex_size[ i ] = _imgs[ i ]._size;
 		glBindTexture( GL_TEXTURE_2D , __texture_pointer_array[ i ] );
 		//glEnable( GL_TEXTURE_2D );
 		const int mipmaplevels = std::min( 10 , pow2( std::min( __tex_size[ i ]._w , __tex_size[ i ]._h ) ) );
-		uint i_f , s;
+		
 		LOG << _imgs[ i ]._bytes_per_pixel;
-		switch( _imgs[ i ]._bytes_per_pixel )
-		{
-			case 4:
-			{
-				i_f = GL_RGBA8;
-				s = GL_RGBA;
-			}
-			break;
-			case 3:
-				i_f = GL_RGB8;
-				s = GL_RGB;
-				break;
-			case 1:
-				i_f = GL_LUMINANCE;
-				s = GL_LUMINANCE;
-				break;
-		}
+		
 		glTexStorage2D( GL_TEXTURE_2D , mipmaplevels , i_f , _imgs[ i ]._size._w , _imgs[ i ]._size._h );
 		glTexSubImage2D( GL_TEXTURE_2D , 0 , 0 , 0 , _imgs[ i ]._size._w , _imgs[ i ]._size._h ,
 						 s , GL_UNSIGNED_BYTE , _imgs[ i ].__data.get() );
@@ -93,11 +93,25 @@ void RTextureHolderGL::init()
 		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_S ,
 						 GL_REPEAT );
 		glTexParameteri( GL_TEXTURE_2D , GL_TEXTURE_WRAP_T ,
-						 GL_REPEAT );
-#ifdef RLOG
-		LOG << "_________________________\n" << "texture generated:id:" << __texture_pointer_array[ i ] << "\n";
-#endif
+						 GL_REPEAT )
+						 #ifdef RLOG
+						 LOG << "_________________________\n" << "texture generated:id:" << __texture_pointer_array[ i ] << "\n";
+						 #endif
+	}*/
+	const int mipmaplevels = std::min( 10 , pow2( std::min( _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h ) ) ) - 1;
+	glGenTextures( 1 , &_texture_array_pointer );
+	glBindTexture( GL_TEXTURE_2D_ARRAY , _texture_array_pointer );
+	glTexStorage3D( GL_TEXTURE_2D_ARRAY , mipmaplevels , i_f , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h , _count );
+	for( uint i = 0; i < _count; i++ )
+	{
+		//auto tmp = &_imgs[ i ];
+		glTexSubImage3D( GL_TEXTURE_2D_ARRAY , 0 , 0 , 0 , 0 , _imgs[ 0 ]._size._w , _imgs[ 0 ]._size._h , i , s , GL_UNSIGNED_BYTE , _imgs[ i ].__data.get() );
 	}
+	glGenerateMipmap( GL_TEXTURE_2D_ARRAY );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MAG_FILTER , GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_MIN_FILTER , GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_S , GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D_ARRAY , GL_TEXTURE_WRAP_T , GL_REPEAT );
 	_imgs.reset();
 }
 RTextureHolderGL::~RTextureHolderGL()
@@ -108,10 +122,10 @@ void RTextureHolderGL::release()
 {
 	if( !isInited() ) return;
 	setInited( false );
-	if( __texture_pointer_array )
+	/*if( __texture_pointer_array )
 	{
 		glDeleteTextures( _count , __texture_pointer_array.get() );
 		__texture_pointer_array.reset();
-	}
-	__tex_size.reset();
+	}*/glDeleteTextures( 1 , &_texture_array_pointer );
+	//__tex_size.reset();
 }

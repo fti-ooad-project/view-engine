@@ -44,9 +44,10 @@ void RWindowGL::run()
 	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE , 16 );
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER , 1 );
 	glEnable( GL_DEPTH_TEST );
-	glDepthFunc( GL_LESS );
+	glDepthFunc( GL_LEQUAL );
 	glPatchParameteri( GL_PATCH_VERTICES , 3 );
 	SDL_GL_SetSwapInterval( 1 );
+	glDisable( GL_BLEND );
 	while( _working )
 	{
 		SDL_Event e;

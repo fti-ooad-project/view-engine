@@ -219,23 +219,17 @@ void RComplexPolyMeshGL::bindRes( InstanceInfo const &stat ) const
 	int c = 0;
 	if( ( _flags & ShaderMask::MASK_TEXTURED ) && __textures.getCount() )
 	{
-		ito( __textures.getCount() )///<=3
-		{
-			glActiveTexture( GL_TEXTURE0 + c );
-			glBindTexture( GL_TEXTURE_2D , __textures.getTexture( i ) );
-			glUniform1i( 1 + i , c );///1-layout of the first texture in shader
-			c++;
-		}
+		glActiveTexture( GL_TEXTURE0 + c );
+		glBindTexture( GL_TEXTURE_2D_ARRAY , __textures.getTexture() );
+		glUniform1i( 1 , c );///1-layout of the first texture in shader
+		c++;
 	}
 	if( ( _flags & ShaderMask::MASK_OWN_ANIMATED ) && __anim_intex.getCount() )
 	{
-		ito( __anim_intex.getCount() )
-		{
-			glActiveTexture( GL_TEXTURE0 + c );
-			glBindTexture( GL_TEXTURE_2D , __anim_intex.getTexture( i ) );
-			glUniform1i( 20 + i , c );///20-location of anim texture
-			c++;
-		}
+		glActiveTexture( GL_TEXTURE0 + c );
+		glBindTexture( GL_TEXTURE_2D_ARRAY , __anim_intex.getBufferPtr() );
+		glUniform1i( 20 , c );///20-location of anim texture
+		c++;
 	}
 }
 void RPolyQuadGL::init()

@@ -4,13 +4,13 @@ void HeightMapDrawler::bindToDraw()
 {
 	_prog.bind();
 	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D , _htex.getTexture( 0 ) );
+	glBindTexture( GL_TEXTURE_2D , _htex.getTexture() );
 	glUniform1i( 1 , 0 );
 	glActiveTexture( GL_TEXTURE0 + 1 );
-	glBindTexture( GL_TEXTURE_2D , _dirttex.getTexture( 0 ) );
+	glBindTexture( GL_TEXTURE_2D , _diff.getTexture() );
 	glUniform1i( 2 , 1 );
 	glActiveTexture( GL_TEXTURE0 + 2 );
-	glBindTexture( GL_TEXTURE_2D , _normtex.getTexture( 0 ) );
+	glBindTexture( GL_TEXTURE_2D , _normtex.getTexture() );
 	glUniform1i( 3 , 2 );
 	glUniform1i( FLAGS , ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_DIF );
 	glUniform4f( 4 , _pos.x() , _pos.y() , _size.x() , _size.y() );
@@ -31,8 +31,9 @@ void HeightMapDrawler::init( uint density , f2 const &size , f2 const &bpos )
 	_pos = bpos;
 	_htex = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/h.png" ) ) , 1 ) );
 	_htex.init();
-	_dirttex = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/ground.jpg" ) ) , 1 ) );
-	_dirttex.init();
+	std::string difftexname[] = { "res/view/images/dirtnorm.jpg" , "res/view/images/grass.jpg" , "res/view/images/snowdirt.jpg" };
+	_diff = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( difftexname , 3 ) ) , 3 ) );
+	_diff.init();
 	_normtex = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/dirtnorm.jpg" ) ) , 1 ) );
 	_normtex.init();
 	std::unique_ptr< f3[] > pos( new f3[ density * density ] );
@@ -79,7 +80,7 @@ void HeightMapDrawler::release()
 	_prog.release();
 	_lightprog.release();
 	_htex.release();
-	_dirttex.release();
+	_diff.release();
 	_normtex.release();
 }
 HeightMapDrawler *HeightMapDrawler::getSingleton()

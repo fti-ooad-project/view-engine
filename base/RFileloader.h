@@ -24,13 +24,14 @@
 class RFileLoader
 {
 public:
-	static std::unique_ptr< RImage[] > loadImage(std::string filename);
-	static std::unique_ptr< RImage[] > loadImageBin(std::shared_ptr< std::ifstream > stream, int count);
-	static std::unique_ptr< RPolymesh > loadPolyMeshBin(std::shared_ptr< std::ifstream > stream, int type);
-	static uint binarize(uint c);
-	static std::unique_ptr< RAnimationset[] > loadAnimSetBin(std::shared_ptr< std::ifstream > stream, int count);
-	static std::shared_ptr< std::ifstream > getStream(const char *filename);
-	static std::string loadFile(std::string filename);
-	static std::string append(std::string const &t1, std::string const &t2);
+	static std::unique_ptr< RImage[] > loadImage( std::string*  , int );
+	static std::unique_ptr< RImage[] > loadImage( std::string );
+	static std::unique_ptr< RImage[] > loadImageBin( std::shared_ptr< std::ifstream > stream , int count );
+	static std::unique_ptr< RPolymesh > loadPolyMeshBin( std::shared_ptr< std::ifstream > stream , int type );
+	static uint binarize( uint c );
+	static std::unique_ptr< RAnimationset[] > loadAnimSetBin( std::shared_ptr< std::ifstream > stream , int count );
+	static std::shared_ptr< std::ifstream > getStream( const char *filename );
+	static std::string loadFile( std::string filename );
+	static std::string append( std::string const &t1 , std::string const &t2 );
 };
 #endif //__RFileloader_H__

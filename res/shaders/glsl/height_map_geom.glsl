@@ -29,7 +29,7 @@ void main()
 	vec4 pos[3];
 	for( int i = 0; i < 3; ++i )
 	{
-		float h = texture2D( RGB_NORMAL_A_HEIGHT_TEXTURE , pvte[i].texcoord ).x;
+		float h = texture( RGB_NORMAL_A_HEIGHT_TEXTURE , pvte[i].texcoord , 0.0 ).x;
 		height[i] = ( h - 0.5 ) * 100;
 		pos[i] = vec4( gl_in[i].gl_Position.xy , height[i] , 1.0 );
 		if( height[i] > WATERZ )

@@ -102,19 +102,20 @@ void DrawlerDeffered::init()
 		//_light_cube_passes[i].init( { { 512 , 512 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , true } );
 	}
 	_storage_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 ,
-						false , false } );
+						false , false , 4 } );
 	_process_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
-						false , false } );
+						false , false , 3 } );
 	_env_tex.init(
 		std::move(
 		RFileLoader::loadImage(
 		"res/view/images/sky2.jpg" ) ) ,
 		1 );
-	HeightMapDrawler::getSingleton()->init( 100 , f2( 500.0f , 500.0f ) ,
-											f2( 0.0f , 0.0f ) );
+	//HeightMapDrawler::getSingleton()->init( 100 , f2( 500.0f , 500.0f ) , f2( 0.0f , 0.0f ) );
+#ifdef RENDERWATER
 	WaterSimulator::getSingleton()->init( _storage_pass.getDepthBufferPtr() ,
 										  f2( 100.0f , 100.0f ) , -20.0f );
-	SelectionDrawler::getSingleton()->init();
+#endif
+	//SelectionDrawler::getSingleton()->init();
 }
 void DrawlerDeffered::release()
 {
@@ -129,9 +130,11 @@ void DrawlerDeffered::release()
 	_view.clear();
 	_screen_quad.release();
 	_env_tex.release();
-	HeightMapDrawler::getSingleton()->release();
+	//HeightMapDrawler::getSingleton()->release();
+#ifdef RENDERWATER
 	WaterSimulator::getSingleton()->release();
-	SelectionDrawler::getSingleton()->release();
+#endif
+	//SelectionDrawler::getSingleton()->release();
 }
 uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 {
@@ -190,14 +193,14 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
 	//
 	
-	drawInstances( data.get() , true );
+	drawInstances( data.get() , false );
 	//glDisable( GL_CULL_FACE );
-	HeightMapDrawler::getSingleton()->bindToDraw();
+	/*HeightMapDrawler::getSingleton()->bindToDraw();
 	glUniform1i( PASSID , PASS_NORMAL );
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
 						scene->getCamera()->getViewProj().getPtr() );
 	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
-	HeightMapDrawler::getSingleton()->draw( true );
+	HeightMapDrawler::getSingleton()->draw( true );*/
 
 	//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	/*f4x4 model( 100.0f );
@@ -213,6 +216,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	 _screen_quad.draw();*/
 
 	 ///lights
+#ifdef LIGHTCASTERS
 	int caster_dir_light_count = 0 , caster_omni_light_count = 0;
 	RLightState const *caster_dir_light_ptr[ LIGHT_CASTER_COUNT ] ,
 		*caster_omni_light_ptr[ LIGHT_CASTER_COUNT ];
@@ -251,8 +255,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 			caster_omni_light_count++;
 		}
 	}
-
+#endif
 	///water
+#ifdef RENDERWATER
 	glDisable( GL_CULL_FACE );
 	//_storage_tess_prog.bind();
 	//WaterSimulator::getSingleton()->bindToRenderSurface();
@@ -271,21 +276,19 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	WaterSimulator::getSingleton()->bindToRenderSurface();
 	glUniform1i( PASSID , PASS_WATER );
 	HeightMapDrawler::getSingleton()->draw( true );
-	glEnable( GL_CULL_FACE );
+	//glEnable( GL_CULL_FACE );
 	//HeightMapDrawler::getSingleton()->draw( false );
 	WaterSimulator::getSingleton()->calc( _cur_time , _dt );
 	//_pass[0].bind();
-	glDepthFunc( GL_LESS );
-	
+	WaterSimulator::getSingleton()->clearPlaneBuf();
 	WaterSimulator::getSingleton()->bindToRenderPlane( false );
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );
-	//_screen_quad.draw();
-	WaterSimulator::getSingleton()->bindToRenderPlane( true );
-	
 	_screen_quad.draw();
-	glDepthFunc( GL_LEQUAL );
+	//glDepthFunc( GL_LESS );
+	WaterSimulator::getSingleton()->bindToRenderPlane( true );
+	_screen_quad.draw();
 	///
-
+#endif
 	///
 	uint select_buff = SelectionDrawler::getSingleton()->process( _storage_pass.getBufferPtr( 0 ) );
 	///
@@ -297,17 +300,20 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	glBindTexture( GL_TEXTURE_2D , _storage_pass.getBufferPtr( 0 ) );
 	glUniform1i( BUFFER0 , 0 );
 	glActiveTexture( GL_TEXTURE0 + 1 );
-	glBindTexture( GL_TEXTURE_2D , _env_tex.getTexture( 0 ) );
+	glBindTexture( GL_TEXTURE_2D , _env_tex.getTexture() );
 	glUniform1i( ENV , 1 );
 	glActiveTexture( GL_TEXTURE0 + 2 );
 	glBindTexture( GL_TEXTURE_2D , select_buff );
 	glUniform1i( 2 , 2 );
-	///
+	glActiveTexture( GL_TEXTURE0 + 3 );
+	glBindTexture( GL_TEXTURE_2D , dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() )->__textures.getTexture() );
+	glUniform1i( 3 , 3 );
+#ifdef RENDERWATER
 	glActiveTexture( GL_TEXTURE0 + 4 );
 	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getPlaneBuffer() );
 	glUniform1i( 11 , 4 );
-	///
-	glUniform1i( DLIGHT_COUNT , caster_dir_light_count );
+#endif
+
 	glUniform3fv( CAM , 1 , scene->getCamera()->_v3pos.getArray() );
 	glUniform3fv( CAM + 1 , 1 , scene->getCamera()->_v3local_z.getArray() );
 	f3 cx = scene->getCamera()->_v3local_x
@@ -316,6 +322,8 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 		* tanf( scene->getCamera()->_fovy / 2.0f );
 	glUniform3fv( CAM + 2 , 1 , cx.getArray() );
 	glUniform3fv( CAM + 3 , 1 , cy.getArray() );
+#ifdef LIGHTCASTERS
+	glUniform1i( DLIGHT_COUNT , caster_dir_light_count );
 	ito( caster_dir_light_count )
 	{
 		int lid = DLIGHT + i * 4;
@@ -327,6 +335,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 		glBindTexture( GL_TEXTURE_2D , _light_dir_passes[ i ].getDepthBufferPtr() );
 		glUniform1i( lid + 3 , 5 + i );
 	}
+#endif
 	_screen_quad.draw();
 	return _process_pass.getBufferPtr( 0 );
 }
