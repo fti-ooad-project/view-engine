@@ -76,6 +76,18 @@ vec3 fog()
 	}
 	return out_c / COUNT * 0.5 * vec3( 0.5 , 0.6 , 0.7 );
 }
+vec3 reflectWater( float start_depth , vec3 wnorm , vec3 wpos )
+{
+	const int COUNT = 10;
+	const float DIST = 5.0;
+	float dest_depth = dot( wpos + DIST * reflect( normalize( wpos - CAM.pos ) , wnorm ) , CAM.look ) - CAM.pos * CAM.look;
+	float DDEPTH = ( dest_depth - start_depth ) / COUNT;
+	for( int i = 1; i < COUNT + 1; i++ )
+	{
+		float idepth = start_depth + i * DDEPTH;
+		
+	}
+}
 void main()
 {
 	//out_data = uvec3( texture( WATER_BUFFER3 , vec2( frag_pos ) ).xyz ); return;
