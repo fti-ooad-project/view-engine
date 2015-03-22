@@ -15,11 +15,11 @@ struct Camera
 	vec3 left;
 	vec3 up;
 };
-vec3 posFromZ( vec2 tx , float z , struct Camera cam )
+vec3 posFromZ( vec2 tx , float z , Camera cam )
 {
 	return ( cam.look + cam.left * tx.x + cam.up * tx.y ) * z + cam.pos;
 }
-vec3 camRay( struct Camera cam , vec2 tx )
+vec3 camRay( Camera cam , vec2 tx )
 {
 	vec2 p2 = vec2( 2.0 , 2.0 ) * tx - 1.0;
 	return normalize( cam.look + cam.left * p2.x + cam.up * p2.y );

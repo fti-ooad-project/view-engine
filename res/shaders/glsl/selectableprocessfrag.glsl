@@ -7,6 +7,7 @@ in vec2 frag_pos;
 out vec4 out_data;
 void main()
 {
+	out_data = vec4( 0.0 );
 	if( pass == 0 )
 	{
 		uvec4 buf = texture( BUFFER , frag_pos );

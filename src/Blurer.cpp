@@ -29,7 +29,7 @@ void Blurer::init()
 	setInited( true );
 	_process_prog.init( "res/shaders/glsl/blur.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
 	_process_pass.init( { { 512 , 512 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
-						false , false } );
+						false , false , 4 } );
 	_screen_quad.init();
 }
 void Blurer::release()

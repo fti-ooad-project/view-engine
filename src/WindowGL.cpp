@@ -46,7 +46,7 @@ void RWindowGL::run()
 	glEnable( GL_DEPTH_TEST );
 	glDepthFunc( GL_LEQUAL );
 	glPatchParameteri( GL_PATCH_VERTICES , 3 );
-	SDL_GL_SetSwapInterval( 1 );
+	SDL_GL_SetSwapInterval( 0 );
 	glDisable( GL_BLEND );
 	while( _working )
 	{

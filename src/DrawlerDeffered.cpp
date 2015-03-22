@@ -108,7 +108,7 @@ void DrawlerDeffered::init()
 	WaterSimulator::getSingleton()->init( _storage_pass.getDepthBufferPtr() ,
 										  f2( 100.0f , 100.0f ) , -20.0f );
 #endif
-	//SelectionDrawler::getSingleton()->init();
+	SelectionDrawler::getSingleton()->init();
 }
 void DrawlerDeffered::release()
 {
@@ -127,7 +127,7 @@ void DrawlerDeffered::release()
 #ifdef RENDERWATER
 	WaterSimulator::getSingleton()->release();
 #endif
-	//SelectionDrawler::getSingleton()->release();
+	SelectionDrawler::getSingleton()->release();
 }
 uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 {
@@ -155,13 +155,14 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 				_view[ ins._view[ 0 ].view_id ]->_size.z() ) )
 				continue;
 
-			if( cam_dist < 50.0f )
+			if( cam_dist < 15.0f )
 				data[ ins._view[ 0 ].view_id * 2 + 1 ].push_back(
 			{ 0.2f * time , 0.0f , cam_dist , 1.0f , 0 , 0 , 0 , m } );
 			else
 			{
 				f4x4 mn = m;
-				mn.scale( _view[ ins._view[ 0 ].view_id ]->_size );
+				mn.scale( _view[ ins._view[ 0 ].view_id ]->_size * 0.5f );
+				mn( 3 , 2 ) += _view[ ins._view[ 0 ].view_id ]->_size.z() * 0.5f;
 				data[ 3 ].push_back( { 0.2f * time , 0.0f , cam_dist , 1.0f , 0 , 0 , 0 , mn } );
 			}
 		}
@@ -285,7 +286,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	///
 #endif
 	///
-	//uint select_buff = SelectionDrawler::getSingleton()->process( _storage_pass.getBufferPtr( 0 ) );
+	uint select_buff = SelectionDrawler::getSingleton()->process( _storage_pass.getBufferPtr( 0 ) );
 	///
 
 	_process_pass.clear();
@@ -297,9 +298,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	glActiveTexture( GL_TEXTURE0 + 1 );
 	glBindTexture( GL_TEXTURE_2D , _env_tex.getTexture() );
 	glUniform1i( ENV , 1 );
-	/*glActiveTexture( GL_TEXTURE0 + 2 );
+	glActiveTexture( GL_TEXTURE0 + 2 );
 	glBindTexture( GL_TEXTURE_2D , select_buff );
-	glUniform1i( 2 , 2 );*/
+	glUniform1i( 2 , 2 );
 	/*glActiveTexture( GL_TEXTURE0 + 3 );
 	glBindTexture( GL_TEXTURE_2D_ARRAY , dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() )->__anim_intex.getBufferPtr() );
 	glUniform1i( 3 , 3 );*/
@@ -311,12 +312,11 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 
 	glUniform3fv( CAM , 1 , scene->getCamera()->_v3pos.getArray() );
 	glUniform3fv( CAM + 1 , 1 , scene->getCamera()->_v3local_z.getArray() );
-	f3 cx = scene->getCamera()->_v3local_x
-		* tanf( scene->getCamera()->_fovx / 2.0f );
-	f3 cy = scene->getCamera()->_v3local_y
-		* tanf( scene->getCamera()->_fovy / 2.0f );
+	f3 cx = scene->getCamera()->_v3local_x * tanf( scene->getCamera()->_fovx / 2.0f );
+	f3 cy = scene->getCamera()->_v3local_y * tanf( scene->getCamera()->_fovy / 2.0f );
 	glUniform3fv( CAM + 2 , 1 , cx.getArray() );
 	glUniform3fv( CAM + 3 , 1 , cy.getArray() );
+	glUniformMatrix4fv( 3 , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );
 #ifdef LIGHTCASTERS
 	glUniform1i( DLIGHT_COUNT , caster_dir_light_count );
 	ito( caster_dir_light_count )
@@ -324,8 +324,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 		int lid = DLIGHT + i * 4;
 		glUniform3fv( lid , 1 , caster_dir_light_ptr[ i ]->_dir.getArray() );
 		glUniform4fv( lid + 1 , 1 , caster_dir_light_ptr[ i ]->_colori.getArray() );
-		glUniformMatrix4fv( lid + 2 , 1 , GL_FALSE ,
-							dir_lights_viewproj[ i ].getPtr() );
+		glUniformMatrix4fv( lid + 2 , 1 , GL_FALSE , dir_lights_viewproj[ i ].getPtr() );
 		glActiveTexture( GL_TEXTURE0 + 5 + i );
 		glBindTexture( GL_TEXTURE_2D , _light_dir_passes[ i ].getDepthBufferPtr() );
 		glUniform1i( lid + 3 , 5 + i );
@@ -333,7 +332,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 #endif
 	_screen_quad.draw();
 
-	_water_pass.clear();
+	/*_water_pass.clear();
 	_water_pass.bind();
 	_water_prog.bind();
 	glActiveTexture( GL_TEXTURE0 );
@@ -349,9 +348,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	glUniform3fv( 3 + 1 , 1 , scene->getCamera()->_v3local_z.getArray() );
 	glUniform3fv( 3 + 2 , 1 , cx.getArray() );
 	glUniform3fv( 3 + 3 , 1 , cy.getArray() );
-	_screen_quad.draw();
+	_screen_quad.draw();*/
 
-	return _water_pass.getBufferPtr( 0 );
+	return _process_pass.getBufferPtr( 0 );
 }
 DrawlerDeffered *DrawlerDeffered::getSingleton()
 {
