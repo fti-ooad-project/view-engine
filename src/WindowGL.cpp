@@ -7,6 +7,7 @@ void RWindowGL::init(FrameFunc func, ReleaseFunc relf, REventer *eventer)
 		return;
 	_screen_width = 512;
 	_screen_height = 512;
+	_mwheel = 0.0f;
 	setInited(true);
 	_func = func;
 	_relf = relf;
@@ -46,7 +47,7 @@ void RWindowGL::run()
 	glEnable( GL_DEPTH_TEST );
 	glDepthFunc( GL_LEQUAL );
 	glPatchParameteri( GL_PATCH_VERTICES , 3 );
-	SDL_GL_SetSwapInterval( 0 );
+	SDL_GL_SetSwapInterval( 1 );
 	glDisable( GL_BLEND );
 	while( _working )
 	{
@@ -95,10 +96,14 @@ void RWindowGL::run()
 					updateMouse();
 				}
 				break;
+				case SDL_MOUSEWHEEL:
+				{
+					_mwheel += float( e.wheel.y );
+				}
+				break;
 			}
 		}
-		_eventer->update( this->__key_state , this->__mouse_state , &this->__mouse_pos );
-		_eventer->call();
+		_eventer->update( this->__key_state , this->__mouse_state , &this->__mouse_pos , _mwheel );
 		SDL_GetWindowSize( mainwindow , &_screen_width , &_screen_height );
 		_func( _screen_width , _screen_height );
 		updateTime();

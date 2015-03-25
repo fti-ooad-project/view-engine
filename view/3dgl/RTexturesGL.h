@@ -18,6 +18,7 @@ public:
 	RTextureHolderGL( std::unique_ptr< RImage[] > && , int );
 	void init( std::unique_ptr< RImage[] > && , int );
 	void init();
+	void setRepeat( bool );
 	~RTextureHolderGL();
 	void release();
 };

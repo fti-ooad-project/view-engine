@@ -81,16 +81,14 @@ public:
 			glBindBuffer( GL_ARRAY_BUFFER_ARB , 0 );
 			glBindBuffer( GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
 		}
-		_field_tex = std::move( RTextureHolderGL( RFileLoader::loadImage( "res/view/images/gui_field.jpg" ) , 1 ) );
-		_field_tex.init();
+		_field_tex.init( std::move( RFileLoader::loadImage( "res/view/images/gui_field.png" ) ) , 1 );
+		_field_tex.setRepeat( false );
 	}
 	void drawPanel( f2 const &pos , f2 const &size , float border )
 	{
 		glActiveTexture( GL_TEXTURE0 );
 		glBindTexture( GL_TEXTURE_2D , _field_tex.getTexture() );
 		glUniform1i( 0 , 0 );
-		glUniform4f( 6 , 0.0f , 0.0f , 1.0f , 1.0f );
-		glUniform1f( 7 , 0.0 );
 
 		f2 npos = pos;
 		f2 nsize = size - f2( border , border );
@@ -281,6 +279,50 @@ private:
 	RPolyQuadGL _gui_quad;
 	char chars_per_row = 16;
 	std::vector< GUITextHolderGL > _text_vector;
+	uint genText( std::string const text )
+	{
+		for( int i = 0; i < _text_vector.size(); i ++ )
+		{
+			if( _text_vector[ i ]._text == text )
+				return i;
+		}
+		GUITextHolderGL temp;
+		temp.init( text );
+		_text_vector.push_back( std::move( temp ) );
+		return _text_vector.size() - 1;
+	}
+	void drawText( uint i , f2 const &pos , f2 const &size )
+	{
+		glEnable( GL_BLEND );
+		glDisable( GL_DEPTH_TEST );
+		glBlendFunc( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
+		//glBlendEquation( GL_FUNC_ADD );
+		_text_shader.bind();
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D , _text_vector[ i ].getTextureId() );
+		glUniform1i( 0 , 0 );
+		glUniform4f( 5 , pos.x() , pos.y() , size.x() , size.y() );
+		_gui_quad.draw();
+		glDisable( GL_BLEND );
+		glEnable( GL_DEPTH_TEST );
+	}
+	void drawPanel( f2 const &pos , f2 const &size , int level )
+	{
+		glEnable( GL_BLEND );
+		glDisable( GL_DEPTH_TEST );
+		glBlendFunc( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
+		//glBlendFunc( GL_SRC_COLOR , GL_ONE_MINUS_SRC_COLOR );
+		//glBlendEquation( GL_FUNC_ADD );
+		_panel_shader.bind();
+		glUniform4f( 5 , pos.x() , pos.y() , size.x() , size.y() );
+		glActiveTexture( GL_TEXTURE0 + 1 );
+		glBindTexture( GL_TEXTURE_2D , _panel_texture.getTexture() );
+		glUniform1i( 1 , 1 );
+		//_gui_quad.draw();
+		PanelDrawler::getSingleton()->drawPanel( pos , size , 0.02f );
+		glDisable( GL_BLEND );
+		glEnable( GL_DEPTH_TEST );
+	}
 public:
 	GUIRendererGL( const GUIRendererGL & ) = delete;
 	void operator=( const GUIRendererGL & ) = delete;
@@ -294,46 +336,15 @@ public:
 		_gui_quad.init();
 		_text_shader.init( "res/shaders/glsl/text_shader.glsl" , "res/shaders/glsl/gui_vertex.glsl" );
 		_panel_shader.init( "res/shaders/glsl/panel_shader.glsl" , "res/shaders/glsl/gui_vertex.glsl" );
-		_panel_texture = std::move( RTextureHolderGL( RFileLoader::loadImage( "res/view/images/panel.jpg" ) , 1 ) );
-		_panel_texture.init();
+		_panel_texture.init( std::move( RFileLoader::loadImage( "res/view/images/panel.png" ) ) , 1 );
+		_panel_texture.setRepeat( false );
 	}
-	uint genText( std::string const text )
+	void renderLayout( int w , int h , GUILayout const *layout )
 	{
-		GUITextHolderGL temp;
-		temp.init( text );
-		_text_vector.push_back( std::move( temp ) );
-		return _text_vector.size() - 1;
-	}
-	void drawText( uint i , f2 const &pos , f2 const &size )
-	{
-		glEnable( GL_BLEND );
-		glDisable( GL_DEPTH_TEST );
-		glBlendFunc( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA );
-		glBlendEquation( GL_FUNC_ADD );
-		_text_shader.bind();
-		glActiveTexture( GL_TEXTURE0 );
-		glBindTexture( GL_TEXTURE_2D , _text_vector[i].getTextureId() );
-		glUniform1i( 0 , 0 );
-		glUniform4f( 5 , pos.x() , pos.y() , size.x() , size.y() );
-		glUniform4f( 6 , 0.0f , 0.0f , 1.0f , 1.0f );
-		_gui_quad.draw();
-		glDisable( GL_BLEND );
-		glEnable( GL_DEPTH_TEST );
-	}
-	void drawPanel( f2 const &pos , f2 const &size , int level )
-	{
-		glEnable( GL_BLEND );
-		glDisable( GL_DEPTH_TEST );
-		glBlendFunc( GL_SRC_COLOR , GL_ONE_MINUS_SRC_COLOR );
-		glBlendEquation( GL_FUNC_ADD );
-		_panel_shader.bind();
-		glUniform4f( 5 , pos.x() , pos.y() , size.x() , size.y() );
-		glActiveTexture( GL_TEXTURE0 + 1 );
-		glBindTexture( GL_TEXTURE_2D , _panel_texture.getTexture() );
-		glUniform1i( 1 , 1 );
-		PanelDrawler::getSingleton()->drawPanel( pos , size , 0.05f );
-		glDisable( GL_BLEND );
-		glEnable( GL_DEPTH_TEST );
+		for( auto const &i : layout->getElemVec() )
+		{
+			drawPanel( f2( 0.0f , 0.0f ) , i->_size_pix / f2( w , h ) , i->_type );
+		}
 	}
 	void release()
 	{

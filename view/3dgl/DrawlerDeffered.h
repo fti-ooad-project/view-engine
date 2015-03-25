@@ -18,15 +18,17 @@ private:
 	RDrawPassGL _light_dir_passes[LIGHT_CASTER_COUNT];
 	//RDrawPassGL _light_cube_passes[LIGHT_CASTER_COUNT];
 	RDrawPassGL  _storage_pass , _process_pass , _water_pass;
-	RTextureHolderGL _env_tex;
+	RTextureHolderGL _env_tex , _lightk_tex;
 	RPolyQuadGL _screen_quad;
 	void drawInstances( std::vector< InstanceInfo > const * , bool tess = false );
 	void drawInstancesToLight( std::vector< InstanceInfo > const * );
+	void updateRes();
+	u2 _resolution;
 public:
 	std::vector< std::unique_ptr< RPolyMeshGL > > _view;
 	void init();
 	void release();
-	uint draw( Scene3D const * , int , int );
+	uint draw( Scene3D const * , u2 const & );
 	static DrawlerDeffered *getSingleton();
 };
 #endif // DRAWLERDEFFERED_HPP

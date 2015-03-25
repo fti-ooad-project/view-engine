@@ -43,6 +43,15 @@ void DrawlerDeffered::drawInstancesToLight( std::vector<InstanceInfo> const *inf
 			_view[ i ]->drawInstanced( info[ i * 2 + 1 ] );
 	}
 }
+void DrawlerDeffered::updateRes()
+{
+	_storage_pass.release();
+	_storage_pass.init( RPassDesc{ { _resolution.x() , _resolution.y() } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false , 4 } );
+	_process_pass.release();
+	_process_pass.init( RPassDesc{ { _resolution.x() , _resolution.y() } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 3 } );
+	_water_pass.release();
+	_water_pass.init( RPassDesc{ { _resolution.x() , _resolution.y() } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 3 } );
+}
 void DrawlerDeffered::init()
 {
 	if( isInited() )
@@ -81,6 +90,7 @@ void DrawlerDeffered::init()
 		RFileLoader::getStream(
 		"res/view/polymodels/tower.bin" ) ,
 		RPolymesh::RPolyMeshType::RSTATIC_PMESH ) ) ) ) );
+
 	for( std::unique_ptr<RPolyMeshGL> &i : _view )
 	{
 		i->init();
@@ -98,15 +108,13 @@ void DrawlerDeffered::init()
 						false , false , 3 } );
 	_water_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
 						  false , false , 3 } );
-	_env_tex.init(
-		std::move(
-		RFileLoader::loadImage(
-		"res/view/images/sky2.jpg" ) ) ,
-		1 );
+	_env_tex.init( std::move( RFileLoader::loadImage( "res/view/images/sky2.jpg" ) ) , 1 );
+	_lightk_tex.init( std::move( RFileLoader::loadImage( "res/view/images/lightk.png" ) ) , 1 );
+	_lightk_tex.setRepeat( false );
 	HeightMapDrawler::getSingleton()->init( 100 , f2( 500.0f , 500.0f ) , f2( 0.0f , 0.0f ) );
 #ifdef RENDERWATER
 	WaterSimulator::getSingleton()->init( _storage_pass.getDepthBufferPtr() ,
-										  f2( 100.0f , 100.0f ) , -20.0f );
+										  f2( 100.0f , 100.0f ) , 0.0f );
 #endif
 	SelectionDrawler::getSingleton()->init();
 }
@@ -129,16 +137,21 @@ void DrawlerDeffered::release()
 #endif
 	SelectionDrawler::getSingleton()->release();
 }
-uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
+uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 {
 	updateTime();
 	if( !scene )
 		return 0;
+	//if( _resolution != res )
+	//{
+	_resolution = res;
+		scene->getCamera()->setAspect(
+			float( _resolution.x() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f ,
+			float( _resolution.y() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f );
+	//}
+
 	std::unique_ptr< std::vector<InstanceInfo>[] > data( new std::vector<InstanceInfo>[ _view.size() * 2 ] );
 	float time = _cur_time - floorf( _cur_time );
-	scene->getCamera()->setAspect(
-		float( w ) / std::max( w , h ) * 3.14f * 0.5f ,
-		float( h ) / std::max( w , h ) * 3.14f * 0.5f );
 	for( RDrawableState const &ins : scene->getStateVector() )
 	{
 		f4x4 const &m = ins._view[ 0 ].model;
@@ -301,6 +314,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , int w , int h )
 	glActiveTexture( GL_TEXTURE0 + 2 );
 	glBindTexture( GL_TEXTURE_2D , select_buff );
 	glUniform1i( 2 , 2 );
+	glActiveTexture( GL_TEXTURE0 + 3 );
+	glBindTexture( GL_TEXTURE_2D , _lightk_tex.getTexture() );
+	glUniform1i( 8 , 3 );
 	/*glActiveTexture( GL_TEXTURE0 + 3 );
 	glBindTexture( GL_TEXTURE_2D_ARRAY , dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() )->__anim_intex.getBufferPtr() );
 	glUniform1i( 3 , 3 );*/

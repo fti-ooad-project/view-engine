@@ -56,9 +56,9 @@ void RGraphicProgrammGL::init( std::string frag_file , std::string vert_file , s
 			glGetProgramiv( _m_program , GL_INFO_LOG_LENGTH , &length );
 			std::string log( length , ' ' );
 			glGetProgramInfoLog( _m_program , length , &length , &log[ 0 ] );
-#ifdef RLOG
+//#ifdef RLOG
 			LOG << "shader link error: " << log << "\n";
-#endif
+//#endif
 			throw std::logic_error( "shader linkage error" );
 			return;
 		}

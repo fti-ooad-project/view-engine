@@ -18,9 +18,9 @@ public:
 public:
 	Scene3DGL();
 	ViewTypes::RDrawInstancePTR genInstance() override;
-	RDrawableState *getInstanceStatePtr(ViewTypes::RDrawInstancePTR i) override;
+	RDrawableState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR i ) override;
 	ViewTypes::RLightSourcePTR genLight() override;
-	RLightState *getLightStatePtr(ViewTypes::RLightSourcePTR i) override;
+	RLightState *getLightStatePtr( ViewTypes::RLightSourcePTR i ) override;
 	RCamera const *getCamera() const override;
 	RCamera *getCamera() override;
 	std::vector< RDrawableState > const &getStateVector() const override;
@@ -34,14 +34,18 @@ private:
 	bool _tess = true;
 	RPolyQuadGL _screen_quad;
 	REventer _eventer;
-	//GUIRendererGL _guimng;
+	GUIRendererGL _guimng;
+	GUILayout const *_gui = nullptr;
 	bool _inited = false;
+	u2 _resolution;
 	Scene3DGL const *_cur_scene = nullptr;
-	void tick(int w, int h);
+	void tick( int w , int h );
+	void updateRes();
 public:
 	void init() override;
-	void setScene(Scene3D const *scene) override;
-	void setGUI(GUILayout const *gui) override;
+	void setScene( Scene3D const * ) override;
+	void setResolution( int , int ) override;
+	void setGUI( GUILayout const * ) override;
 	Scene3D *genScene() override;
 	REventer *getEventer() override;
 	void release() override;

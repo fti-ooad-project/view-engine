@@ -26,7 +26,7 @@ void HeightMapDrawler::init( uint density , f2 const &size , f2 const &bpos )
 	setInited( true );
 	_size = size;
 	_pos = bpos;
-	_hmap = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/h.png" ) ) , 1 ) );
+	_hmap = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/terrain.png" ) ) , 1 ) );
 	_hmap.init();
 	std::string difftexname[] = { "res/view/images/dirtnorm.jpg" , "res/view/images/grass.jpg" , "res/view/images/snowdirt.jpg" , "res/view/images/ground.jpg" };
 	_textures = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( difftexname , 4 ) ) , 4 ) );

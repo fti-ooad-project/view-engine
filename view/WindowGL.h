@@ -16,6 +16,7 @@ protected:
 	keystate	__key_state[MAX_KEY];
 	keystate	__mouse_state[3];
 	f2		__mouse_pos;
+	float _mwheel;
 	int _screen_width , _screen_height;
 	SDL_Window *mainwindow;
 	FrameFunc _func;

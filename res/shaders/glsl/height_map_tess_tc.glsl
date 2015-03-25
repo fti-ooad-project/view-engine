@@ -9,13 +9,9 @@ out PerVertex pvtc[];
 float getTessLevel( float dist )
 {
 	dist *= 0.5;
-	if( dist < 50.0 )
-		return 20.0;
-	if( dist < 100.0 )
-		return 5.0;
-	if( dist < 150.0 )
-		return 2.0;
-	return 1.0;
+	//if( dist < 50.0 )
+	//	return 20.0;
+	return min( 20.0 , max( 1.0 , 50.0 * exp( -dist * 0.02 ) ) );
 }
 void main()
 {

@@ -21,12 +21,13 @@ void main()
 			vec3 grass = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 1.0 ) ).xyz;
 			vec3 snow = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 2.0 ) ).xyz;
 			vec3 dirt = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 3.0 ) ).xyz;
-			if( pvo.position.z < 0.0 )
+			const float lvl = 20.0;
+			if( pvo.position.z < lvl )
 			{
-				diff = mix( dirt , grass , min( 1.0 , max( 0.0 , 1.0 + pvo.position.z / 30.0 ) ) );
+				diff = mix( grass , dirt , min( 1.0 , abs( lvl - pvo.position.z ) / 30.0 ) );
 			}else
 			{
-				diff = mix( grass , snow , min( 1.0 , max( 0.0 , pvo.position.z / 30.0 ) ) );
+				diff = mix( grass , snow , min( 1.0 , abs( pvo.position.z - lvl ) / 30.0 ) );
 			}
 			
 			/*vec4 ne = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 0.0 ) );

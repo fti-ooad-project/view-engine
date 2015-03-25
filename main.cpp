@@ -43,7 +43,7 @@ int main()
 		scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 0 , temp } );
 	}
 	f4x4 temp( 1.0f );
-	temp( 3 , 2 ) = -20.0f;
+	temp( 3 , 2 ) = 0.0f;
 	temp( 3 , 0 ) = 20.0f;
 	scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 2 , temp } );
 
@@ -55,10 +55,11 @@ int main()
 	ls->_type = RLightSourceType::RLIGHT_DIRECT;
 	auto cam = scene->getCamera();
 	cam->lookAt( f3( 0.0f , -2.0f , 2.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
-	f3 cam_pos , cam_lookat;
+	f3 cam_pos( 0.0f ) , cam_lookat;
 	float X = 0.0f;
+	float cam_z = 10.0f;
 	eventer->addKeyFunc(
-		[ cam , ls , &X ]( const KeyStates &cs , const float dt )
+		[ cam , ls , &X , &cam_pos , &cam_z ]( const KeyStates &cs , const float dt )
 	{
 		const float dr = dt * 30.0f;
 		f3 v( 0.0f , 0.0f , 0.0f );
@@ -67,20 +68,26 @@ int main()
 		else
 			_tri = false;*/
 		if( cs.__cur_states[ SDL_SCANCODE_W ] )//w
-			v += cam->_v3local_z;
+			v += //f3( 1.0f , 1.0f , 0.0f );// 
+		cam->_v3local_z;
 		if( cs.__cur_states[ SDL_SCANCODE_S ] )//s
-			v -= cam->_v3local_z;
+			v -= //f3( 1.0f , 1.0f , 0.0f );//
+		cam->_v3local_z;
 		if( cs.__cur_states[ SDL_SCANCODE_A ] )//a
-			v -= cam->_v3local_x;
+			v -= //f3( 1.0f , -1.0f , 0.0f );//
+		cam->_v3local_x;
 		if( cs.__cur_states[ SDL_SCANCODE_D ] )//d
-			v += cam->_v3local_x;
+			v += //f3( 1.0f , -1.0f , 0.0f );//
+		cam->_v3local_x;
 		if( cs.__cur_states[ SDL_SCANCODE_X ] )//d
 			X += dr * 0.3f;
 		if( cs.__cur_states[ SDL_SCANCODE_Z ] )//d
 			X -= dr * 0.3f;
 		float l = v.g_mod();
 		if( l != 0.0f )
-			cam->pos( cam->_v3pos + v.g_norm() * dr );
+			cam->_v3pos += v.g_norm() * dr;
+			//cam_pos += v.g_norm() * dr;
+			//cam->lookAt( cam_pos + cam_z * f3( -1.0f , -1.0f , 1.0f ) , cam_pos - 100.0f * f3( -1.0f , -1.0f , 1.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
 		cam->calc();
 		f2 clook = f2( cam->_v3local_z.x() , cam->_v3local_z.y() ).g_norm() * 10.0f;
 
@@ -91,15 +98,16 @@ int main()
 	}
 	);
 	eventer->addMouseFunc(
-		[ cam ]( const MouseStates &cs , const float dt )
+		[ cam , &cam_z ]( const MouseStates &cs , const float dt )
 	{
 		static float phi( 1.4f );
 		static float theta( 1.4f );
 		constexpr float delta = 0.01f;
 		const float dr = dt * 50.0f;
-
+		cam_z += ( cs._mwheel - cs._mwheel_last ) * 1.0f;
 		if( cs.__cur_states[ 0 ] )
 		{
+			
 			//MARK
 			phi += dr * ( cs.__cur_pos.x() - cs.__last_pos.x() );
 			theta += dr * ( cs.__cur_pos.y() - cs.__last_pos.y() );
@@ -109,9 +117,20 @@ int main()
 			cam->angle( phi , theta );
 			cam->calc();
 		}
+
 	}
 	);
 	//cam->lookAt( cam_pos , cam_lookat , f3( 0.0f , 0.0f , 1.0f ) );
+	
+	std::shared_ptr< GUILayout > main_menu( new GUILayout() );
+	std::shared_ptr< GUIElem > button1( new GUIElem() );
+	button1->_floatX = GUIElem::GUIFloat::CENTER;
+	button1->_floatY = GUIElem::GUIFloat::CENTER;
+	button1->_layer = 0;
+	button1->_size_pix = f2( 140.0f , 50.0f );
+	button1->_visible = true;
+	main_menu->addElem( button1 );
+	engine->setGUI( main_menu.get() );
 	engine->setScene( scene );
 	//std::cout << "Hello World!" << std::endl;
 	float t = 0.0f;
@@ -124,7 +143,7 @@ int main()
 		{
 			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 0 ) = 2.0f * ( x - 5.0f ) + X;
 			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 1 ) = 2.0f * ( y + 5.0f );
-			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 2 ) = -24.0f;
+			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 2 ) = -0.0f;
 		}
 		//ls->_pos = f3( sinf( t ) , cosf( t ) , 1.0f ) * 50.0f;
 		//ls->_dir = -ls->_pos.g_norm();

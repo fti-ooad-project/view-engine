@@ -13,6 +13,12 @@ private:
 		run->run();
 		return 0;
 	}
+	static int start_lb( void *in )
+	{
+		std::function< void() > *fun = static_cast< std::function< void() > * >( in );
+		( *fun )();
+		return 0;
+	}
 protected:
 	bool _working = true;
 	SDL_Thread *_thread;
@@ -30,5 +36,9 @@ public:
 		_thread = SDL_CreateThread( Parallel::start_th , "thread" , this );
 	}
 	virtual void run() = 0;
+	static void startLambda( std::function< void() > fun )
+	{
+		SDL_Thread * thread = SDL_CreateThread( Parallel::start_lb , "thread" , &fun );
+	}
 };
 #endif // PARALLEL_H

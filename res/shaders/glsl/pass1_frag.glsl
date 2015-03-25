@@ -5,6 +5,7 @@ layout( location = 0 ) uniform usampler2D BUFFER0;//pos cull
 layout( location = 1 ) uniform sampler2D ENV;//normal depth
 layout( location = 2 ) uniform sampler2D SELECTBUFF;//normal depth
 layout( location = 3 ) uniform mat4 VIEWPROJ;
+layout( location = 8 ) uniform sampler2D LIGHTK;
 //layout( location = 3 ) uniform sampler2DArray TEST;//spec gloss
 //layout( location = 3 ) uniform sampler2D BUFFER3;//diff emiss
 layout( location = 11 ) uniform usampler2D WATER_BUFFER3;//diff emiss
@@ -26,9 +27,12 @@ vec3 env( vec3 n , float s )
 	float theta = atan( n.z , length( n.xy ) );
 	//return texture( ENV , vec2( 0.5 + alpha / pi * 0.5 , 0.5 - theta / pi ) ).xyz;
 	//float mipmapLevel = textureQueryLod( ENV , textureCoord ).x;
-	return textureLod( ENV , vec2( 0.5 + alpha / pi * 0.5 , 0.5 - theta / pi ) , s * 15.0 ).xyz;
+	//if( -dot( n , DLIGHT[0].dir ) > 0.999 )
+	//		return vec3( 1.1 );
+	return //vec3( pow( max( 0.0 , min( 1.0 , dot( n , -DLIGHT[0].dir ) * 1.001 ) ) , ( 1.0 - s ) * 15.0 ) ) + 
+	textureLod( ENV , vec2( 0.5 + alpha / pi * 0.5 , 0.5 - theta / pi ) , s * 15.0 ).xyz;
 }
-vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , float doenv )
+vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw )
 {
 	vec3 lightness = vec3( 0.0 );
 	vec3 refl = reflect( normalize( p - v ) , n );
@@ -47,14 +51,17 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , float doenv )
 	}*/
 	for( int i = 0; i < 1; i++ )//COUNT!!!
 	{
-		float k = mix( pow( max( 0.0 , min( 1.0 , dot( refl , -DLIGHT[i].dir ) * 1.001 ) ) , specw.w * 15.0 ) , max( 0.0 , freshnel * dot( n , -DLIGHT[i].dir ) ) , 1.0 - specw.w );
+		float ra = max( 0.0 , dot( refl , -DLIGHT[i].dir ) );
+		float rk = freshnel * texture( LIGHTK , vec2( ra , specw.w ) ).x;
+		float da = max( 0.0 , dot( n , -DLIGHT[i].dir ) );
+		float dk = texture( LIGHTK , vec2( da , specw.w ) ).x;
+		float k = mix( rk , dk , 1.0 - specw.w );
 		lightness += DLIGHT[i].colori.xyz * DLIGHT[i].colori.w *
 		smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) * 
 		k;
 	}
-	lightness *= doenv;
 	lightness += freshnel * env( refl , 1.0 - specw.w );
-	return lightness.xyz;
+	return lightness.xyz ;
 	//return vec3( smoothLightDir( p , n , 0.1 , DLIGHT[0].toLightViewProj , DLIGHT[0].DepthMap_Buffer ) );
 }
 vec3 lightFog( vec3 p )
@@ -132,14 +139,13 @@ void main()
 		vec3 wnorm = normFromi( wbuf );
 		vec3 wpos = vec3( wnorm.xy , 0.0 ) * 0.5 + posFromZ( vec2( -1.0 + 2.0 * frag_pos.x , -1.0 + 2.0 * frag_pos.y ) , wdepth , CAM );
 		DDEPTH = abs( wdepth - depth );
-		WATERK = dot( normalize( CAM.pos - wpos ) , wnorm ) * mix( vec3( 0.7 , 0.8 , 0.9 ) , vec3( 0.1 , 0.15 , 0.2 ) , min( 1.0 , DDEPTH / 3.0 ) );
-		vec3 wl = light( wpos , wnorm , CAM.pos , vec4( 0.0 , 1.0 , 0.0 , 1.0 ) , 1.0 );
-		out_data += 
-		//wnorm;
-		vec3( 0.65 , 0.7 , 0.8 ) * wl;//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );reflectWater( wdepth , frag_pos , wnorm , wpos )
+		float dw = max( 0.0 , dot( normalize( CAM.pos - wpos ) , wnorm ) );
+		WATERK = dw * mix( vec3( 0.7 , 0.8 , 0.9 ) , vec3( 0.1 , 0.15 , 0.2 ) , min( 1.0 , DDEPTH / 3.0 ) );
+		vec3 wl = light( wpos , wnorm , CAM.pos , vec4( 0.0 , 0.0 , 0.0 , 1.0 ) );
+		out_data += ( 1.0 - dw ) * vec3( 0.9 , 0.95 , 0.99 ) * wl;//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );reflectWater( wdepth , frag_pos , wnorm , wpos )
 		
-		screenspacewaternorm = 2.0 * wY.xy - 1.0;
-		distfragpos += -screenspacewaternorm * 0.1 * min( DDEPTH / 3.0 , 1.0 );
+		//screenspacewaternorm = 2.0 * wY.xy - 1.0;
+		//distfragpos += -screenspacewaternorm * 0.1 * min( DDEPTH / 3.0 , 1.0 );
 	}
 	uvec4 buf0 = texture( BUFFER0 , distfragpos );
 	float depth = depthFromi( buf0 );
@@ -155,9 +161,10 @@ void main()
 	{
 		vec3 v = camRay( CAM , frag_pos );
 		if( -dot( v , DLIGHT[0].dir ) > 0.999 )
-			out_data = vec3( 1.1 );
+			out_data = vec3( 1.5 );
 		else
-			out_data = vec3( 0.8 );//env( v , 0.0 );
+			out_data = vec3( 0.8 );
+		//out_data = env( v , 0.0 );
 		//return;
 	}else
 	{
@@ -165,12 +172,12 @@ void main()
 		vec4 specw = unpack4i( buf0.w );
 		vec3 norm = normFromi( buf0 );
 		vec4 diff = unpack4i( buf0.y );
-		vec3 l = light( pos , norm , CAM.pos , specw , 1.0 ) * mix( vec3( 1.0 ) , diff.xyz , specw.x );
+		vec3 l = light( pos , norm , CAM.pos , specw ) * mix( vec3( 1.0 ) , diff.xyz , specw.x );
 		float ao = 1.0;//ssao( BUFFER0 , vec4( norm , depth ) , distfragpos , 0.8 );
 		out_data += WATERK * diff.xyz * ao * l;
 		out_data = mix( out_data , vec3( 0.6 , 0.7 , 0.75 ) , 1.0 - exp( - min( depth , wdepth ) * 0.01 ) );
 	}
-	vec4 selbuf = texture( SELECTBUFF , frag_pos );
-	out_data += selbuf.xyz;
+	//vec4 selbuf = texture( SELECTBUFF , frag_pos );
+	//out_data += selbuf.xyz;
 	//vec3( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );
 }
