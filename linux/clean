@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ./linux/
+
+rm -rf ./obj/
+rm -rf ./dep/
+rm ./run
