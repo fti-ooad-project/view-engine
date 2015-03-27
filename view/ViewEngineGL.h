@@ -47,6 +47,7 @@ public:
 	void setResolution( int , int ) override;
 	void setGUI( GUILayout const * ) override;
 	Scene3D *genScene() override;
+	Scene3D  const *getScene() override;
 	REventer *getEventer() override;
 	void release() override;
 };

@@ -142,7 +142,7 @@ void main()
 		float dw = max( 0.0 , dot( normalize( CAM.pos - wpos ) , wnorm ) );
 		WATERK = dw * mix( vec3( 0.7 , 0.8 , 0.9 ) , vec3( 0.1 , 0.15 , 0.2 ) , min( 1.0 , DDEPTH / 3.0 ) );
 		vec3 wl = light( wpos , wnorm , CAM.pos , vec4( 0.0 , 0.0 , 0.0 , 1.0 ) );
-		out_data += ( 1.0 - dw ) * vec3( 0.9 , 0.95 , 0.99 ) * wl;//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );reflectWater( wdepth , frag_pos , wnorm , wpos )
+		out_data += ( 1.0 - dw ) * vec3( 0.9 , 0.85 , 0.99 ) * wl;//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );reflectWater( wdepth , frag_pos , wnorm , wpos )
 		
 		//screenspacewaternorm = 2.0 * wY.xy - 1.0;
 		//distfragpos += -screenspacewaternorm * 0.1 * min( DDEPTH / 3.0 , 1.0 );

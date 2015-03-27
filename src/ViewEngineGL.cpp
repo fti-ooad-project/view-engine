@@ -59,7 +59,7 @@ void ViewEngineGL::tick( int w , int h )
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D , draw );
 	glUniform1i( 0 , 0 );
-	//_screen_quad.draw();
+	_screen_quad.draw();
 	//if( _gui )
 		_guimng.renderLayout( w , h , _gui );
 	//_guimng.drawPanel( f2( 0.0f , 0.0f ) , f2( 0.3f , 0.2f ) , 0 );
@@ -91,6 +91,10 @@ void ViewEngineGL::setGUI( GUILayout const *gui )
 Scene3D *ViewEngineGL::genScene()
 {
 	return new Scene3DGL();
+}
+Scene3D  const *ViewEngineGL::getScene()
+{
+	return static_cast< Scene3D const* >( _cur_scene );
 }
 REventer *ViewEngineGL::getEventer()
 {

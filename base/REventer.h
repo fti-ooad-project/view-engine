@@ -33,6 +33,7 @@ private:
 	f2			__mouse_pos[2];
 	float _mwheel[ 2 ];
 	int         _cur[3], _last[3];
+	bool _udated;
 public:
 	REventer();
 	void addMouseFunc(MouseFunc);

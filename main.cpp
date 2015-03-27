@@ -97,8 +97,34 @@ int main()
 		//cam->$getViewProj().print();
 	}
 	);
+	std::shared_ptr< GUILayout > main_menu( new GUILayout() );
+	std::shared_ptr< GUIElem > button1( new GUIElem() );
+	button1->_floatX = GUIElem::GUIFloat::LEFT;
+	button1->_floatY = GUIElem::GUIFloat::TOP;
+	button1->_layer = 0;
+	button1->_text = "menu";
+	button1->_size_pix = f2( 40.0f , 30.0f );
+	button1->_visible = true;
+	button1->_onClick = [ engine , scene ]()
+	{
+		if( engine->getScene() )
+			engine->setScene( nullptr );
+		else
+			engine->setScene( scene );
+	};
+	main_menu->addElem( button1 );
+	std::shared_ptr< GUIElem > button2( new GUIElem() );
+	button2->_floatX = GUIElem::GUIFloat::LEFT;
+	button2->_floatY = GUIElem::GUIFloat::TOP;
+	button2->_layer = 0;
+	button2->_text = "but2";
+	button2->_size_pix = f2( 40.0f , 30.0f );
+	button2->_visible = true;
+	button2->_onClick = nullptr;
+	main_menu->addElem( button2 );
+
 	eventer->addMouseFunc(
-		[ cam , &cam_z ]( const MouseStates &cs , const float dt )
+		[ cam , &cam_z , main_menu ]( const MouseStates &cs , const float dt )
 	{
 		static float phi( 1.4f );
 		static float theta( 1.4f );
@@ -117,19 +143,36 @@ int main()
 			cam->angle( phi , theta );
 			cam->calc();
 		}
-
+		auto isin = []( f2 const &p , f2 const &c , f2 const &s )
+		{
+			if(
+				fabsf( -p.x() - c.x() ) < s.x()
+				&& fabsf( -p.y() - c.y() ) < s.y()
+				)
+				return true;
+			return false;
+		};
+		for( auto &i : main_menu->getElemVec() )
+		{
+			if( isin( cs.__cur_pos , i->_screen_pos , i->_screen_size ) )
+			{
+				if( cs.__cur_states[ 0 ] )
+					i->_status = 2;
+				else
+					i->_status = 1;
+				if( !cs.__cur_states[ 0 ] && cs.__last_states[ 0 ] )
+					if( i->_onClick )
+						i->_onClick();
+			}
+			else
+				i->_status = 0;
+			//LOG << "clicked\n";
+		}
 	}
 	);
 	//cam->lookAt( cam_pos , cam_lookat , f3( 0.0f , 0.0f , 1.0f ) );
 	
-	std::shared_ptr< GUILayout > main_menu( new GUILayout() );
-	std::shared_ptr< GUIElem > button1( new GUIElem() );
-	button1->_floatX = GUIElem::GUIFloat::CENTER;
-	button1->_floatY = GUIElem::GUIFloat::CENTER;
-	button1->_layer = 0;
-	button1->_size_pix = f2( 140.0f , 50.0f );
-	button1->_visible = true;
-	main_menu->addElem( button1 );
+	
 	engine->setGUI( main_menu.get() );
 	engine->setScene( scene );
 	//std::cout << "Hello World!" << std::endl;

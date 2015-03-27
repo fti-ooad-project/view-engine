@@ -318,6 +318,7 @@ private:
 		glActiveTexture( GL_TEXTURE0 + 1 );
 		glBindTexture( GL_TEXTURE_2D , _panel_texture.getTexture() );
 		glUniform1i( 1 , 1 );
+		glUniform1f( 2 , float( level ) );
 		//_gui_quad.draw();
 		PanelDrawler::getSingleton()->drawPanel( pos , size , 0.02f );
 		glDisable( GL_BLEND );
@@ -341,9 +342,96 @@ public:
 	}
 	void renderLayout( int w , int h , GUILayout const *layout )
 	{
+		const float border = 0.01f;
+		float ltop = border , lbot = border , rtop = border , rbot = border , ctop = border , cbot = border , ccenter = 0.5f;
 		for( auto const &i : layout->getElemVec() )
 		{
-			drawPanel( f2( 0.0f , 0.0f ) , i->_size_pix / f2( w , h ) , i->_type );
+			switch( i->_floatX )
+			{
+				case GUIElem::GUIFloat::LEFT:
+				{
+					switch( i->_floatY )
+					{
+						case GUIElem::GUIFloat::TOP:
+						{
+							f2 pos = f2( i->_size_pix.x() * 0.5f / w + border , ltop + i->_size_pix.y() * 0.5f / h );
+							ltop += i->_size_pix.y() / h + border;
+							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_screen_size = i->_size_pix / f2( w , h );
+						}
+						break;
+						case GUIElem::GUIFloat::BOTTOM:
+						{
+							f2 pos = f2( i->_size_pix.x() * 0.5f / w + border , 1.0f - lbot - i->_size_pix.y() * 0.5f / h );
+							lbot += i->_size_pix.y() / h + border;
+							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_screen_size = i->_size_pix / f2( w , h );
+						}
+						break;
+						case GUIElem::GUIFloat::CENTER:
+						{
+
+						}
+						break;
+					}
+				}
+				break;
+				case GUIElem::GUIFloat::RIGHT:
+				{
+					switch( i->_floatY )
+					{
+						case GUIElem::GUIFloat::TOP:
+						{
+							f2 pos = f2( 1.0f - i->_size_pix.x() * 0.5f / w - border , rtop + i->_size_pix.y() * 0.5f / h );
+							rtop += i->_size_pix.y() / h + border;
+							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_screen_size = i->_size_pix / f2( w , h );
+						}
+						break;
+						case GUIElem::GUIFloat::BOTTOM:
+						{
+							f2 pos = f2( 1.0f - i->_size_pix.x() * 0.5f / w - border , 1.0f - rbot - i->_size_pix.y() * 0.5f / h );
+							rbot += i->_size_pix.y() / h + border;
+							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_screen_size = i->_size_pix / f2( w , h );
+						}
+						break;
+						case GUIElem::GUIFloat::CENTER:
+						{
+
+						}
+						break;
+					}
+				}
+				break;
+				case GUIElem::GUIFloat::CENTER:
+				{
+					switch( i->_floatY )
+					{
+						case GUIElem::GUIFloat::TOP:
+						{
+
+						}
+						break;
+						case GUIElem::GUIFloat::BOTTOM:
+						{
+
+						}
+						break;
+						case GUIElem::GUIFloat::CENTER:
+						{
+							f2 pos = f2( 0.5f , 1.0f - ccenter - i->_size_pix.y() * 0.5f / h );
+							ccenter += i->_size_pix.y() / h + border;
+							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_screen_size = i->_size_pix / f2( w , h );
+						}
+						break;
+					}
+				}
+				break;
+			}
+			drawPanel( i->_screen_pos , i->_screen_size , i->_status );
+			drawText( genText( i->_text ) , i->_screen_pos , i->_screen_size * 0.6f );
 		}
 	}
 	void release()

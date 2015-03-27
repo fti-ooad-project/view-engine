@@ -32,16 +32,22 @@ public:
 class GUIElem
 {
 public:
-	static class GUIFloat
+	class GUIFloat
 	{
 	public:
 		static const int LEFT = 0 , RIGHT = 1 , TOP = 0 , BOTTOM = 1 , CENTER = 2;
 	};
+	class GUIStatus
+	{
+	public:
+		static const int CLICKED = 0 , NONE = 1 , HOVER = 2 , DRAG = 3;
+	};
 	std::string _text;
 	f2 _size_pix;
-	//f2 _pos_pix;
+	mutable f2 _screen_pos;
+	mutable f2 _screen_size;
 	int _floatX , _floatY , _layer;
-	int _type;
+	int _status;
 	bool _visible;
 	std::function< void() > _onClick;
 	std::function< void( f2 const & ) > _onDrag;
@@ -81,6 +87,7 @@ public:
 	virtual void setScene( Scene3D const * ) = 0;
 	virtual void setGUI( GUILayout const * ) = 0;
 	virtual Scene3D *genScene() = 0;
+	virtual Scene3D const *getScene() = 0;
 	virtual REventer *getEventer() = 0;
 };
 #endif // RSCENEDRAWLER_H
