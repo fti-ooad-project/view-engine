@@ -21,6 +21,11 @@ void main()
 		vec4 p = MAT4X4_VIEWPROJ[0] * gl_in[i].gl_Position;
 		switch( PASSID )
 		{
+			case PASS_REFLECT:
+				gl_Position = p;
+				pvo.position = gl_in[i].gl_Position.xyz;
+				EmitVertex();
+			break;
 			case PASS_LIGHT:
 				gl_Position = scalel( p );
 				EmitVertex();
@@ -35,7 +40,7 @@ void main()
 			case PASS_NORMAL:
 				gl_Position = p;
 				pvo.depth = p.z;
-				pvo.position = pv[i].position;
+				pvo.position = gl_in[i].gl_Position.xyz;
 				pvo.normal = pv[i].normal;
 				pvo.select_id = pv[i].select_id;
 				pvo.binormal = pv[i].binormal;

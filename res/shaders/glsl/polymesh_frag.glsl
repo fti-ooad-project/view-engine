@@ -12,6 +12,9 @@ void main()
 {
 	switch( PASSID )
 	{
+		case PASS_REFLECT:
+			if( pvo.position.z < WATERZ ) discard;
+		break;
 		case PASS_WATER:
 		case PASS_LIGHT:
 			buf = uvec4( 1 );

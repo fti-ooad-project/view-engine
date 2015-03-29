@@ -40,12 +40,18 @@ int main()
 		temp( 3 , 0 ) = 2.0f * ( x - 5.0f );
 		temp( 3 , 1 ) = 2.0f * ( y + 5.0f );
 		temp( 3 , 2 ) = -21.0f;
-		scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 0 , temp } );
+		auto *state = scene->getInstanceStatePtr( scene->genInstance() );
+		state->_view.push_back( 0 );
+		state->_animstat.update( float( x + y ) / 5.0f );
+		state->_animstat._speed = 0.4f;
+		state->model = temp;
 	}
 	f4x4 temp( 1.0f );
 	temp( 3 , 2 ) = 0.0f;
 	temp( 3 , 0 ) = 20.0f;
-	scene->getInstanceStatePtr( scene->genInstance() )->_view.push_back( ViewInfo{ 2 , temp } );
+	auto *state = scene->getInstanceStatePtr( scene->genInstance() );
+	state->_view.push_back( 2 );
+	state->model = temp;
 
 	RLightState *ls = scene->getLightStatePtr( scene->genLight() );
 	ls->_cast_shadow = true;
@@ -184,9 +190,10 @@ int main()
 		xfor( x , 10 )
 		xfor( y , 10 )
 		{
-			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 0 ) = 2.0f * ( x - 5.0f ) + X;
-			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 1 ) = 2.0f * ( y + 5.0f );
-			scene->getInstanceStatePtr( x + y * 10 )->_view[0].model( 3 , 2 ) = -0.0f;
+			auto *state = scene->getInstanceStatePtr( x + y * 10 );
+			state->model( 3 , 0 ) = 2.0f * ( x - 5.0f );
+			state->model( 3 , 1 ) = 2.0f * ( y + 5.0f ) + X;
+			state->model( 3 , 2 ) = -0.0f;
 		}
 		//ls->_pos = f3( sinf( t ) , cosf( t ) , 1.0f ) * 50.0f;
 		//ls->_dir = -ls->_pos.g_norm();

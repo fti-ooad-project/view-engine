@@ -6,11 +6,18 @@ $include pervertex.glsl
 in PerVertex pvo;
 
 out uvec4 buf;
+
 void main()
 {
 	switch( PASSID )
 	{
+		case PASS_REFLECT:
+			if( pvo.position.z < WATERZ ) discard;
+		break;
 		case PASS_WATER:
+			if( pvo.position.z < WATERZ ) discard;
+			buf = uvec4( 1 );
+		break;
 		case PASS_LIGHT:
 			buf = uvec4( 1 );
 		break;
@@ -21,13 +28,13 @@ void main()
 			vec3 grass = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 1.0 ) ).xyz;
 			vec3 snow = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 2.0 ) ).xyz;
 			vec3 dirt = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 3.0 ) ).xyz;
-			const float lvl = 20.0;
+			const float lvl = 5.0;
 			if( pvo.position.z < lvl )
 			{
-				diff = mix( grass , dirt , min( 1.0 , abs( lvl - pvo.position.z ) / 30.0 ) );
+				diff = mix( grass , dirt , min( 1.0 , abs( lvl - pvo.position.z ) / 5.0 ) );
 			}else
 			{
-				diff = mix( grass , snow , min( 1.0 , abs( pvo.position.z - lvl ) / 30.0 ) );
+				diff = mix( grass , snow , min( 1.0 , abs( pvo.position.z - lvl ) / 5.0 ) );
 			}
 			
 			/*vec4 ne = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 0.0 ) );

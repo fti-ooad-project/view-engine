@@ -13,7 +13,7 @@ void main()
 		uvec4 buf = texture( BUFFER , frag_pos );
 		float id = unpack4i( buf.y ).w;
 		if( id > 0.9 && id < 1.1 )
-			out_data = vec4( 1.0 , 0.0 , 0.0 , 1.0 );
+			out_data = vec4( 1.0 , 0.0 , 1.0 , 1.0 );
 		return;
 	}
 	if( pass == 1 )

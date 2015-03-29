@@ -42,25 +42,20 @@ struct RAnimationMixer
 		bool _active = false;
 		std::function< void( void ) > _func;
 		float _time;
-		void check(float time);
+		void check( float time );
 	} _event;
 	float _speed = 1.0f;
 	float _mixspeed = 1.0f;
-	void update(const float dt);
-	void change(const int i, const float speed, RTimeEvent const &event);
+	void update( const float dt );
+	void change( const int i , const float speed , RTimeEvent const &event );
 };
-typedef struct
-{
-	ViewTypes::RDrawablePTR view_id;
-	f4x4 model;
-}
-ViewInfo;
 class RDrawableState
 {
 public:
-	std::vector< ViewInfo > _view;
+	std::vector< ViewTypes::RDrawablePTR > _view;
+	f4x4 model;
 	int selectid;
-	RAnimationMixer _animstat;
+	mutable RAnimationMixer _animstat;
 };
 struct RLightState
 {

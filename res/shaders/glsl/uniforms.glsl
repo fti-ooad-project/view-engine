@@ -17,6 +17,7 @@ layout( location = 18 ) uniform float WATERZ;
 #define PASS_NORMAL 0
 #define PASS_LIGHT 1
 #define PASS_WATER 2
+#define PASS_REFLECT 3
 layout( location = 11 ) uniform vec3 CAM_POS;
 layout( location = 16 ) uniform float DIST_TO_CAM;
 

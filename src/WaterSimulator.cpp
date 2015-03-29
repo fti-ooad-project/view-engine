@@ -20,6 +20,7 @@ void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 	}
 	_final.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 4 } );
 	_water_plane_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , depth_buf , false , false , 4 } );
+	_water_refl_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , false } );
 	_water_plane_prog.init( "res/shaders/glsl/water_plane_fragment.glsl" , "res/shaders/glsl/water_plane_vertex.glsl" );
 	_water_bump_prog.init( "res/shaders/glsl/water_bump_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
 	_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );
@@ -48,6 +49,20 @@ void WaterSimulator::bindToRenderSurface()
 	//_water_surf_prog.bind();
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , water_viewproj.getPtr() );
 	glUniform1f( WATER_Z , _height );
+}
+void WaterSimulator::bindToRenderReflection()
+{
+	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , reflection_camera.getViewProj().getPtr() );
+	glUniform1f( WATER_Z , _height );
+}
+void WaterSimulator::calcReflectionCamera( RCamera const &cam )
+{
+	reflection_camera = cam;
+	reflection_camera._v3pos = f3( cam._v3pos.x() , cam._v3pos.y() , _height - cam._v3pos.z() );
+	reflection_camera._v3local_z = f3( cam._v3local_z.x() , cam._v3local_z.y() , -cam._v3local_z.z() );
+	reflection_camera._v3local_y = f3( cam._v3local_y.x() , cam._v3local_y.y() , -cam._v3local_y.z() );
+	reflection_camera.calc();
+	_water_refl_pass.clear();
 }
 void WaterSimulator::switchSurfaceBuffer( f3 const & cam_pos )
 {
@@ -117,6 +132,10 @@ uint WaterSimulator::getPlaneBuffer() const
 uint WaterSimulator::getSurfBuffer() const
 {
 	return _water_surf_pass[ cur ].getBufferPtr( 0 );
+}
+uint WaterSimulator::getReflectionPass() const
+{
+	return _water_refl_pass.getDepthBufferPtr();
 }
 void WaterSimulator::release()
 {

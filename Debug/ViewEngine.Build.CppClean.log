@@ -1,14 +1,12 @@
 c:\dev\c++\viewengine\debug\vc140.pdb
 c:\dev\c++\viewengine\debug\vc140.idb
 c:\dev\c++\viewengine\debug\drawablegl.obj
-c:\dev\c++\viewengine\debug\drawlerdeffered.obj
 c:\dev\c++\viewengine\debug\heighmapdrawler.obj
 c:\dev\c++\viewengine\debug\mat.obj
 c:\dev\c++\viewengine\debug\ranimgl.obj
 c:\dev\c++\viewengine\debug\rcamera.obj
 c:\dev\c++\viewengine\debug\reventer.obj
 c:\dev\c++\viewengine\debug\rfileloader.obj
-c:\dev\c++\viewengine\debug\rfileparser.obj
 c:\dev\c++\viewengine\debug\rmodels.obj
 c:\dev\c++\viewengine\debug\rpassgl.obj
 c:\dev\c++\viewengine\debug\rtextures.obj
@@ -23,6 +21,8 @@ c:\dev\c++\viewengine\debug\windowgl.obj
 c:\dev\c++\viewengine\debug\main.obj
 c:\dev\c++\viewengine\debug\base.obj
 c:\dev\c++\viewengine\debug\blurer.obj
+c:\dev\c++\viewengine\debug\drawlerdeffered.obj
+c:\dev\c++\viewengine\debug\rfileparser.obj
 c:\dev\c++\viewengine\debug\viewengine.ilk
 c:\dev\c++\viewengine\debug\viewengine.exe
 c:\dev\c++\viewengine\debug\viewengine.pdb

@@ -23,17 +23,21 @@ void main()
 		p = MAT4X4_VIEWPROJ[0] * vec4( gl_in[i].gl_Position.xyz + pvte[i].normal * 0.08 * ( -0.3 + h ) , 1.0 );
 		switch( PASSID )
 		{
-			case PASS_LIGHT:
+			/*case PASS_REFLECT:
+				gl_Position = p;
+				EmitVertex();
+			break;*/
+			/*case PASS_LIGHT:
 				gl_Position = scalel( p );
 				EmitVertex();
-			break;
-			case PASS_WATER:
+			break;*/
+			/*case PASS_WATER:
 				if( n != 3 && p != 3 )
 				{
 					gl_Position = p;
 					EmitVertex();
 				}
-			break;
+			break;*/
 			case PASS_NORMAL:
 				gl_Position = p;
 				pvo.depth = p.z;

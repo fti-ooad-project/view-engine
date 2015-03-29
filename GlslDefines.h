@@ -43,6 +43,7 @@ layout( location = 32 ) uniform DirectedLight DLIGHT[MAX_LIGHTS_CASTER];
 #define PASS_NORMAL 0
 #define PASS_LIGHT 1
 #define PASS_WATER 2
+#define PASS_REFLECT 3
 #define WATER_Z 18
 #define CAM_POS 11
 #define ANIM_TEX 20

@@ -9,7 +9,7 @@ out PerVertex pvo;
 vec3 norm( const vec2 tx , const float r , sampler2D Buffer_tex )
 {
     vec3 o = vec3( 0.0 );
-    float k = 0.25;
+    float k = 0.125;
     float hx1 = texture2D( Buffer_tex , tx - vec2( r * 0.5 , 0.0 ) ).x;
     float hx2 = texture2D( Buffer_tex , tx + vec2( r * 0.5 , 0.0 ) ).x;
     float hy1 = texture2D( Buffer_tex , tx - vec2( 0.0 , r * 0.5 ) ).x;
@@ -27,7 +27,7 @@ vec3 getColwithWater( vec3 p0 , vec3 p1 , float waterlevel )
 const float DR = 1.0 / 1024.0;
 void main()
 {
-	int p = 0 , n = 0;
+	//int p = 0 , n = 0;
 	float height[3];
 	vec4 pos[3];
 	for( int i = 0; i < 3; ++i )
@@ -35,10 +35,10 @@ void main()
 		float h = texture( BUFFER1 , pvte[i].texcoord , 0.0 ).x;
 		height[i] = ( h - 0.5 ) * 50;
 		pos[i] = vec4( gl_in[i].gl_Position.xy , height[i] , 1.0 );
-		if( height[i] > WATERZ )
+		/*if( height[i] > WATERZ )
 			p++;
 		else
-			n++;
+			n++;*/
 	}
 	bool temp = false;
     for( int i = 0; i < 3; ++i )
@@ -49,9 +49,13 @@ void main()
 				gl_Position = scalel( MAT4X4_VIEWPROJ[0] * pos[i] );
 				EmitVertex();
 			break;
+			case PASS_REFLECT:
 			case PASS_WATER:
 			{
-				if( n != 3 )
+				gl_Position = MAT4X4_VIEWPROJ[0] * pos[i];
+				pvo.position = pos[i].xyz;
+				EmitVertex();
+				/*if( n != 3 )
 				{
 					if( p == 1 )
 					{
@@ -83,7 +87,7 @@ void main()
 						gl_Position = MAT4X4_VIEWPROJ[0] * pos[i];
 						EmitVertex();
 					}
-				}
+				}*/
 			}
 			break;
 			case PASS_NORMAL:

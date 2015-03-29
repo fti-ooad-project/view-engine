@@ -154,29 +154,30 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	float time = _cur_time - floorf( _cur_time );
 	for( RDrawableState const &ins : scene->getStateVector() )
 	{
-		f4x4 const &m = ins._view[ 0 ].model;
+		f4x4 const &m = ins.model;
 		f3 pos = f3( m( 3 , 0 ) , m( 3 , 1 ) , m( 3 , 2 ) );
-
 		float cam_dist = pos.g_dist( scene->getCamera()->_v3pos )
-			/ _view[ ins._view[ 0 ].view_id ]->_size.z();
-		if( cam_dist < 3.0f )
-			data[ ins._view[ 0 ].view_id * 2 ].push_back( { 0.2f * time , 0.0f ,
-			cam_dist , 1.0f , 0 , 0 , 0 , m } );
-		else
+			/ _view[ ins._view[ 0 ] ]->_size.z();
+		ins._animstat.update( _dt );
+		for( auto const i : ins._view )
 		{
-			if( !scene->getCamera()->fristrum( pos ,
-				_view[ ins._view[ 0 ].view_id ]->_size.z() ) )
-				continue;
-
-			if( cam_dist < 15.0f )
-				data[ ins._view[ 0 ].view_id * 2 + 1 ].push_back(
-			{ 0.2f * time , 0.0f , cam_dist , 1.0f , 0 , 0 , 0 , m } );
+			InstanceInfo instance_info{ ins._animstat._moment._time , ins._animstat._moment._last_time , cam_dist , 1.0f , int( ins._animstat._moment._mix ) , ins._animstat._moment._cur_set , ins._animstat._moment._last_set , m };
+			if( cam_dist < 3.0f )
+				data[ i * 2 ].push_back( instance_info );
 			else
 			{
-				f4x4 mn = m;
-				mn.scale( _view[ ins._view[ 0 ].view_id ]->_size * 0.5f );
-				mn( 3 , 2 ) += _view[ ins._view[ 0 ].view_id ]->_size.z() * 0.5f;
-				data[ 3 ].push_back( { 0.2f * time , 0.0f , cam_dist , 1.0f , 0 , 0 , 0 , mn } );
+				if( !scene->getCamera()->fristrum( pos , _view[ i ]->_size.z() ) )
+					continue;
+
+				if( cam_dist < 15.0f )
+					data[ i * 2 + 1 ].push_back( instance_info );
+				else
+				{
+					f4x4 mn = m;
+					mn.scale( _view[ i ]->_size * 0.5f );
+					mn( 3 , 2 ) += _view[ i ]->_size.z() * 0.5f;
+					data[ 3 ].push_back( instance_info );
+				}
 			}
 		}
 	}
@@ -186,8 +187,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	_storage_pass.clear();
 	_storage_tess_prog.bind();
 	glUniform1f( TIME , time );
-	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
-						scene->getCamera()->getViewProj().getPtr() );
+	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );
 	glUniform1i( PASSID , PASS_NORMAL );
 	glUniform1i( INSTANSING , 1 );
 	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
@@ -237,7 +237,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 			if( caster_dir_light_count > 2 || !l._cast_shadow )
 				continue;
 			caster_dir_light_ptr[ caster_dir_light_count ] = &l;
-			_light_dir_passes[ caster_dir_light_count ].bind();
+			//_light_dir_passes[ caster_dir_light_count ].bind();
 			_light_dir_passes[ caster_dir_light_count ].clear();
 
 			dir_lights_viewproj[ caster_dir_light_count ] = RCamera::orthographic(
@@ -284,6 +284,17 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	WaterSimulator::getSingleton()->bindToRenderSurface();
 	glUniform1i( PASSID , PASS_WATER );
 	HeightMapDrawler::getSingleton()->draw( true );
+
+	//HeightMapDrawler::getSingleton()->bindToDraw();
+	WaterSimulator::getSingleton()->calcReflectionCamera( *scene->getCamera() );
+	WaterSimulator::getSingleton()->bindToRenderReflection();
+	glUniform1i( PASSID , PASS_REFLECT );
+	HeightMapDrawler::getSingleton()->draw( true );
+	_storage_prog.bind();
+	glUniform1i( PASSID , PASS_REFLECT );
+	WaterSimulator::getSingleton()->bindToRenderReflection();
+	drawInstances( data.get() , false );
+
 	//glEnable( GL_CULL_FACE );
 	//HeightMapDrawler::getSingleton()->draw( false );
 	WaterSimulator::getSingleton()->calc( _cur_time , _dt );
@@ -317,6 +328,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	glActiveTexture( GL_TEXTURE0 + 3 );
 	glBindTexture( GL_TEXTURE_2D , _lightk_tex.getTexture() );
 	glUniform1i( 8 , 3 );
+	glActiveTexture( GL_TEXTURE0 + 6 );
+	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getReflectionPass() );
+	glUniform1i( 12 , 6 );
 	/*glActiveTexture( GL_TEXTURE0 + 3 );
 	glBindTexture( GL_TEXTURE_2D_ARRAY , dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() )->__anim_intex.getBufferPtr() );
 	glUniform1i( 3 , 3 );*/
