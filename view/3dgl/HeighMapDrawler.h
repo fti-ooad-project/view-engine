@@ -16,13 +16,13 @@ private:
 	RTextureHolderGL _hmap;
 	HeightMapDrawler() = default;
 public:
-	f2 _size;
-	f2 _pos;
+	f3 _size;
 	HeightMapDrawler( HeightMapDrawler const & ) = delete;
 	void operator=( HeightMapDrawler const & ) = delete;
+	void bindHeihgtTexture() const;
 	void bindToDraw();
-	void draw(bool tess);
-	void init(uint density, f2 const &size, f2 const &bpos);
+	void draw( bool );
+	void init( uint , f3 const & );
 	void release();
 	static HeightMapDrawler *getSingleton();
 };

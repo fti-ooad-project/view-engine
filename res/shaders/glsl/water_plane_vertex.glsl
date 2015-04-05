@@ -4,17 +4,16 @@ $include uniforms.glsl
 $include attributes.glsl
 $include pervertex.glsl
 out PerVertex pvo;
-layout( location = 4 ) uniform vec4 pos_size;
 void main()
 {
 	vec4 p;
 	switch( PASSID )
 	{
 	case 0:
-		p = vec4( pos_size.xyz + invertex_position * pos_size.w , 1.0 );
+		p = vec4( WATER_POS_SIZE.xyz + invertex_position * WATER_POS_SIZE.w , 1.0 );
 	break;
 	case 1:
-		p = vec4( vec3( 0.0 , 0.0 , pos_size.z - 0.1 ) + invertex_position * 500.0 , 1.0 );
+		p = vec4( vec3( 0.0 , 0.0 , WATER_POS_SIZE.z - 0.1 ) + invertex_position * 500.0 , 1.0 );
 	break;
 	}
 	

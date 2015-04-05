@@ -23,7 +23,7 @@ void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 	_water_refl_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , false } );
 	_water_plane_prog.init( "res/shaders/glsl/water_plane_fragment.glsl" , "res/shaders/glsl/water_plane_vertex.glsl" );
 	_water_bump_prog.init( "res/shaders/glsl/water_bump_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
-	_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );
+	//_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );
 }
 void WaterSimulator::bindToRenderPlane( bool nt )
 {
@@ -35,12 +35,12 @@ void WaterSimulator::bindToRenderPlane( bool nt )
 		glBindTexture( GL_TEXTURE_2D , _final.getBufferPtr( 0 ) );
 		glUniform1i( 3 , 0 );
 		glUniform1i( PASSID , 0 );
-		glUniform4f( 4 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
+		glUniform4f( 18 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
 	} else
 	{
 		glUniform1i( PASSID , 1 );
 		//glUniform4f( 4 , 0.0f , 0.0f , _height , 500.0f );
-		glUniform4f( 4 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
+		glUniform4f( 18 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
 	}
 }
 void WaterSimulator::bindToRenderSurface()
@@ -48,12 +48,12 @@ void WaterSimulator::bindToRenderSurface()
 	_water_surf_pass[ cur ].bind();
 	//_water_surf_prog.bind();
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , water_viewproj.getPtr() );
-	glUniform1f( WATER_Z , _height );
+	glUniform4f( 18 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
 }
 void WaterSimulator::bindToRenderReflection()
 {
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , reflection_camera.getViewProj().getPtr() );
-	glUniform1f( WATER_Z , _height );
+	glUniform4f( 18 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
 }
 void WaterSimulator::calcReflectionCamera( RCamera const &cam )
 {

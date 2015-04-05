@@ -25,5 +25,6 @@ public:
 	static f4x4 orthographic( const f3 & , const f3 & , const f3 & , float );
 	static void genCubeCamera( f4x4 *out , const f3 &pos );
 	bool fristrum( f3 const &p , float size ) const;
+	bool fristrum2d( f2 const &p ) const;
 };
 #endif // RCAMERA_H

@@ -2,7 +2,6 @@
 $include uniforms.glsl
 $include include.glsl
 $include pervertex.glsl
-layout( location = 4 ) uniform vec4 pos_size;
 in PerVertex pvo;
 out uvec4 buf;
 
@@ -16,7 +15,7 @@ void main()
 		vec4 bump = -1.0 + ne * 2.0;
 		newnormal = mix( vec3( 0.0 , 0.0 , 1.0 ) ,
 		normalize( pvo.normal * bump.z-pvo.binormal * bump.y + pvo.tangentnormal * bump.x ) ,
-		1.0 - min( 1.0 , distance( pvo.position.xy , pos_size.xy ) / 100.0 ) );// , 
+		1.0 - min( 1.0 , distance( pvo.position.xy , WATER_POS_SIZE.xy ) / 100.0 ) );// , 
 	break;
 	case 1:
 		//if( distance( pvo.position.xy , pos_size.xy ) < 100.0 )

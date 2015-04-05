@@ -21,11 +21,11 @@ public:
 	Scene3D( Scene3D const & ) = delete;
 	void operator=( Scene3D const & ) = delete;
 	virtual ViewTypes::RDrawInstancePTR genInstance() = 0;
-	virtual RDrawableState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR ) = 0;
-	virtual std::vector< RDrawableState > const &getStateVector() const = 0;
-	virtual std::vector< RLightState > const &getLightVector() const = 0;
+	virtual UnitInstanceState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR ) = 0;
+	virtual std::vector< UnitInstanceState > const &getStateVector() const = 0;
+	virtual std::vector< LightState > const &getLightVector() const = 0;
 	virtual ViewTypes::RLightSourcePTR genLight() = 0;
-	virtual RLightState *getLightStatePtr( ViewTypes::RLightSourcePTR ) = 0;
+	virtual LightState *getLightStatePtr( ViewTypes::RLightSourcePTR ) = 0;
 	virtual RCamera const *getCamera() const = 0;
 	virtual RCamera *getCamera() = 0;
 };
@@ -44,8 +44,8 @@ public:
 	};
 	std::string _text;
 	f2 _size_pix;
-	mutable f2 _screen_pos;
-	mutable f2 _screen_size;
+	mutable f2 _calculated_pos;
+	mutable f2 _calculated_size;
 	int _floatX , _floatY , _layer;
 	int _status;
 	bool _visible;
@@ -56,18 +56,18 @@ public:
 class GUILayout
 {
 private:
-	std::vector< std::shared_ptr< GUIElem > > _elem_vec;
+	std::vector< std::shared_ptr< GUIElem > > _elems;
 public:
 	GUILayout() = default;
 	GUILayout( GUILayout const & ) = delete;
 	GUILayout operator=( GUILayout const & ) = delete;
 	void addElem( std::shared_ptr< GUIElem > elem )
 	{
-		_elem_vec.push_back( elem );
+		_elems.push_back( elem );
 	}
 	std::vector< std::shared_ptr< GUIElem > > const getElemVec() const
 	{
-		return _elem_vec;
+		return _elems;
 	}
 };
 class ViewManager : public RInitable

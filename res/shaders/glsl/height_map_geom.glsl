@@ -33,7 +33,7 @@ void main()
 	for( int i = 0; i < 3; ++i )
 	{
 		float h = texture( BUFFER1 , pvte[i].texcoord , 0.0 ).x;
-		height[i] = ( h - 0.5 ) * 50;
+		height[i] = ( h - 0.5 ) * HEIGHTMAP_SIZE.z;
 		pos[i] = vec4( gl_in[i].gl_Position.xy , height[i] , 1.0 );
 		/*if( height[i] > WATERZ )
 			p++;

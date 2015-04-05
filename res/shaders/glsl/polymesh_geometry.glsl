@@ -11,7 +11,7 @@ void main()
 	float pn = 0.0 , n = 0.0;
 	for( int i = 0; i < 3; ++i )
 	{
-		if( gl_in[i].gl_Position.z > WATERZ )
+		if( gl_in[i].gl_Position.z > WATER_POS_SIZE.z )
 			pn++;
 		else
 			n++;

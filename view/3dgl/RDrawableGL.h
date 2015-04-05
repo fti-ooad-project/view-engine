@@ -15,7 +15,11 @@ struct InstanceInfo
 	int mixing;
 	int cur_anim;
 	int last_anim;
-	f4x4 model;
+	int auto_height;
+	f3 pos;
+	f3 look;
+	f3 left;
+	f3 up;
 };
 class RPolyMeshGL : public RInitable
 {

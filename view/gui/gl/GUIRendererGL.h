@@ -356,16 +356,16 @@ public:
 						{
 							f2 pos = f2( i->_size_pix.x() * 0.5f / w + border , ltop + i->_size_pix.y() * 0.5f / h );
 							ltop += i->_size_pix.y() / h + border;
-							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
-							i->_screen_size = i->_size_pix / f2( w , h );
+							i->_calculated_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_calculated_size = i->_size_pix / f2( w , h );
 						}
 						break;
 						case GUIElem::GUIFloat::BOTTOM:
 						{
 							f2 pos = f2( i->_size_pix.x() * 0.5f / w + border , 1.0f - lbot - i->_size_pix.y() * 0.5f / h );
 							lbot += i->_size_pix.y() / h + border;
-							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
-							i->_screen_size = i->_size_pix / f2( w , h );
+							i->_calculated_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_calculated_size = i->_size_pix / f2( w , h );
 						}
 						break;
 						case GUIElem::GUIFloat::CENTER:
@@ -384,16 +384,16 @@ public:
 						{
 							f2 pos = f2( 1.0f - i->_size_pix.x() * 0.5f / w - border , rtop + i->_size_pix.y() * 0.5f / h );
 							rtop += i->_size_pix.y() / h + border;
-							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
-							i->_screen_size = i->_size_pix / f2( w , h );
+							i->_calculated_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_calculated_size = i->_size_pix / f2( w , h );
 						}
 						break;
 						case GUIElem::GUIFloat::BOTTOM:
 						{
 							f2 pos = f2( 1.0f - i->_size_pix.x() * 0.5f / w - border , 1.0f - rbot - i->_size_pix.y() * 0.5f / h );
 							rbot += i->_size_pix.y() / h + border;
-							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
-							i->_screen_size = i->_size_pix / f2( w , h );
+							i->_calculated_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_calculated_size = i->_size_pix / f2( w , h );
 						}
 						break;
 						case GUIElem::GUIFloat::CENTER:
@@ -422,16 +422,16 @@ public:
 						{
 							f2 pos = f2( 0.5f , 1.0f - ccenter - i->_size_pix.y() * 0.5f / h );
 							ccenter += i->_size_pix.y() / h + border;
-							i->_screen_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
-							i->_screen_size = i->_size_pix / f2( w , h );
+							i->_calculated_pos = f2( pos.x() *  2.0f - 1.0f , pos.y() * -2.0f + 1.0 );
+							i->_calculated_size = i->_size_pix / f2( w , h );
 						}
 						break;
 					}
 				}
 				break;
 			}
-			drawPanel( i->_screen_pos , i->_screen_size , i->_status );
-			drawText( genText( i->_text ) , i->_screen_pos , i->_screen_size * 0.6f );
+			drawPanel( i->_calculated_pos , i->_calculated_size , i->_status );
+			drawText( genText( i->_text ) , i->_calculated_pos , i->_calculated_size * 0.6f );
 		}
 	}
 	void release()

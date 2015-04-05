@@ -71,7 +71,7 @@ void DrawlerDeffered::init()
 	_process_prog.init( "res/shaders/glsl/pass1_frag.glsl" ,
 						"res/shaders/glsl/screen_quad_vertex.glsl" , "" );
 	_water_prog.init( "res/shaders/glsl/pass2_frag.glsl" ,
-						  "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
+					  "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
 	_view.push_back(
 		std::move(
 		std::unique_ptr < RPolyMeshGL
@@ -90,7 +90,14 @@ void DrawlerDeffered::init()
 		RFileLoader::getStream(
 		"res/view/polymodels/tower.bin" ) ,
 		RPolymesh::RPolyMeshType::RSTATIC_PMESH ) ) ) ) );
-
+	_view.push_back(
+		std::move(
+		std::unique_ptr < RPolyMeshGL
+		>( new RComplexPolyMeshGL(
+		RFileLoader::loadPolyMeshBin(
+		RFileLoader::getStream(
+		"res/view/polymodels/sword.bin" ) ,
+		RPolymesh::RPolyMeshType::RSTATIC_PMESH ) ) ) ) );
 	for( std::unique_ptr<RPolyMeshGL> &i : _view )
 	{
 		i->init();
@@ -107,11 +114,11 @@ void DrawlerDeffered::init()
 	_process_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
 						false , false , 3 } );
 	_water_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
-						  false , false , 3 } );
+					  false , false , 3 } );
 	_env_tex.init( std::move( RFileLoader::loadImage( "res/view/images/sky2.jpg" ) ) , 1 );
 	_lightk_tex.init( std::move( RFileLoader::loadImage( "res/view/images/lightk.png" ) ) , 1 );
 	_lightk_tex.setRepeat( false );
-	HeightMapDrawler::getSingleton()->init( 100 , f2( 500.0f , 500.0f ) , f2( 0.0f , 0.0f ) );
+	HeightMapDrawler::getSingleton()->init( 100 , f3( 500.0f , 500.0f , 50.0f ) );
 #ifdef RENDERWATER
 	WaterSimulator::getSingleton()->init( _storage_pass.getDepthBufferPtr() ,
 										  f2( 100.0f , 100.0f ) , 0.0f );
@@ -145,53 +152,51 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	//if( _resolution != res )
 	//{
 	_resolution = res;
-		scene->getCamera()->setAspect(
-			float( _resolution.x() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f ,
-			float( _resolution.y() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f );
+	scene->getCamera()->setAspect(
+		float( _resolution.x() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f ,
+		float( _resolution.y() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f );
 	//}
 
 	std::unique_ptr< std::vector<InstanceInfo>[] > data( new std::vector<InstanceInfo>[ _view.size() * 2 ] );
 	float time = _cur_time - floorf( _cur_time );
-	for( RDrawableState const &ins : scene->getStateVector() )
+	for( UnitInstanceState const &ins : scene->getStateVector() )
 	{
-		f4x4 const &m = ins.model;
-		f3 pos = f3( m( 3 , 0 ) , m( 3 , 1 ) , m( 3 , 2 ) );
-		float cam_dist = pos.g_dist( scene->getCamera()->_v3pos )
-			/ _view[ ins._view[ 0 ] ]->_size.z();
+		float cam_dist = f2( ins._pos.x() , ins._pos.y() ).g_dist( f2( scene->getCamera()->_v3pos.x() , scene->getCamera()->_v3pos.y() ) ) / _view[ ins._view[ 0 ] ]->_size.z();
 		ins._animstat.update( _dt );
 		for( auto const i : ins._view )
 		{
-			InstanceInfo instance_info{ ins._animstat._moment._time , ins._animstat._moment._last_time , cam_dist , 1.0f , int( ins._animstat._moment._mix ) , ins._animstat._moment._cur_set , ins._animstat._moment._last_set , m };
-			if( cam_dist < 3.0f )
-				data[ i * 2 ].push_back( instance_info );
-			else
+			InstanceInfo instance_info{
+				ins._animstat._moment._moment , ins._animstat._moment._last_moment
+				, cam_dist , 1.0f , int( ins._animstat._moment._mixing )
+				, ins._animstat._moment._cur_set , ins._animstat._moment._last_set , int( ins._auto_height ) , ins._pos , ins._look , vecx( ins._look , ins._up ) , ins._up };
+			//if( cam_dist < 3.0f )
+			data[ i * 2 ].push_back( instance_info );
+			/*else
 			{
-				if( !scene->getCamera()->fristrum( pos , _view[ i ]->_size.z() ) )
+				if( !scene->getCamera()->fristrum2d( ins._pos ) )
 					continue;
 
 				if( cam_dist < 15.0f )
 					data[ i * 2 + 1 ].push_back( instance_info );
 				else
 				{
-					f4x4 mn = m;
-					mn.scale( _view[ i ]->_size * 0.5f );
-					mn( 3 , 2 ) += _view[ i ]->_size.z() * 0.5f;
 					data[ 3 ].push_back( instance_info );
 				}
-			}
+			}*/
 		}
 	}
 	if( time < 0.01f )
 		LOG << 1.0f / _dt << "\n";
-	
 	_storage_pass.clear();
 	_storage_tess_prog.bind();
+	HeightMapDrawler::getSingleton()->bindHeihgtTexture();
 	glUniform1f( TIME , time );
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );
 	glUniform1i( PASSID , PASS_NORMAL );
 	glUniform1i( INSTANSING , 1 );
 	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
 	_storage_prog.bind();
+	HeightMapDrawler::getSingleton()->bindHeihgtTexture();
 	glUniform1f( TIME , time );
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
 						scene->getCamera()->getViewProj().getPtr() );
@@ -226,11 +231,11 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	 ///lights
 #ifdef LIGHTCASTERS
 	int caster_dir_light_count = 0 , caster_omni_light_count = 0;
-	RLightState const *caster_dir_light_ptr[ LIGHT_CASTER_COUNT ] ,
+	LightState const *caster_dir_light_ptr[ LIGHT_CASTER_COUNT ] ,
 		*caster_omni_light_ptr[ LIGHT_CASTER_COUNT ];
 	f4x4 dir_lights_viewproj[ LIGHT_CASTER_COUNT ];
 
-	for( RLightState const &l : scene->getLightVector() )
+	for( LightState const &l : scene->getLightVector() )
 	{
 		if( l._type == RLightSourceType::RLIGHT_DIRECT )
 		{

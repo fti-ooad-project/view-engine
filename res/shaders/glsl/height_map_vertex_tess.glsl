@@ -15,7 +15,7 @@ void main()
 		pv.texcoord = invertex_texcoord;
 	pv.normal = normalize( ( m * vec4( invertex_normal , 0.0 ) ).xyz );*/
 	float h = texture2D( BUFFER1 , 0.5 + 0.5 * invertex_position.xy ).x;
-	vec4 p = vec4( 500.0 * invertex_position.xy , ( h - 0.5 ) * 100.0 , 1.0 );
+	vec4 p = vec4( HEIGHTMAP_SIZE.xy * invertex_position.xy , ( h - 0.5 ) * HEIGHTMAP_SIZE.z , 1.0 );
 	pv.texcoord = 0.5 + 0.5 * invertex_position.xy;
 	gl_Position = p;
 	switch( PASSID )

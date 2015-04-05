@@ -8,14 +8,6 @@ in PerVertex pvte[];
 out PerVertex pvo;
 void main()
 {
-	int p = 0 , n = 0;
-	for( int i = 0; i < 3; ++i )
-	{
-		if( gl_in[i].gl_Position.z > WATERZ )
-			p++;
-		else
-			n++;
-	}
     for( int i = 0; i < 3; ++i )
 	{
 		vec4 p;// = gl_in[i].gl_Position;

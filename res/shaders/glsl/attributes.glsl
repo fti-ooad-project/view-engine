@@ -7,5 +7,8 @@ layout( location = 5 ) in vec3 invertex_bone_weight;
 layout( location = 6 ) in vec4 invertex_indx;
 
 layout( location = 7 ) in vec4 INS_TIME;
-layout( location = 8 ) in ivec3 INS_MIXING_ANIM_INDX;
-layout( location = 9 ) in mat4 INS_MODEL4x4;
+layout( location = 8 ) in ivec4 INS_MIXING_ANIM_INDX;
+layout( location = 9 ) in vec3 INS_POS;
+layout( location = 10 ) in vec3 INS_LOOK;
+layout( location = 11 ) in vec3 INS_LEFT;
+layout( location = 12 ) in vec3 INS_UP;

@@ -13,18 +13,18 @@ class Scene3DGL : public Scene3D
 {
 public:
 	RCamera _main_cam;
-	std::vector< RDrawableState > _instances;
-	std::vector< RLightState > _lights;
+	std::vector< UnitInstanceState > _instances;
+	std::vector< LightState > _lights;
 public:
 	Scene3DGL();
 	ViewTypes::RDrawInstancePTR genInstance() override;
-	RDrawableState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR i ) override;
+	UnitInstanceState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR i ) override;
 	ViewTypes::RLightSourcePTR genLight() override;
-	RLightState *getLightStatePtr( ViewTypes::RLightSourcePTR i ) override;
+	LightState *getLightStatePtr( ViewTypes::RLightSourcePTR i ) override;
 	RCamera const *getCamera() const override;
 	RCamera *getCamera() override;
-	std::vector< RDrawableState > const &getStateVector() const override;
-	std::vector< RLightState > const &getLightVector() const override;
+	std::vector< UnitInstanceState > const &getStateVector() const override;
+	std::vector< LightState > const &getLightVector() const override;
 };
 class ViewEngineGL : public ViewManager
 {

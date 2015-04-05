@@ -132,3 +132,7 @@ bool RCamera::fristrum( f3 const &p , float size ) const
 	if( fabsf( y ) / z > tanf( _fovy / 2.0f + 0.2f ) ) return false;
 	return true;
 }
+bool RCamera::fristrum2d( f2 const & p ) const
+{
+	return false;
+}

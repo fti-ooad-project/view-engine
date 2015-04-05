@@ -1,5 +1,12 @@
 #include "../view/3dgl/HeighMapDrawler.h"
 #include "../GlslDefines.h"
+void HeightMapDrawler::bindHeihgtTexture() const
+{
+	glActiveTexture( GL_TEXTURE0 );
+	glBindTexture( GL_TEXTURE_2D , _hmap.getTexture() );
+	glUniform1i( 3 , 0 );
+	glUniform3fv( 4 , 1 , _size.getArray() );
+}
 void HeightMapDrawler::bindToDraw()
 {
 	_prog.bind();
@@ -10,7 +17,7 @@ void HeightMapDrawler::bindToDraw()
 	glBindTexture( GL_TEXTURE_2D_ARRAY , _textures.getTexture() );
 	glUniform1i( 1 , 1 );
 	glUniform1i( FLAGS , ShaderMask::MASK_TEXTURED | ShaderMask::MASK_TEXTURED_DIF );
-	glUniform4f( 4 , _pos.x() , _pos.y() , _size.x() , _size.y() );
+	glUniform3fv( 4 , 1 , _size.getArray() );
 }
 void HeightMapDrawler::draw( bool tess )
 {
@@ -20,12 +27,11 @@ void HeightMapDrawler::draw( bool tess )
 	else
 		glDrawElements( GL_TRIANGLES , _indx_count , GL_UNSIGNED_SHORT , 0 );
 }
-void HeightMapDrawler::init( uint density , f2 const &size , f2 const &bpos )
+void HeightMapDrawler::init( uint density , f3 const &size )
 {
 	if( isInited() ) return;
 	setInited( true );
 	_size = size;
-	_pos = bpos;
 	_hmap = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/terrain.png" ) ) , 1 ) );
 	_hmap.init();
 	std::string difftexname[] = { "res/view/images/dirtnorm.jpg" , "res/view/images/grass.jpg" , "res/view/images/snowdirt.jpg" , "res/view/images/ground.jpg" };

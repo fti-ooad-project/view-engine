@@ -4,19 +4,19 @@ Scene3DGL::Scene3DGL()
 }
 ViewTypes::RDrawInstancePTR Scene3DGL::genInstance()
 {
-	_instances.push_back( RDrawableState() );
+	_instances.push_back( UnitInstanceState() );
 	return _instances.size() - 1;
 }
-RDrawableState *Scene3DGL::getInstanceStatePtr( ViewTypes::RDrawInstancePTR i )
+UnitInstanceState *Scene3DGL::getInstanceStatePtr( ViewTypes::RDrawInstancePTR i )
 {
 	return &_instances[ i ];
 }
 ViewTypes::RLightSourcePTR Scene3DGL::genLight()
 {
-	_lights.push_back( RLightState() );
+	_lights.push_back( LightState() );
 	return _lights.size() - 1;
 }
-RLightState *Scene3DGL::getLightStatePtr( ViewTypes::RLightSourcePTR i )
+LightState *Scene3DGL::getLightStatePtr( ViewTypes::RLightSourcePTR i )
 {
 	return &_lights[ i ];
 }
@@ -28,11 +28,11 @@ RCamera *Scene3DGL::getCamera()
 {
 	return &_main_cam;
 }
-std::vector< RDrawableState > const &Scene3DGL::getStateVector() const
+std::vector< UnitInstanceState > const &Scene3DGL::getStateVector() const
 {
 	return _instances;
 }
-std::vector< RLightState > const &Scene3DGL::getLightVector() const
+std::vector< LightState > const &Scene3DGL::getLightVector() const
 {
 	return _lights;
 }

@@ -1,6 +1,6 @@
 if( bool( FLAGS & MASK_ANIMATED ) )
 {
-	if( INS_TIME.z < 10.0 )
+	if( INS_TIME.z < 50.0 )
 	{
 		mat4 ma = mat4( 0.0 );
 		float time , ltime;
@@ -25,7 +25,7 @@ if( bool( FLAGS & MASK_ANIMATED ) )
 		for( int i = 0; i < 3; i++ )
 		{
 			temp += invertex_bone_weight[i];
-			ma += getMatFromTex( time , invertex_indx[i] , BONE_COUNT , ANIM_TEX_ARRAY , 2.0 ) * invertex_bone_weight[i];
+			ma += getMatFromTex( time , invertex_indx[i] , BONE_COUNT , ANIM_TEX_ARRAY , 1.0 ) * invertex_bone_weight[i];
 		}
 		ma += getMatFromTex( time , invertex_indx[3] , BONE_COUNT , ANIM_TEX_ARRAY , 0.0 ) * ( 1.0 - temp );
 		for( int i = 0; i < 3; ++i )
