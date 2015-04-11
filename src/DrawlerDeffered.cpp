@@ -169,20 +169,19 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 				ins._animstat._moment._moment , ins._animstat._moment._last_moment
 				, cam_dist , 1.0f , int( ins._animstat._moment._mixing )
 				, ins._animstat._moment._cur_set , ins._animstat._moment._last_set , int( ins._auto_height ) , ins._pos , ins._look , vecx( ins._look , ins._up ) , ins._up };
-			//if( cam_dist < 3.0f )
+			if( cam_dist < 3.0f )
 			data[ i * 2 ].push_back( instance_info );
-			/*else
+			else
 			{
-				if( !scene->getCamera()->fristrum2d( ins._pos ) )
-					continue;
-
+				//if( !scene->getCamera()->fristrum2d( f2( ins._pos.x() , ins._pos.y() ) ) )
+				//	continue;
 				if( cam_dist < 15.0f )
 					data[ i * 2 + 1 ].push_back( instance_info );
 				else
 				{
 					data[ 3 ].push_back( instance_info );
 				}
-			}*/
+			}
 		}
 	}
 	if( time < 0.01f )
@@ -230,9 +229,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 
 	 ///lights
 #ifdef LIGHTCASTERS
-	int caster_dir_light_count = 0 , caster_omni_light_count = 0;
-	LightState const *caster_dir_light_ptr[ LIGHT_CASTER_COUNT ] ,
-		*caster_omni_light_ptr[ LIGHT_CASTER_COUNT ];
+	int caster_dir_light_count = 0 , simple_omni_light_count = 0;
+	LightState const *caster_dir_light_ptr[ 1 ]
+		, *omni_light_ptr[ 10 ];
 	f4x4 dir_lights_viewproj[ LIGHT_CASTER_COUNT ];
 
 	for( LightState const &l : scene->getLightVector() )
@@ -263,9 +262,8 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 			caster_dir_light_count++;
 		} else
 		{
-			if( caster_omni_light_count > 2 )
-				continue;
-			caster_omni_light_count++;
+			omni_light_ptr[ simple_omni_light_count ] = &l;
+			simple_omni_light_count++;
 		}
 	}
 #endif
@@ -344,7 +342,6 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getPlaneBuffer() );
 	glUniform1i( 11 , 4 );
 #endif
-
 	glUniform3fv( CAM , 1 , scene->getCamera()->_v3pos.getArray() );
 	glUniform3fv( CAM + 1 , 1 , scene->getCamera()->_v3local_z.getArray() );
 	f3 cx = scene->getCamera()->_v3local_x * tanf( scene->getCamera()->_fovx / 2.0f );
@@ -363,6 +360,13 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 		glActiveTexture( GL_TEXTURE0 + 5 + i );
 		glBindTexture( GL_TEXTURE_2D , _light_dir_passes[ i ].getDepthBufferPtr() );
 		glUniform1i( lid + 3 , 5 + i );
+	}
+	glUniform1i( 13 , simple_omni_light_count );
+	ito( simple_omni_light_count )
+	{
+		int lid = 20 + i * 2;
+		glUniform4f( lid , omni_light_ptr[ i ]->_pos.x() , omni_light_ptr[ i ]->_pos.y() , omni_light_ptr[ i ]->_pos.z() , omni_light_ptr[ i ]->_size );
+		glUniform4fv( lid + 1 , 1 , omni_light_ptr[ i ]->_colori.getArray() );
 	}
 #endif
 	_screen_quad.draw();

@@ -34,9 +34,7 @@ layout( location = 20 ) uniform OmniLight OLIGHT[MAX_LIGHTS_CASTER];
 layout( location = 32 ) uniform DirectedLight DLIGHT[MAX_LIGHTS_CASTER];
 */
 #define FLAGS 0
-#define RGB_NORMAL_A_HEIGHT_TEXTURE 1
-#define RGB_DIFFUSE_A_OPACITY_TEXTURE 2
-#define RGB_SPECULAR_A_GLOSSNESS_TEXTURE 3
+#define ARRAY_TEXTURE 1
 #define TIME 7
 #define BONE_COUNT 10
 #define PASSID 17
@@ -52,8 +50,8 @@ layout( location = 32 ) uniform DirectedLight DLIGHT[MAX_LIGHTS_CASTER];
 #define BUFFER0 0
 #define ENV 1
 #define CAM 4
-#define OLIGHT_COUNT 9
+//#define OLIGHT_COUNT 9
 #define DLIGHT_COUNT 10
-#define OLIGHT 20
-#define DLIGHT 32
+//#define OLIGHT 20
+#define DLIGHT 40
 

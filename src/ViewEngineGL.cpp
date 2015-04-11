@@ -18,7 +18,7 @@ ViewTypes::RLightSourcePTR Scene3DGL::genLight()
 }
 LightState *Scene3DGL::getLightStatePtr( ViewTypes::RLightSourcePTR i )
 {
-	return &_lights[ i ];
+	return &( _lights[ i ] );
 }
 RCamera const *Scene3DGL::getCamera() const
 {

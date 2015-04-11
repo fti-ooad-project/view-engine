@@ -65,23 +65,40 @@ int main()
 		state->_view.push_back( 3 );
 		state->model = temp;
 	}*/
-
 	LightState *ls = scene->getLightStatePtr( scene->genLight() );
 	ls->_cast_shadow = true;
-	ls->_colori = f4( 0.9f , 0.99f , 1.0f , 3.0f );
+	ls->_colori = f4( 0.9f , 0.99f , 1.0f , 5.0f );
 	ls->_dir = f3( -0.7f , 0.0f , -0.7f );
 	ls->_pos = f3( 70.0f , 0.0f , 70.0f );
 	ls->_type = RLightSourceType::RLIGHT_DIRECT;
+
+	LightState *ss = scene->getLightStatePtr( scene->genLight() );
+	ss->_cast_shadow = false;
+	ss->_colori = f4( 0.9f , 0.3f , 0.4f , 500.0f );
+	ss->_pos = f3( -10.0f , 0.0f , 5.0f );
+	ss->_type = RLightSourceType::RLIGHT_OMNI;
+	ss->_size = 1.0f;
+
 	auto cam = scene->getCamera();
 	cam->lookAt( f3( 0.0f , -2.0f , 2.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
 	f3 cam_pos( 0.0f ) , cam_lookat;
 	float X = 0.0f;
 	float cam_z = 10.0f;
+	ls = scene->getLightStatePtr( 0 );
+	eventer->addTimeFunc(
+		[ ss ]( const float dt )
+	{
+		static float t = 0.0f;
+		t += dt;
+		ss->_colori = f4( 0.9f , 0.8f , 0.4f , 500.0f + 100.0f * sinf( t * 30.0f ) );
+	}
+		);
 	eventer->addKeyFunc(
-		[ cam , ls , &X , &cam_pos , &cam_z ]( const KeyStates &cs , const float dt )
+		[ cam , ls , ss , &X , &cam_pos , &cam_z ]( const KeyStates &cs , const float dt )
 	{
 		const float dr = dt * 30.0f;
 		f3 v( 0.0f , 0.0f , 0.0f );
+		
 		/*if( cs.__cur_states[SDL_SCANCODE_X] )
 			_tri = true;
 		else

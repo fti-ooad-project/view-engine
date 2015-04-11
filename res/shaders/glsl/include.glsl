@@ -3,7 +3,7 @@ const int MASK_TEXTURED_DIF			= 1 << 1;
 const int MASK_TEXTURED_NOR 	= 1 << 2;
 const int MASK_TEXTURED_SPE		= 1 << 3;
 const int MASK_ANIMATED			= 1 << 4;
-#define MAX_LIGHTS_CASTER 3
+#define MAX_LIGHTS_CASTER 1
 #define MAX_LIGHTS 10
 #define pi 3.1415
 const int NUM_TAPS = 12;

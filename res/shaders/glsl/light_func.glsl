@@ -1,3 +1,8 @@
+struct SimpleLight
+{
+    vec4 pos_r;
+    vec4 colori;
+};
 struct OmniLight
 {
     vec3 pos;

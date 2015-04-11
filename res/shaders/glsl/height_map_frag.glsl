@@ -24,7 +24,7 @@ void main()
 		case PASS_NORMAL:
 			vec3 diff = vec3( 0.5 );
 			vec4 norm = vec4( pvo.normal , pvo.depth );
-			vec4 spec = vec4( vec3( 0.2 ) , 0.2 );
+			vec4 spec = vec4( 0.0 );
 			vec3 grass = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 1.0 ) ).xyz;
 			vec3 snow = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 2.0 ) ).xyz;
 			vec3 dirt = texture( TEXTURE_ARRAY , vec3( pvo.texcoord , 3.0 ) ).xyz;
