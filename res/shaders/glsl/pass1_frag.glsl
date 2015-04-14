@@ -45,11 +45,11 @@ float specular( vec3 n , vec3 l , vec3 refl , float spec , float ldist2 , float 
 	float func;
 	float cosx = max( 0.0 , dot( refl , l ) );
 	if( cosx < cosa )
-		func = pow( 1.0 - cos( cosx * pi * 0.5 / cosa ) , max( 1.0 , spec * 40.0 ) );
+		func = pow( cosx / cosa , max( 1.0 , spec * 40.0 ) );
 	else
 		func = 1.0;
-	return max( 0.0 , dot( n , l ) ) * 0.6 *
-	func / max( 0.01 , ldist2 - lr * lr );
+	return max( 0.0 , dot( n , l ) ) *
+	func / max( 0.01 , ldist2 - lr * lr ) * ( spec * 40.0 + 1.0 ) * 0.03;
 }
 vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , vec3 albedo , float env_k )
 {
@@ -76,42 +76,19 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , vec3 albedo , float env_k )
 		vec3 rl = SLIGHT[i].pos_r.xyz - p;
 		float ldist2 = dot( rl , rl );
 		vec3 l = normalize( rl );
-		float dk = diffuse( n , l , ldist2 , SLIGHT[i].pos_r.w );
 		float sk = specular( n , l , refl , specw.w , ldist2 , SLIGHT[i].pos_r.w );
-		out_c += mix( dk , freshnel * sk , specw.w ) * SLIGHT[i].colori.xyz * SLIGHT[i].colori.w;
-		//dk * SLIGHT[i].colori.xyz * SLIGHT[i].colori.w;
-		/*
-		vec3 l = normalize( rl );
-		float da = max( 0.0 , dot( n , l ) );
-		float dk = da * 0.3;//texture( LIGHTK , vec2( da , specw.w ) ).x;
-		float ra = max( 0.0 , dot( refl , l ) );
-		float rk = dk > 0.0 ? da * freshnel * texture( LIGHTK , vec2( ra , specw.w ) ).x : 0.0;
-		//float k = mix( rk , dk , 1.0 - specw.w );
-		vec3 tl = SLIGHT[i].colori.xyz * SLIGHT[i].colori.w / ( max( 0.01 , dot( rl , rl ) - SLIGHT[i].pos_r.w ) );
-		diff_out += tl * dk;
-		spec_out += tl * rk;*/
+		out_c += freshnel * sk * SLIGHT[i].colori.xyz * SLIGHT[i].colori.w;
 	}
 	for( int i = 0; i < DLIGHT_COUNT; i++ )//COUNT!!!
 	{
-		float dk = diffuse( n , -DLIGHT[i].dir , 1.0 , 0.01 );
-		//out_c += dk * DLIGHT[i].colori.xyz * DLIGHT[i].colori.w;
 		float sk = specular( n , -DLIGHT[i].dir , refl , specw.w , 1.0 , 0.04 );
-		out_c +=  mix( dk , freshnel * sk , specw.w ) * DLIGHT[i].colori.xyz * DLIGHT[i].colori.w
-		 * smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer );
-		
-		/*float da = max( 0.0 , dot( n , -DLIGHT[i].dir ) );
-		float dk = da * 0.1;//texture( LIGHTK , vec2( da , specw.w ) ).x;
-		float ra = max( 0.0 , dot( refl , -DLIGHT[i].dir ) );
-		float rk = dk > 0.0 ? da * freshnel * texture( LIGHTK , vec2( ra , specw.w ) ).x : 0.0;
-		//float k = mix( rk , dk , 1.0 - specw.w );
-		vec3 tl = DLIGHT[i].colori.xyz * DLIGHT[i].colori.w * smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer );// * k;
-		diff_out += tl * dk;
-		spec_out += tl * rk;*/
+		out_c +=  
+		freshnel * sk * DLIGHT[i].colori.xyz * DLIGHT[i].colori.w * mix( smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) , env_k , specw.w );
 	}
-	return out_c + env_k * freshnel * env( refl , 1.0 - specw.w ) * albedo;
+	return out_c + ( env_k * 0.7 + 0.3 ) * freshnel * env( refl , 1.0 - specw.w ) * albedo;
 	//return vec3( smoothLightDir( p , n , 0.1 , DLIGHT[0].toLightViewProj , DLIGHT[0].DepthMap_Buffer ) );
 }
-vec3 traceLights( vec3 p , vec3 v )
+vec3 traceLights( vec3 p , vec3 v , float depth )
 {
 	for( int i = 0; i < SLIGHT_COUNT; i++ )//COUNT!!!
 	{
@@ -119,7 +96,7 @@ vec3 traceLights( vec3 p , vec3 v )
 		if( dot( dp , v) > 0.0 ) return vec3( 0.0 );
 		float a = dot( v , dp );
 		float d = a * a - dot( dp , dp ) + SLIGHT[i].pos_r.w * SLIGHT[i].pos_r.w;
-		if( d >= 0.0 )
+		if( d >= 0.0 && length( dp ) < depth )
 			return SLIGHT[i].colori.xyz;// * SLIGHT[i].colori.w;
 	}
 	return vec3( 0.0 );
@@ -206,7 +183,7 @@ void main()
 		DDEPTH = abs( wdepth - depth );
 		float dw = max( 0.0 , dot( normalize( CAM.pos - wpos ) , wnorm ) );
 		WATERK = dw * mix( vec3( 0.7 , 0.8 , 0.9 ) , vec3( 0.1 , 0.15 , 0.2 ) , min( 1.0 , DDEPTH / 3.0 ) );
-		vec3 wl = light( wpos , wnorm , CAM.pos , vec4( 0.0 , 0.5 , 0.0 , 0.99 ) , vec3( 0.9 , 0.85 , 0.89 ) , ( texture( WATER_REFLECTBUF , distfragpos ).x < 1.0 ? 0.5 : 1.0 ) );
+		vec3 wl = light( wpos , wnorm , CAM.pos , vec4( 0.0 , 0.5 , 0.0 , 0.99 ) , vec3( 0.9 , 0.85 , 0.89 ) , ( texture( WATER_REFLECTBUF , distfragpos ).x < 1.0 ? 0.0 : 1.0 ) );
 		out_data += ( 1.0 - dw ) * 
 		vec3( wl );//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );reflectWater( wdepth , frag_pos , wnorm , wpos ) * 
 		
@@ -224,6 +201,7 @@ void main()
 	//out_data += vec4( fog() , 1.0 );
 	const vec3 FOG = vec3( 0.1 , 0.2 , 0.2 );
 	vec3 v = camRay( CAM , frag_pos );
+	out_data += traceLights( CAM.pos , v , depth );
 	if( buf0.x == 0 )
 	{
 		
@@ -231,7 +209,7 @@ void main()
 			out_data = vec3( 1.5 );
 		else
 		//	out_data = vec3( 0.8 );
-			out_data = mix( env( v , 0.0 ) , FOG , 1.0 - abs( v.z ) );
+			out_data += mix( env( v , 0.0 ) , FOG , 1.0 - abs( v.z ) );
 		//return;
 	}else
 	{
