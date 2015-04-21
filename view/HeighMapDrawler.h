@@ -1,19 +1,17 @@
 #ifndef HEIGHMAPDRAWLER_HPP
 #define HEIGHMAPDRAWLER_HPP
-#include "../../base/RBase.h"
-#include "../GL.h"
-#include "RTextures.h"
-#include "RViewModelsGL.h"
-#include "RTexturesGL.h"
-class HeightMapDrawler : public RInitable
+#include <base/Base.h>
+#include <openGL\ViewModelsGL.h>
+#include <openGL\TexturesGL.h>
+class HeightMapDrawler : public Initable
 {
 private:
 	uint _vao;
 	int _indx_count;
-	RGraphicProgrammGL _prog;
-	RGraphicProgrammGL _lightprog;
-	RTextureHolderGL _textures;
-	RTextureHolderGL _hmap;
+	GraphicProgrammGL _prog;
+	GraphicProgrammGL _lightprog;
+	TextureHolderGL _textures;
+	TextureHolderGL _hmap;
 	HeightMapDrawler() = default;
 public:
 	f3 _size;

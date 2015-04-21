@@ -2,29 +2,29 @@
 Scene3DGL::Scene3DGL()
 {
 }
-ViewTypes::RDrawInstancePTR Scene3DGL::genInstance()
+uint Scene3DGL::genInstance()
 {
 	_instances.push_back( UnitInstanceState() );
 	return _instances.size() - 1;
 }
-UnitInstanceState *Scene3DGL::getInstanceStatePtr( ViewTypes::RDrawInstancePTR i )
+UnitInstanceState *Scene3DGL::getInstanceStatePtr( uint i )
 {
 	return &_instances[ i ];
 }
-ViewTypes::RLightSourcePTR Scene3DGL::genLight()
+uint Scene3DGL::genLight()
 {
 	_lights.push_back( LightState() );
 	return _lights.size() - 1;
 }
-LightState *Scene3DGL::getLightStatePtr( ViewTypes::RLightSourcePTR i )
+LightState *Scene3DGL::getLightStatePtr( uint i )
 {
 	return &( _lights[ i ] );
 }
-RCamera const *Scene3DGL::getCamera() const
+Camera const *Scene3DGL::getCamera() const
 {
 	return &_main_cam;
 }
-RCamera *Scene3DGL::getCamera()
+Camera *Scene3DGL::getCamera()
 {
 	return &_main_cam;
 }
@@ -96,7 +96,7 @@ Scene3D  const *ViewEngineGL::getScene()
 {
 	return static_cast< Scene3D const* >( _cur_scene );
 }
-REventer *ViewEngineGL::getEventer()
+Eventer *ViewEngineGL::getEventer()
 {
 	return &_eventer;
 }

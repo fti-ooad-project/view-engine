@@ -3,7 +3,7 @@
 #include <memory>
 #include "view/ViewEngineGL.h"
 #include <stdexcept>
-#include "view/GL.h"
+#include <openGL\GLincludes.h>
 void assertGL( int mark )
 {
 	if( int i = glGetError() )
@@ -70,13 +70,13 @@ int main()
 	ls->_colori = f4( 0.9f , 0.99f , 1.0f , 5.0f );
 	ls->_dir = f3( -0.7f , 0.0f , -0.7f );
 	ls->_pos = f3( 70.0f , 0.0f , 70.0f );
-	ls->_type = RLightSourceType::RLIGHT_DIRECT;
+	ls->_type = LightSourceType::LIGHT_DIRECT;
 
 	LightState *ss = scene->getLightStatePtr( scene->genLight() );
 	ss->_cast_shadow = false;
 	ss->_colori = f4( 0.9f , 0.3f , 0.4f , 500.0f );
 	ss->_pos = f3( -10.0f , 0.0f , 5.0f );
-	ss->_type = RLightSourceType::RLIGHT_OMNI;
+	ss->_type = LightSourceType::LIGHT_OMNI;
 	ss->_size = 1.0f;
 
 	auto cam = scene->getCamera();

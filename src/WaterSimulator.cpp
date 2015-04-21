@@ -1,7 +1,7 @@
-#include "../view/3dgl/WaterSimulator.h"
-#include "../view/export/RCamera.h"
+#include "../view/WaterSimulator.h"
+#include <view\Camera.h>
 #include "../GlslDefines.h"
-#include "../base/RFileloader.h"
+#include <base\Fileloader.h>
 void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 {
 	if( isInited() ) return;
@@ -13,14 +13,14 @@ void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 	_screen_quad.init();
 	ito( 2 )
 	{
-		_water_surf_pass[ i ].init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false , 4 } );
-		_water_bump_pass[ i ].init( { { dest , dest } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 4 } );
+		_water_surf_pass[ i ].init( { { 1024 , 1024 } , BufferStoreType::BUFFER_INT , 1 , -1 , false , false , 4 } );
+		_water_bump_pass[ i ].init( { { dest , dest } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 4 } );
 		_water_bump_pass[ i ].bind();
 		_water_bump_pass[ i ].clear();
 	}
-	_final.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 4 } );
-	_water_plane_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , depth_buf , false , false , 4 } );
-	_water_refl_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , false } );
+	_final.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 4 } );
+	_water_plane_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_INT , 1 , depth_buf , false , false , 4 } );
+	_water_refl_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , false } );
 	_water_plane_prog.init( "res/shaders/glsl/water_plane_fragment.glsl" , "res/shaders/glsl/water_plane_vertex.glsl" );
 	_water_bump_prog.init( "res/shaders/glsl/water_bump_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
 	//_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );
@@ -55,7 +55,7 @@ void WaterSimulator::bindToRenderReflection()
 	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , reflection_camera.getViewProj().getPtr() );
 	glUniform4f( 18 , _cam_pos.x() , _cam_pos.y() , _height , _size.x() );
 }
-void WaterSimulator::calcReflectionCamera( RCamera const &cam )
+void WaterSimulator::calcReflectionCamera( Camera const &cam )
 {
 	reflection_camera = cam;
 	reflection_camera._v3pos = f3( cam._v3pos.x() , cam._v3pos.y() , _height - cam._v3pos.z() );
@@ -71,13 +71,13 @@ void WaterSimulator::switchSurfaceBuffer( f3 const & cam_pos )
 		_caminit = true;
 		_last_cam_pos = cam_pos;
 		_cam_pos = cam_pos;
-		water_viewproj = RCamera::orthographic( f3( _cam_pos.x() , _cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
+		water_viewproj = Camera::orthographic( f3( _cam_pos.x() , _cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
 	}
 	if( cam_pos.g_dist2( _cam_pos ) > 300.0f )
 	{
 		_last_cam_pos = _cam_pos;
 		_cam_pos = cam_pos;
-		water_viewproj = RCamera::orthographic( f3( _cam_pos.x() , _cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
+		water_viewproj = Camera::orthographic( f3( _cam_pos.x() , _cam_pos.y() , _height - 10.0f ) , f3( 0.0f , 0.0f , 1.0f ) , f3( 0.0f , 1.0f , 0.0f ) , _size.x() );
 	}
 	last = cur;
 	cur = ( cur + 1 ) % 2;

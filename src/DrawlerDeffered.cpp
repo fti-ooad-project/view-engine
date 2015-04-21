@@ -1,5 +1,5 @@
 #include <memory>
-#include "../view/3dgl/DrawlerDeffered.h"
+#include "../view/DrawlerDeffered.h"
 #include "../GlslDefines.h"
 #define LIGHTCASTERS
 #define RENDERWATER
@@ -46,11 +46,11 @@ void DrawlerDeffered::drawInstancesToLight( std::vector<InstanceInfo> const *inf
 void DrawlerDeffered::updateRes()
 {
 	_storage_pass.release();
-	_storage_pass.init( RPassDesc{ { _resolution.x() , _resolution.y() } , RBufferStoreType::RBUFFER_INT , 1 , -1 , false , false , 4 } );
+	_storage_pass.init( PassDesc{ { _resolution.x() , _resolution.y() } , BufferStoreType::BUFFER_INT , 1 , -1 , false , false , 4 } );
 	_process_pass.release();
-	_process_pass.init( RPassDesc{ { _resolution.x() , _resolution.y() } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 3 } );
+	_process_pass.init( PassDesc{ { _resolution.x() , _resolution.y() } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 3 } );
 	_water_pass.release();
-	_water_pass.init( RPassDesc{ { _resolution.x() , _resolution.y() } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 , false , false , 3 } );
+	_water_pass.init( PassDesc{ { _resolution.x() , _resolution.y() } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 3 } );
 }
 void DrawlerDeffered::init()
 {
@@ -74,31 +74,31 @@ void DrawlerDeffered::init()
 					  "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
 	_view.push_back(
 		std::move(
-		std::unique_ptr < RPolyMeshGL
-		>( new RComplexPolyMeshGL(
-		RFileLoader::loadPolyMeshBin(
-		RFileLoader::getStream(
+		std::unique_ptr < PolyMeshGL
+		>( new ComplexPolyMeshGL(
+		FileLoader::loadPolyMeshBin(
+		FileLoader::getStream(
 		"res/view/polymodels/monkey.bin" ) ,
-		RPolymesh::RPolyMeshType::RBONED_PMESH ) ) ) ) );
+		Polymesh::PolyMeshType::BONED_PMESH ) ) ) ) );
 	_view.push_back(
-		std::move( std::unique_ptr < RPolyMeshGL >( new RPolyBoxGL ) ) );
+		std::move( std::unique_ptr < PolyMeshGL >( new PolyBoxGL ) ) );
 	_view.push_back(
 		std::move(
-		std::unique_ptr < RPolyMeshGL
-		>( new RComplexPolyMeshGL(
-		RFileLoader::loadPolyMeshBin(
-		RFileLoader::getStream(
+		std::unique_ptr < PolyMeshGL
+		>( new ComplexPolyMeshGL(
+		FileLoader::loadPolyMeshBin(
+		FileLoader::getStream(
 		"res/view/polymodels/tower.bin" ) ,
-		RPolymesh::RPolyMeshType::RSTATIC_PMESH ) ) ) ) );
+		Polymesh::PolyMeshType::STATIC_PMESH ) ) ) ) );
 	_view.push_back(
 		std::move(
-		std::unique_ptr < RPolyMeshGL
-		>( new RComplexPolyMeshGL(
-		RFileLoader::loadPolyMeshBin(
-		RFileLoader::getStream(
+		std::unique_ptr < PolyMeshGL
+		>( new ComplexPolyMeshGL(
+		FileLoader::loadPolyMeshBin(
+		FileLoader::getStream(
 		"res/view/polymodels/sword.bin" ) ,
-		RPolymesh::RPolyMeshType::RSTATIC_PMESH ) ) ) ) );
-	for( std::unique_ptr<RPolyMeshGL> &i : _view )
+		Polymesh::PolyMeshType::STATIC_PMESH ) ) ) ) );
+	for( std::unique_ptr<PolyMeshGL> &i : _view )
 	{
 		i->init();
 		i->genInstancedBuffer();
@@ -106,17 +106,17 @@ void DrawlerDeffered::init()
 	ito( LIGHT_CASTER_COUNT )
 	{
 		_light_dir_passes[ i ].init( { { 1024 , 1024 } ,
-									 RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , false } );
-		//_light_cube_passes[i].init( { { 512 , 512 } , RBufferStoreType::RBUFFER_FLOAT , 0 , -1 , true , true } );
+									 BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , false } );
+		//_light_cube_passes[i].init( { { 512 , 512 } , BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , true } );
 	}
-	_storage_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_INT , 1 , -1 ,
+	_storage_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_INT , 1 , -1 ,
 						false , false , 4 } );
-	_process_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
+	_process_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 ,
 						false , false , 3 } );
-	_water_pass.init( { { 1024 , 1024 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
+	_water_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 ,
 					  false , false , 3 } );
-	_env_tex.init( std::move( RFileLoader::loadImage( "res/view/images/sky2.jpg" ) ) , 1 );
-	_lightk_tex.init( std::move( RFileLoader::loadImage( "res/view/images/lightk.png" ) ) , 1 );
+	_env_tex.init( std::move( FileLoader::loadImage( "res/view/images/sky2.jpg" ) ) , 1 );
+	_lightk_tex.init( std::move( FileLoader::loadImage( "res/view/images/lightk.png" ) ) , 1 );
 	_lightk_tex.setRepeat( false );
 	HeightMapDrawler::getSingleton()->init( 100 , f3( 500.0f , 500.0f , 50.0f ) );
 #ifdef RENDERWATER
@@ -236,7 +236,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 
 	for( LightState const &l : scene->getLightVector() )
 	{
-		if( l._type == RLightSourceType::RLIGHT_DIRECT )
+		if( l._type == LightSourceType::LIGHT_DIRECT )
 		{
 			if( caster_dir_light_count > 2 || !l._cast_shadow )
 				continue;
@@ -244,7 +244,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 			//_light_dir_passes[ caster_dir_light_count ].bind();
 			_light_dir_passes[ caster_dir_light_count ].clear();
 
-			dir_lights_viewproj[ caster_dir_light_count ] = RCamera::orthographic(
+			dir_lights_viewproj[ caster_dir_light_count ] = Camera::orthographic(
 				l._pos , l._dir , f3( 0.0f , 0.0f , 1.0f ) , 300.0f );
 
 			_storage_prog.bind();

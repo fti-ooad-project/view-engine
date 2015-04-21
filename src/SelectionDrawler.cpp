@@ -1,6 +1,7 @@
-#include "../view/3dgl/SelectionDrawler.h"
-#include "../view/3dgl/Blurer.h"
-#include "../view/GL.h"
+#include "../view/SelectionDrawler.h"
+#include <openGL\Blurer.h>
+#include <openGL\GLincludes.h>
+#include <base/Base.h>
 SelectionDrawler::SelectionDrawler()
 {
 }
@@ -38,7 +39,7 @@ void SelectionDrawler::init()
 	if( isInited() ) return;
 	setInited( true );
 	_process_prog.init( "res/shaders/glsl/selectableprocessfrag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
-	_process_pass.init( { { 512 , 512 } , RBufferStoreType::RBUFFER_FLOAT , 1 , -1 ,
+	_process_pass.init( { { 512 , 512 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 ,
 						false , false , 4 } );
 	_screen_quad.init();
 	_blurer.init();

@@ -1,9 +1,9 @@
 #ifndef RSCENEDRAWLER_H
 #define RSCENEDRAWLER_H
-#include "../../base/RBase.h"
-#include "../../base/REventer.h"
-#include "RViewModels.h"
-#include "RCamera.h"
+#include <base/Base.h>
+#include <base/Eventer.h>
+#include <view\ViewModels.h>
+#include <view\Camera.h>
 //#ifdef _WIN32
 /*#if defined( VIEWLIBRARY_EXPORT )
 #define VIEWAPI   __declspec( dllexport )
@@ -20,14 +20,14 @@ public:
 	Scene3D() = default;
 	Scene3D( Scene3D const & ) = delete;
 	void operator=( Scene3D const & ) = delete;
-	virtual ViewTypes::RDrawInstancePTR genInstance() = 0;
-	virtual UnitInstanceState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR ) = 0;
+	virtual uint genInstance() = 0;
+	virtual UnitInstanceState *getInstanceStatePtr( uint ) = 0;
 	virtual std::vector< UnitInstanceState > const &getStateVector() const = 0;
 	virtual std::vector< LightState > const &getLightVector() const = 0;
-	virtual ViewTypes::RLightSourcePTR genLight() = 0;
-	virtual LightState *getLightStatePtr( ViewTypes::RLightSourcePTR ) = 0;
-	virtual RCamera const *getCamera() const = 0;
-	virtual RCamera *getCamera() = 0;
+	virtual uint genLight() = 0;
+	virtual LightState *getLightStatePtr( uint ) = 0;
+	virtual Camera const *getCamera() const = 0;
+	virtual Camera *getCamera() = 0;
 };
 class GUIElem
 {
@@ -70,7 +70,7 @@ public:
 		return _elems;
 	}
 };
-class ViewManager : public RInitable
+class ViewManager : public Initable
 {
 public:
 	class API
@@ -88,6 +88,6 @@ public:
 	virtual void setGUI( GUILayout const * ) = 0;
 	virtual Scene3D *genScene() = 0;
 	virtual Scene3D const *getScene() = 0;
-	virtual REventer *getEventer() = 0;
+	virtual Eventer *getEventer() = 0;
 };
 #endif // RSCENEDRAWLER_H

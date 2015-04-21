@@ -1,4 +1,5 @@
-#include "../view/3dgl/HeighMapDrawler.h"
+#include "../view/HeighMapDrawler.h"
+#include <openGL\GLincludes.h>
 #include "../GlslDefines.h"
 void HeightMapDrawler::bindHeihgtTexture() const
 {
@@ -32,10 +33,10 @@ void HeightMapDrawler::init( uint density , f3 const &size )
 	if( isInited() ) return;
 	setInited( true );
 	_size = size;
-	_hmap = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( "res/view/images/terrain.png" ) ) , 1 ) );
+	_hmap = std::move( TextureHolderGL( std::move( FileLoader::loadImage( "res/view/images/terrain.png" ) ) , 1 ) );
 	_hmap.init();
 	std::string difftexname[] = { "res/view/images/dirtnorm.jpg" , "res/view/images/grass.jpg" , "res/view/images/snowdirt.jpg" , "res/view/images/ground.jpg" };
-	_textures = std::move( RTextureHolderGL( std::move( RFileLoader::loadImage( difftexname , 4 ) ) , 4 ) );
+	_textures = std::move( TextureHolderGL( std::move( FileLoader::loadImage( difftexname , 4 ) ) , 4 ) );
 	_textures.init();
 	std::unique_ptr< f3[] > pos( new f3[ density * density ] );
 	_indx_count = ( density - 1 ) * ( density - 1 ) * 6;

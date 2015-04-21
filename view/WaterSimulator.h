@@ -1,18 +1,18 @@
 #ifndef WATERSIMULATOR_HPP
 #define WATERSIMULATOR_HPP
-#include "../../base/RBase.h"
-#include "RViewModelsGL.h"
-#include "../export/RCamera.h"
-#include "RPassGL.h"
-#include "RDrawableGL.h"
-#include "RTexturesGL.h"
-class WaterSimulator : public RInitable
+#include <base/Base.h>
+#include <openGL\ViewModelsGL.h>
+#include <view\Camera.h>
+#include <openGL\PassGL.h>
+#include <openGL\DrawableGL.h>
+#include <openGL\TexturesGL.h>
+class WaterSimulator : public Initable
 {
 private:
-	RGraphicProgrammGL _water_surf_prog , _water_bump_prog , _water_plane_prog;
-	RDrawPassGL _water_bump_pass[ 2 ] , _water_surf_pass[ 2 ] , _final , _water_plane_pass , _water_refl_pass;
+	GraphicProgrammGL _water_surf_prog , _water_bump_prog , _water_plane_prog;
+	DrawPassGL _water_bump_pass[ 2 ] , _water_surf_pass[ 2 ] , _final , _water_plane_pass , _water_refl_pass;
 	int cur = 0 , last = 1;
-	RPolyQuadGL _screen_quad;
+	PolyQuadGL _screen_quad;
 	f2 _size;
 	float _height;
 	bool _caminit = false;
@@ -20,7 +20,7 @@ private:
 	uint dest;
 	WaterSimulator() = default;
 	f4x4 water_viewproj;
-	RCamera reflection_camera;
+	Camera reflection_camera;
 public:
 	WaterSimulator( WaterSimulator const & ) = delete;
 	void operator=( WaterSimulator const & ) = delete;
@@ -28,7 +28,7 @@ public:
 	void bindToRenderPlane( bool );
 	void bindToRenderSurface();
 	void bindToRenderReflection();
-	void calcReflectionCamera( RCamera const & );
+	void calcReflectionCamera( Camera const & );
 	void switchSurfaceBuffer( f3 const & );
 	void clearPlaneBuf();
 	void calc( float , float );

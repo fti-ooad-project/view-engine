@@ -1,35 +1,37 @@
-﻿Build started 14.04.2015 21:11:55.
+﻿Build started 21.04.2015 23:47:49.
      1>Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W0 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W0 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp src\DrawlerDeffered.cpp
+         DrawlerDeffered.cpp
          main.cpp
+         Generating Code...
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.exe" /INCREMENTAL /NOLOGO SDL2main.lib SDL2.lib SDL2_image.lib SDL2_ttf.lib opengl32.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.lib" /MACHINE:X86 Debug\main.obj
-         Debug\Base.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.exe" /INCREMENTAL /NOLOGO SDL2main.lib SDL2.lib SDL2_image.lib SDL2_ttf.lib opengl32.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.lib" /MACHINE:X86 Debug\Base.obj
+         Debug\Eventer.obj
+         Debug\FileLoader.obj
+         Debug\FileParser.obj
+         Debug\mat.obj
+         Debug\vec.obj
+         Debug\AnimGL.obj
          Debug\Blurer.obj
          Debug\DrawableGL.obj
+         Debug\PassGL.obj
+         Debug\TexturesGL.obj
+         Debug\ViewModelsGL.obj
+         Debug\WindowGL.obj
+         Debug\Camera.obj
+         Debug\Models.obj
+         Debug\Textures.obj
+         Debug\ViewModels.obj
+         Debug\main.obj
          Debug\DrawlerDeffered.obj
          Debug\HeighMapDrawler.obj
-         Debug\mat.obj
-         Debug\RAnimGL.obj
-         Debug\RCamera.obj
-         Debug\REventer.obj
-         Debug\RFileLoader.obj
-         Debug\RFileParser.obj
-         Debug\RModels.obj
-         Debug\RPassGL.obj
-         Debug\RTextures.obj
-         Debug\RTexturesGL.obj
-         Debug\RViewModels.obj
-         Debug\RViewModelsGL.obj
          Debug\SelectionDrawler.obj
-         Debug\vec.obj
          Debug\ViewEngineGL.obj
          Debug\WaterSimulator.obj
-         Debug\WindowGL.obj
          ViewEngine.vcxproj -> C:\DEV\c++\ViewEngine\Debug\ViewEngine.exe
      1>Done Building Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:07.64
+Time Elapsed 00:00:03.79

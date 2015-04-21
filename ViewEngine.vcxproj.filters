@@ -13,181 +13,92 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="opengl">
+      <UniqueIdentifier>{9d0b0ee8-537e-4123-a78c-746e998686e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{e470e9a0-dc99-4633-817e-95cd0c9e13c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="localview">
+      <UniqueIdentifier>{a67fce83-8a3e-42b7-a847-ab1ac1ccddf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="view">
+      <UniqueIdentifier>{c4885df8-cb16-467d-afe9-95ef6e94c5c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="linalg">
+      <UniqueIdentifier>{1f0baaac-ba05-4a19-9038-31854d7ebbe1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\DrawlerDeffered.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\WindowGL.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>localview</Filter>
     </ClCompile>
     <ClCompile Include="src\HeighMapDrawler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DrawableGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\REventer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RFileLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Base.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RFileParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RModels.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RPassGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RTextures.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RTexturesGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RViewModels.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RViewModelsGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\vec.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ViewEngineGL.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>localview</Filter>
     </ClCompile>
     <ClCompile Include="src\WaterSimulator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RAnimGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mat.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>localview</Filter>
     </ClCompile>
     <ClCompile Include="src\SelectionDrawler.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>localview</Filter>
     </ClCompile>
-    <ClCompile Include="src\Blurer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\ViewEngineGL.cpp">
+      <Filter>localview</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="base\Parallel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="base\RBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="base\REventer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="base\RFileloader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="base\RModels.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="linalg\mat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="linalg\vec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\GL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RAnim.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RAnimGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RDrawable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RDrawableGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RLightGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RPassDesc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RPassGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RTextures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RTexturesGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RVertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\RViewModelsGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\ShaderSpecs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\WaterSimulator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\WindowGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\export\ViewInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\ViewEngineGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\export\RViewModels.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="base\RFileParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\HeighMapDrawler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\gui\gl\GUIRendererGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\DrawlerDeffered.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\export\RCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GlslDefines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\SelectionDrawler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="view\3dgl\Blurer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="..\..\libs\lib\openGL\souce\AnimGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\openGL\souce\Blurer.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\openGL\souce\DrawableGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\openGL\souce\PassGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\openGL\souce\TexturesGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\openGL\souce\ViewModelsGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\openGL\souce\WindowGL.cpp">
+      <Filter>opengl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\base\source\Base.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\base\source\Eventer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\base\source\FileLoader.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\base\source\FileParser.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\view\source\Camera.cpp">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\view\source\Models.cpp">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\view\source\Textures.cpp">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\view\source\ViewModels.cpp">
+      <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\linalg\source\mat.cpp">
+      <Filter>linalg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\lib\linalg\source\vec.cpp">
+      <Filter>linalg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\view\polymodels\monkey.bin">
@@ -196,5 +107,106 @@
     <None Include="res\view\polymodels\tower.bin">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="view\WaterSimulator.h">
+      <Filter>localview</Filter>
+    </ClInclude>
+    <ClInclude Include="view\DrawlerDeffered.h">
+      <Filter>localview</Filter>
+    </ClInclude>
+    <ClInclude Include="view\HeighMapDrawler.h">
+      <Filter>localview</Filter>
+    </ClInclude>
+    <ClInclude Include="view\SelectionDrawler.h">
+      <Filter>localview</Filter>
+    </ClInclude>
+    <ClInclude Include="view\ViewEngineGL.h">
+      <Filter>localview</Filter>
+    </ClInclude>
+    <ClInclude Include="view\export\ViewInterface.h">
+      <Filter>localview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\AnimGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\Blurer.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\DrawableGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\GLincludes.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\GUIRendererGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\Light.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\LightGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\PassGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\TexturesGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\ViewModelsGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\WindowGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\base\Base.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\base\Eventer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\base\Fileloader.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\base\FileParser.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\base\Parallel.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\Anim.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\Camera.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\Drawable.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\Models.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\PassDesc.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\ShaderSpecs.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\Textures.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\Vertex.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\ViewModels.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\linalg\mat.h">
+      <Filter>linalg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\linalg\vec.h">
+      <Filter>linalg</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

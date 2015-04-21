@@ -37,7 +37,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\DEV\libs\SDL2-2.0.3;C:\DEV\libs\glew-1.12.0\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\DEV\libs\lib;C:\DEV\libs\SDL2-2.0.3;C:\DEV\libs\glew-1.12.0\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\DEV\libs\glew-1.12.0\lib;C:\DEV\libs\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -80,69 +80,68 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\lib\base\source\Base.cpp" />
+    <ClCompile Include="..\..\libs\lib\base\source\Eventer.cpp" />
+    <ClCompile Include="..\..\libs\lib\base\source\FileLoader.cpp" />
+    <ClCompile Include="..\..\libs\lib\base\source\FileParser.cpp" />
+    <ClCompile Include="..\..\libs\lib\linalg\source\mat.cpp" />
+    <ClCompile Include="..\..\libs\lib\linalg\source\vec.cpp" />
+    <ClCompile Include="..\..\libs\lib\openGL\souce\AnimGL.cpp" />
+    <ClCompile Include="..\..\libs\lib\openGL\souce\Blurer.cpp" />
+    <ClCompile Include="..\..\libs\lib\openGL\souce\DrawableGL.cpp" />
+    <ClCompile Include="..\..\libs\lib\openGL\souce\PassGL.cpp" />
+    <ClCompile Include="..\..\libs\lib\openGL\souce\TexturesGL.cpp" />
+    <ClCompile Include="..\..\libs\lib\openGL\souce\ViewModelsGL.cpp" />
+    <ClCompile Include="..\..\libs\lib\openGL\souce\WindowGL.cpp" />
+    <ClCompile Include="..\..\libs\lib\view\source\Camera.cpp" />
+    <ClCompile Include="..\..\libs\lib\view\source\Models.cpp" />
+    <ClCompile Include="..\..\libs\lib\view\source\Textures.cpp" />
+    <ClCompile Include="..\..\libs\lib\view\source\ViewModels.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Base.cpp" />
-    <ClCompile Include="src\Blurer.cpp" />
-    <ClCompile Include="src\DrawableGL.cpp" />
     <ClCompile Include="src\DrawlerDeffered.cpp" />
     <ClCompile Include="src\HeighMapDrawler.cpp" />
-    <ClCompile Include="src\mat.cpp" />
-    <ClCompile Include="src\RAnimGL.cpp" />
-    <ClCompile Include="src\RCamera.cpp" />
-    <ClCompile Include="src\REventer.cpp" />
-    <ClCompile Include="src\RFileLoader.cpp" />
-    <ClCompile Include="src\RFileParser.cpp" />
-    <ClCompile Include="src\RModels.cpp" />
-    <ClCompile Include="src\RPassGL.cpp" />
-    <ClCompile Include="src\RTextures.cpp" />
-    <ClCompile Include="src\RTexturesGL.cpp" />
-    <ClCompile Include="src\RViewModels.cpp" />
-    <ClCompile Include="src\RViewModelsGL.cpp" />
     <ClCompile Include="src\SelectionDrawler.cpp" />
-    <ClCompile Include="src\vec.cpp" />
     <ClCompile Include="src\ViewEngineGL.cpp" />
     <ClCompile Include="src\WaterSimulator.cpp" />
-    <ClCompile Include="src\WindowGL.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="base\Parallel.h" />
-    <ClInclude Include="base\RBase.h" />
-    <ClInclude Include="base\REventer.h" />
-    <ClInclude Include="base\RFileloader.h" />
-    <ClInclude Include="base\RFileParser.h" />
-    <ClInclude Include="base\RModels.h" />
-    <ClInclude Include="GlslDefines.h" />
-    <ClInclude Include="linalg\mat.h" />
-    <ClInclude Include="linalg\vec.h" />
-    <ClInclude Include="view\3dgl\Blurer.h" />
-    <ClInclude Include="view\3dgl\DrawlerDeffered.h" />
-    <ClInclude Include="view\3dgl\HeighMapDrawler.h" />
-    <ClInclude Include="view\3dgl\RAnim.h" />
-    <ClInclude Include="view\3dgl\RAnimGL.h" />
-    <ClInclude Include="view\3dgl\RDrawable.h" />
-    <ClInclude Include="view\3dgl\RDrawableGL.h" />
-    <ClInclude Include="view\3dgl\RLight.h" />
-    <ClInclude Include="view\3dgl\RLightGL.h" />
-    <ClInclude Include="view\3dgl\RPassDesc.h" />
-    <ClInclude Include="view\3dgl\RPassGL.h" />
-    <ClInclude Include="view\3dgl\RTextures.h" />
-    <ClInclude Include="view\3dgl\RTexturesGL.h" />
-    <ClInclude Include="view\3dgl\RVertex.h" />
-    <ClInclude Include="view\3dgl\RViewModelsGL.h" />
-    <ClInclude Include="view\3dgl\SelectionDrawler.h" />
-    <ClInclude Include="view\3dgl\ShaderSpecs.h" />
-    <ClInclude Include="view\3dgl\WaterSimulator.h" />
-    <ClInclude Include="view\export\RCamera.h" />
-    <ClInclude Include="view\export\RViewModels.h" />
-    <ClInclude Include="view\export\ViewInterface.h" />
-    <ClInclude Include="view\GL.h" />
-    <ClInclude Include="view\gui\gl\GUIRendererGL.h" />
-    <ClInclude Include="view\ViewEngineGL.h" />
-    <ClInclude Include="view\WindowGL.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\view\polymodels\monkey.bin" />
     <None Include="res\view\polymodels\tower.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libs\lib\base\Base.h" />
+    <ClInclude Include="..\..\libs\lib\base\Eventer.h" />
+    <ClInclude Include="..\..\libs\lib\base\Fileloader.h" />
+    <ClInclude Include="..\..\libs\lib\base\FileParser.h" />
+    <ClInclude Include="..\..\libs\lib\base\Parallel.h" />
+    <ClInclude Include="..\..\libs\lib\linalg\mat.h" />
+    <ClInclude Include="..\..\libs\lib\linalg\vec.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\AnimGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\Blurer.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\DrawableGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\GLincludes.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\GUIRendererGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\Light.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\LightGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\PassGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\TexturesGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\ViewModelsGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\WindowGL.h" />
+    <ClInclude Include="..\..\libs\lib\view\Anim.h" />
+    <ClInclude Include="..\..\libs\lib\view\Camera.h" />
+    <ClInclude Include="..\..\libs\lib\view\Drawable.h" />
+    <ClInclude Include="..\..\libs\lib\view\Models.h" />
+    <ClInclude Include="..\..\libs\lib\view\PassDesc.h" />
+    <ClInclude Include="..\..\libs\lib\view\ShaderSpecs.h" />
+    <ClInclude Include="..\..\libs\lib\view\Textures.h" />
+    <ClInclude Include="..\..\libs\lib\view\Vertex.h" />
+    <ClInclude Include="..\..\libs\lib\view\ViewModels.h" />
+    <ClInclude Include="view\DrawlerDeffered.h" />
+    <ClInclude Include="view\export\ViewInterface.h" />
+    <ClInclude Include="view\HeighMapDrawler.h" />
+    <ClInclude Include="view\SelectionDrawler.h" />
+    <ClInclude Include="view\ViewEngineGL.h" />
+    <ClInclude Include="view\WaterSimulator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

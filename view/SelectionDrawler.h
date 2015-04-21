@@ -1,15 +1,15 @@
 #pragma once
-#include "RPassGL.h"
-#include "RViewModelsGL.h"
-#include "RDrawableGL.h"
-#include "../../base/RBase.h"
-#include "Blurer.h"
-class SelectionDrawler : public RInitable
+#include <openGL\PassGL.h>
+#include <openGL\DrawableGL.h>
+#include <openGL\Blurer.h>
+#include <base/Base.h>
+#include <openGL\ViewModelsGL.h>
+class SelectionDrawler : public Initable
 {
 private:
-	RDrawPassGL _process_pass;
-	RGraphicProgrammGL _process_prog;
-	RPolyQuadGL _screen_quad;
+	DrawPassGL _process_pass;
+	GraphicProgrammGL _process_prog;
+	PolyQuadGL _screen_quad;
 	Blurer _blurer;
 	SelectionDrawler();
 public:

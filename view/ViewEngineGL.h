@@ -1,39 +1,39 @@
 #ifndef VIEWENGINEGL_H
 #define VIEWENGINEGL_H
 #include "export/ViewInterface.h"
-#include "WindowGL.h"
-#include "../base/REventer.h"
-#include "3dgl/RDrawableGL.h"
-#include "3dgl/RViewModelsGL.h"
+#include <openGL\WindowGL.h>
+#include <base/Eventer.h>
+#include <openGL\DrawableGL.h>
+#include <openGL\ViewModelsGL.h>
 #include <list>
-#include "gui/gl/GUIRendererGL.h"
-#include "3dgl/DrawlerDeffered.h"
+#include <openGL\GUIRendererGL.h>
+#include "DrawlerDeffered.h"
 #include <vector>
 class Scene3DGL : public Scene3D
 {
 public:
-	RCamera _main_cam;
+	Camera _main_cam;
 	std::vector< UnitInstanceState > _instances;
 	std::vector< LightState > _lights;
 public:
 	Scene3DGL();
-	ViewTypes::RDrawInstancePTR genInstance() override;
-	UnitInstanceState *getInstanceStatePtr( ViewTypes::RDrawInstancePTR i ) override;
-	ViewTypes::RLightSourcePTR genLight() override;
-	LightState *getLightStatePtr( ViewTypes::RLightSourcePTR i ) override;
-	RCamera const *getCamera() const override;
-	RCamera *getCamera() override;
+	uint genInstance() override;
+	UnitInstanceState *getInstanceStatePtr( uint i ) override;
+	uint genLight() override;
+	LightState *getLightStatePtr( uint i ) override;
+	Camera const *getCamera() const override;
+	Camera *getCamera() override;
 	std::vector< UnitInstanceState > const &getStateVector() const override;
 	std::vector< LightState > const &getLightVector() const override;
 };
 class ViewEngineGL : public ViewManager
 {
 private:
-	RWindowGL win;
-	RGraphicProgrammGL _quad_prog;
+	WindowGL win;
+	GraphicProgrammGL _quad_prog;
 	bool _tess = true;
-	RPolyQuadGL _screen_quad;
-	REventer _eventer;
+	PolyQuadGL _screen_quad;
+	Eventer _eventer;
 	GUIRendererGL _guimng;
 	GUILayout const *_gui = nullptr;
 	bool _inited = false;
@@ -48,7 +48,7 @@ public:
 	void setGUI( GUILayout const * ) override;
 	Scene3D *genScene() override;
 	Scene3D  const *getScene() override;
-	REventer *getEventer() override;
+	Eventer *getEventer() override;
 	void release() override;
 };
 #endif // VIEWENGINEGL_H
