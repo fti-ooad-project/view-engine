@@ -9,6 +9,7 @@
 #include <view\Camera.h>
 #include "export\ViewInterface.h"
 #include "SelectionDrawler.h"
+#include "ComplexPolyMeshGL.h"
 class DrawlerDeffered : public Initable , public Timer
 {
 private:
@@ -25,7 +26,7 @@ private:
 	void updateRes();
 	u2 _resolution;
 public:
-	std::vector< std::unique_ptr< PolyMeshGL > > _view;
+	std::vector< std::unique_ptr< ComplexPolyMeshGL > > _view;
 	void init();
 	void release();
 	uint draw( Scene3D const * , u2 const & );

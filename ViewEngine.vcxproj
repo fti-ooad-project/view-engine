@@ -98,6 +98,7 @@
     <ClCompile Include="..\..\libs\lib\view\source\Textures.cpp" />
     <ClCompile Include="..\..\libs\lib\view\source\ViewModels.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\ComplexPolyMeshGL.cpp" />
     <ClCompile Include="src\DrawlerDeffered.cpp" />
     <ClCompile Include="src\HeighMapDrawler.cpp" />
     <ClCompile Include="src\SelectionDrawler.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="..\..\libs\lib\view\Textures.h" />
     <ClInclude Include="..\..\libs\lib\view\Vertex.h" />
     <ClInclude Include="..\..\libs\lib\view\ViewModels.h" />
+    <ClInclude Include="view\ComplexPolyMeshGL.h" />
     <ClInclude Include="view\DrawlerDeffered.h" />
     <ClInclude Include="view\export\ViewInterface.h" />
     <ClInclude Include="view\HeighMapDrawler.h" />

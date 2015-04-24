@@ -1,37 +1,117 @@
-﻿Build started 21.04.2015 23:47:49.
+﻿Build started 24.04.2015 20:41:49.
      1>Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W0 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp src\DrawlerDeffered.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W0 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp src\ComplexPolyMeshGL.cpp src\DrawlerDeffered.cpp src\ViewEngineGL.cpp
+         ViewEngineGL.cpp
          DrawlerDeffered.cpp
+     1>src\DrawlerDeffered.cpp(82): error C2664: 'void std::vector<std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>,std::allocator<std::unique_ptr<_Ty,std::default_delete<_Ty>>>>::push_back(const std::unique_ptr<_Ty,std::default_delete<_Ty>> &)': cannot convert argument 1 from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>> &&'
+                 with
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(82): note: Reason: cannot convert from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>'
+                 with
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(82): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+     1>src\DrawlerDeffered.cpp(84): error C2664: 'void std::vector<std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>,std::allocator<std::unique_ptr<_Ty,std::default_delete<_Ty>>>>::push_back(const std::unique_ptr<_Ty,std::default_delete<_Ty>> &)': cannot convert argument 1 from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>> &&'
+                 with
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(84): note: Reason: cannot convert from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>'
+                 with
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(84): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+     1>src\DrawlerDeffered.cpp(92): error C2664: 'void std::vector<std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>,std::allocator<std::unique_ptr<_Ty,std::default_delete<_Ty>>>>::push_back(const std::unique_ptr<_Ty,std::default_delete<_Ty>> &)': cannot convert argument 1 from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>> &&'
+                 with
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(92): note: Reason: cannot convert from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>'
+                 with
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(92): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+     1>src\DrawlerDeffered.cpp(100): error C2664: 'void std::vector<std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>,std::allocator<std::unique_ptr<_Ty,std::default_delete<_Ty>>>>::push_back(const std::unique_ptr<_Ty,std::default_delete<_Ty>> &)': cannot convert argument 1 from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>> &&'
+                 with
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(100): note: Reason: cannot convert from 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>'
+                 with
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+         src\DrawlerDeffered.cpp(100): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+     1>src\DrawlerDeffered.cpp(101): error C2440: 'initializing': cannot convert from 'std::unique_ptr<ComplexPolyMeshGL,std::default_delete<_Ty>>' to 'std::unique_ptr<PolyMeshGL,std::default_delete<_Ty>> &'
+                 with
+                 [
+                     _Ty=ComplexPolyMeshGL
+                 ]
+                 and
+                 [
+                     _Ty=PolyMeshGL
+                 ]
+     1>src\DrawlerDeffered.cpp(104): error C2039: 'genInstancedBuffer': is not a member of 'PolyMeshGL'
+         C:\DEV\libs\lib\openGL\DrawableGL.h(9): note: see declaration of 'PolyMeshGL'
+         ComplexPolyMeshGL.cpp
          main.cpp
          Generating Code...
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.exe" /INCREMENTAL /NOLOGO SDL2main.lib SDL2.lib SDL2_image.lib SDL2_ttf.lib opengl32.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\DEV\c++\ViewEngine\Debug\ViewEngine.lib" /MACHINE:X86 Debug\Base.obj
-         Debug\Eventer.obj
-         Debug\FileLoader.obj
-         Debug\FileParser.obj
-         Debug\mat.obj
-         Debug\vec.obj
-         Debug\AnimGL.obj
-         Debug\Blurer.obj
-         Debug\DrawableGL.obj
-         Debug\PassGL.obj
-         Debug\TexturesGL.obj
-         Debug\ViewModelsGL.obj
-         Debug\WindowGL.obj
-         Debug\Camera.obj
-         Debug\Models.obj
-         Debug\Textures.obj
-         Debug\ViewModels.obj
-         Debug\main.obj
-         Debug\DrawlerDeffered.obj
-         Debug\HeighMapDrawler.obj
-         Debug\SelectionDrawler.obj
-         Debug\ViewEngineGL.obj
-         Debug\WaterSimulator.obj
-         ViewEngine.vcxproj -> C:\DEV\c++\ViewEngine\Debug\ViewEngine.exe
-     1>Done Building Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" (Build target(s)).
+     1>Done Building Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:03.79
+Time Elapsed 00:00:04.22
