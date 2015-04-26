@@ -1,4 +1,5 @@
 #include "../view/ViewEngineGL.h"
+f4 selection_box;
 Scene3DGL::Scene3DGL()
 {
 }
@@ -36,6 +37,38 @@ std::vector< LightState > const &Scene3DGL::getLightVector() const
 {
 	return _lights;
 }
+uint Scene3DGL::getSelected( f2 const &mpos ) const
+{
+	float min = 9999999.0f;
+	float min2d = 99999999.9f;
+	int mindx = -1;
+	for( int i = 0; i < _instances.size(); i ++ )
+	{
+		float dp = ( _instances[i]._pos - _main_cam._v3pos ).g_mod();
+		f4 scr_pos = f4( _instances[ i ]._pos + f3( f2( 0.0f ) , _instances[ i ]._size.z() ) , 1.0f ) * _main_cam.getViewProj();
+		scr_pos /= scr_pos.w();
+		float tmp = scr_pos.xy().g_dist2( mpos );
+		if( isIn( mpos , scr_pos.xy() , f2( _instances[i]._size.x() / dp , _instances[ i ]._size.z() / dp * _main_cam._v3local_y.z() ) ) && scr_pos.z() < min && tmp < min2d )
+		{
+			min = scr_pos.z();
+			min2d = tmp;
+			mindx = i;
+		}
+	}
+	return mindx;
+}
+std::vector< uint > Scene3DGL::getSelected( f2 const &center , f2 const &dr ) const
+{
+	std::vector< uint > out;
+	for( int i = 0; i < _instances.size(); i++ )
+	{
+		f4 scr_pos = f4( _instances[ i ]._pos + f3( f2( 0.0f ) , _instances[ i ]._size.z() ) , 1.0f ) * _main_cam.getViewProj();
+		scr_pos /= scr_pos.w();
+		if( isIn( scr_pos.xy() , center , dr ) )
+			out.push_back( i );
+	}
+	return out;
+}
 void ViewEngineGL::tick( int w , int h )
 {
 	if( !_inited )
@@ -59,6 +92,7 @@ void ViewEngineGL::tick( int w , int h )
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D , draw );
 	glUniform1i( 0 , 0 );
+	glUniform4fv( 1 , 1 , selection_box.getArray() );
 	_screen_quad.draw();
 	//if( _gui )
 		_guimng.renderLayout( w , h , _gui );
@@ -73,7 +107,7 @@ void ViewEngineGL::init()
 {
 	if( isInited() ) return;
 	setInited( true );
-	win.init( [ this ]( int w , int h ) { tick( w , h ); } , [ this ]() { this->release(); } , &_eventer );
+	win.init( [ this ]( int w , int h ) { tick( w , h ); } , [ this ]() { this->release(); } , &_eventer , true , "OOOD PROJ" );
 	_eventer.start();
 }
 void ViewEngineGL::setScene( Scene3D const *scene )
@@ -99,6 +133,14 @@ Scene3D  const *ViewEngineGL::getScene()
 Eventer *ViewEngineGL::getEventer()
 {
 	return &_eventer;
+}
+void ViewEngineGL::drawSelection( f2 const &p1 , f2 const &p2 )
+{
+	selection_box = f4( 0.5f * p1 + f2( 0.5f ) , 0.5f * p2 );
+}
+f3 ViewEngineGL::getMousePos( f2 const &mpos )
+{
+	return DrawlerDeffered::getSingleton()->getMousePos( mpos );
 }
 void ViewEngineGL::release()
 {

@@ -9,7 +9,28 @@
 #include <view\Camera.h>
 #include "export\ViewInterface.h"
 #include "SelectionDrawler.h"
-#include "ComplexPolyMeshGL.h"
+struct View
+{
+	int _flags;
+	int _mesh_id;
+	int _texture_id;
+	int _anim_id;
+};
+struct InstanceInfo
+{
+	float time;
+	float last_time;
+	float dist_to_cam;
+	float selection_id;
+	int mixing;
+	int cur_anim;
+	int last_anim;
+	int auto_height;
+	f3 pos;
+	f3 look;
+	f3 left;
+	f3 up;
+};
 class DrawlerDeffered : public Initable , public Timer
 {
 private:
@@ -23,11 +44,19 @@ private:
 	PolyQuadGL _screen_quad;
 	void drawInstances( std::vector< InstanceInfo > const * , bool tess = false );
 	void drawInstancesToLight( std::vector< InstanceInfo > const * );
+	void bindUniforms( View const & ) const;
 	void updateRes();
+	uint loadView( std::string , int );
 	u2 _resolution;
+	f2 _mpos;
+	f3 _wmpos;
 public:
-	std::vector< std::unique_ptr< ComplexPolyMeshGL > > _view;
+	std::vector< std::unique_ptr< PolyMeshGL > > _meshes;
+	std::vector< TextureHolderGL > _textures;
+	std::vector< BoneAnimInTexHolderGL > _animations;
+	std::vector< View > _view;
 	void init();
+	f3 getMousePos( f2 const & );
 	void release();
 	uint draw( Scene3D const * , u2 const & );
 	static DrawlerDeffered *getSingleton();

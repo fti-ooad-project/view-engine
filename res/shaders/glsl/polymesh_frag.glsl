@@ -42,7 +42,7 @@ void main()
 			buf.x = uint( pvo.depth * 100.0 );
 			buf.y = pack4i( 
 			//vec4( 0.5 + 0.5 * pvo.normal , 0.0 ));//
-			vec4( diff.xyz , pvo.select_id ) );
+			vec4( diff.xyz , pvo.select_id / 10.0 ) );
 			float sg = norm.z >= 0.0 ? 1.0 : -1.0;
 			buf.z = pack4i( vec4( 0.5 + 0.5 * norm.xy , 0.5 + 0.5 * sg , 0.0 ) );
 			buf.w = pack4i( spec );

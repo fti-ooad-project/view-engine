@@ -99,9 +99,6 @@
     <ClCompile Include="..\..\libs\lib\linalg\source\vec.cpp">
       <Filter>linalg</Filter>
     </ClCompile>
-    <ClCompile Include="src\ComplexPolyMeshGL.cpp">
-      <Filter>localview</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\view\polymodels\monkey.bin">
@@ -210,9 +207,6 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\lib\linalg\vec.h">
       <Filter>linalg</Filter>
-    </ClInclude>
-    <ClInclude Include="view\ComplexPolyMeshGL.h">
-      <Filter>localview</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

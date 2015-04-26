@@ -3,32 +3,126 @@
 #include "../GlslDefines.h"
 #define LIGHTCASTERS
 #define RENDERWATER
+void DrawlerDeffered::bindUniforms( View const &view ) const
+{
+	glUniform1i( 0 , view._flags );
+	if( view._texture_id >= 0 )
+	{
+		auto const &tex = _textures[ view._texture_id ];
+		if( ( view._flags & ShaderMask::MASK_TEXTURED ) && tex.getCount() )
+		{
+			glActiveTexture( GL_TEXTURE0 );
+			glBindTexture( GL_TEXTURE_2D_ARRAY , tex.getTexture() );
+			glUniform1i( 1 , 0 );///1-layout of the first texture in shader
+		}
+	}
+	if( view._anim_id >= 0 )
+	{
+		auto const &anim = _animations[ view._anim_id ];
+		if( view._flags & ShaderMask::MASK_ANIMATED )
+		{
+			glUniform1i( 10 , anim._bone_count );
+		}
+		if( ( view._flags & ShaderMask::MASK_OWN_ANIMATED ) && anim.getCount() )
+		{
+			glActiveTexture( GL_TEXTURE0 + 1 );
+			glBindTexture( GL_TEXTURE_2D_ARRAY , anim.getBufferPtr() );
+			glUniform1i( 2 , 1 );///20-location of anim texture
+		}
+	}
+}
+uint DrawlerDeffered::loadView( std::string filename , int type )
+{
+	auto stream = FileLoader::getStream( filename.c_str() );
+	auto mesh = std::unique_ptr< PolyMeshGL >( new PolyMeshGL() );
+	auto meshdata = std::move( FileLoader::loadPolyMeshBin( stream , type ) );
+	mesh->genVboFromMesh( std::move( meshdata ) );
+	_meshes.push_back( std::move( mesh ) );
+	View out;
+	out._mesh_id = _meshes.size() - 1;
+	out._anim_id = -1;
+	out._texture_id = -1;
+	out._flags = 0;
+	int img_count;
+	stream->read( ( char* )&img_count , sizeof( int ) );
+	if( img_count > 0 )
+	{
+		out._flags |=
+			ShaderMask::MASK_TEXTURED
+			| ShaderMask::MASK_TEXTURED_DIF
+			| ShaderMask::MASK_TEXTURED_NOR
+			| ShaderMask::MASK_TEXTURED_SPE
+			;
+		std::unique_ptr< std::string[] > fnames( new std::string[ img_count ] );
+		ito( img_count )
+		{
+			int l;
+			stream->read( ( char* )&l , sizeof( int ) );
+			std::unique_ptr< char[] > fname( new char[ l + 1 ] );
+			stream->read( fname.get() , sizeof( char ) * l );
+			fname.get()[ l ] = '\0';
+			std::string respath( "res/view/images/" );
+			respath.append( std::string( fname.get() ) );
+			fnames[ i ] = std::move( std::string( respath ) );
+		}
+		auto textures_data = std::move( FileLoader::loadImage( fnames.get() , img_count ) );
+		TextureHolderGL texture;
+		texture.init( std::move( textures_data ) , img_count );
+		_textures.push_back( std::move( texture ) );
+		out._texture_id = _textures.size() - 1;
+	}
+	if( type != Polymesh::PolyMeshType::BONED_PMESH )
+	{
+		goto exit;
+	}
+	out._flags |= ShaderMask::MASK_ANIMATED;
+	int anim_count;
+	stream->read( ( char * )&anim_count , sizeof( uint ) );
+	if( anim_count )
+	{
+		out._flags |= ShaderMask::MASK_OWN_ANIMATED;
+		auto animdata = std::move( FileLoader::loadAnimSetBin( stream , anim_count ) );
+		BoneAnimInTexHolderGL animintex;
+		animintex.init( std::move( animdata ) , anim_count );
+		_animations.push_back( std::move( animintex ) );
+		out._anim_id = _animations.size() - 1;
+	}
+exit:
+	stream->close();
+	_view.push_back( out );
+	return _view.size() - 1;
+}
 void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info , bool tess )
 {
 	ito( _view.size() )
 	{
+		_storage_tess_prog.bind();
+		bindUniforms( _view[ i ] );
+		_storage_prog.bind();
+		bindUniforms( _view[ i ] );
+		int meshid = _view[ i ]._mesh_id;
 		if( tess )
 		{
 			if( info[ 2 * i ].size() > 0 )
 			{
 				_storage_tess_prog.bind();
-				_view[ i ]->drawInstancedPatches( info[ i * 2 ] );
+				_meshes[ meshid ]->drawInstancedPatches( &info[ i * 2 ][ 0 ] , info[ 2 * i ].size() * sizeof( InstanceInfo ) , info[ 2 * i ].size() );
 			}
 			if( info[ 2 * i + 1 ].size() > 0 )
 			{
 				_storage_prog.bind();
-				_view[ i ]->drawInstanced( info[ i * 2 + 1 ] );
+				_meshes[ meshid ]->drawInstanced( &info[ i * 2 + 1 ][ 0 ] , info[ 2 * i + 1 ].size() * sizeof( InstanceInfo ) , info[ 2 * i + 1 ].size() );
 			}
 		} else
 		{
 			_storage_prog.bind();
 			if( info[ 2 * i ].size() > 0 )
 			{
-				_view[ i ]->drawInstanced( info[ i * 2 ] );
+				_meshes[ meshid ]->drawInstanced( &( info[ i * 2 ][ 0 ] ) , info[ 2 * i ].size() * sizeof( InstanceInfo ) , info[ 2 * i ].size() );
 			}
 			if( info[ 2 * i + 1 ].size() > 0 )
 			{
-				_view[ i ]->drawInstanced( info[ i * 2 + 1 ] );
+				_meshes[ meshid ]->drawInstanced( &( info[ i * 2 + 1 ][ 0 ] ) , info[ 2 * i + 1 ].size() * sizeof( InstanceInfo ) , info[ 2 * i + 1 ].size() );
 			}
 		}
 	}
@@ -37,10 +131,12 @@ void DrawlerDeffered::drawInstancesToLight( std::vector<InstanceInfo> const *inf
 {
 	ito( _view.size() )
 	{
+		int meshid = _view[ i ]._mesh_id;
+		bindUniforms( _view[ i ] );
 		if( info[ 2 * i ].size() > 0 )
-			_view[ i ]->drawInstanced( info[ i * 2 ] );
+			_meshes[ meshid ]->drawInstanced( &info[ i * 2 ][ 0 ] , info[ 2 * i ].size() * sizeof( InstanceInfo ) , info[ 2 * i ].size() );
 		if( info[ 2 * i + 1 ].size() > 0 )
-			_view[ i ]->drawInstanced( info[ i * 2 + 1 ] );
+			_meshes[ meshid ]->drawInstanced( &info[ i * 2 + 1 ][ 0 ] , info[ 2 * i + 1 ].size() * sizeof( InstanceInfo ) , info[ 2 * i + 1 ].size() );
 	}
 }
 void DrawlerDeffered::updateRes()
@@ -59,20 +155,32 @@ void DrawlerDeffered::init()
 	setInited( true );
 	_screen_quad.init();
 	_storage_tess_prog.init( "res/shaders/glsl/polymesh_frag.glsl" ,
-							 "res/shaders/glsl/polymesh_tess_vertex.glsl" ,
-							 "res/shaders/glsl/polymesh_tess_geom.glsl" ,
-							 "res/shaders/glsl/polymesh_tess_tc.glsl" ,
-							 "res/shaders/glsl/polymesh_tess_te.glsl" );
+		"res/shaders/glsl/polymesh_tess_vertex.glsl" ,
+		"res/shaders/glsl/polymesh_tess_geom.glsl" ,
+		"res/shaders/glsl/polymesh_tess_tc.glsl" ,
+		"res/shaders/glsl/polymesh_tess_te.glsl" );
 	_storage_prog.init( //"res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl"
-						"res/shaders/glsl/polymesh_frag.glsl" ,
-						"res/shaders/glsl/polymesh_tess_vertex.glsl" ,
-						"res/shaders/glsl/polymesh_geometry.glsl"
-						);
+		"res/shaders/glsl/polymesh_frag.glsl" ,
+		"res/shaders/glsl/polymesh_tess_vertex.glsl" ,
+		"res/shaders/glsl/polymesh_geometry.glsl"
+		);
 	_process_prog.init( "res/shaders/glsl/pass1_frag.glsl" ,
-						"res/shaders/glsl/screen_quad_vertex.glsl" , "" );
+		"res/shaders/glsl/screen_quad_vertex.glsl" , "" );
 	_water_prog.init( "res/shaders/glsl/pass2_frag.glsl" ,
-					  "res/shaders/glsl/screen_quad_vertex.glsl" , "" );
-	_view.push_back(
+		"res/shaders/glsl/screen_quad_vertex.glsl" , "" );
+	loadView( "res/view/polymodels/monkey.bin" , Polymesh::PolyMeshType::BONED_PMESH );
+	View boxview;
+	_meshes.push_back( std::move( std::unique_ptr < PolyMeshGL >( new PolyBoxGL() ) ) );
+	boxview._mesh_id = _meshes.size() - 1;
+	boxview._anim_id = -1;
+	boxview._texture_id = -1;
+	boxview._flags = 0;
+	_view.push_back( boxview );
+	loadView( "res/view/polymodels/tower.bin" , Polymesh::PolyMeshType::STATIC_PMESH );
+	//loadView( "res/view/polymodels/sword.bin" , Polymesh::PolyMeshType::STATIC_PMESH );
+
+
+	/*_view.push_back(
 		std::move(
 		std::unique_ptr < PolyMeshGL
 		>( new ComplexPolyMeshGL(
@@ -97,31 +205,31 @@ void DrawlerDeffered::init()
 		FileLoader::loadPolyMeshBin(
 		FileLoader::getStream(
 		"res/view/polymodels/sword.bin" ) ,
-		Polymesh::PolyMeshType::STATIC_PMESH ) ) ) ) );
-	for( std::unique_ptr<PolyMeshGL> &i : _view )
+		Polymesh::PolyMeshType::STATIC_PMESH ) ) ) ) );*/
+	std::vector< uint > shader_comp{ 4 , 4 , 3 , 3 , 3 , 3 };
+	for( std::unique_ptr<PolyMeshGL> &i : _meshes )
 	{
-		i->init();
-		i->genInstancedBuffer();
+		i->genInstancedBuffer( 7 , shader_comp );
 	}
 	ito( LIGHT_CASTER_COUNT )
 	{
 		_light_dir_passes[ i ].init( { { 1024 , 1024 } ,
-									 BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , false } );
+			BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , false } );
 		//_light_cube_passes[i].init( { { 512 , 512 } , BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , true } );
 	}
 	_storage_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_INT , 1 , -1 ,
-						false , false , 4 } );
+		false , false , 4 } );
 	_process_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 ,
-						false , false , 3 } );
+		false , false , 3 } );
 	_water_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 ,
-					  false , false , 3 } );
+		false , false , 3 } );
 	_env_tex.init( std::move( FileLoader::loadImage( "res/view/images/sky2.jpg" ) ) , 1 );
 	_lightk_tex.init( std::move( FileLoader::loadImage( "res/view/images/lightk.png" ) ) , 1 );
 	_lightk_tex.setRepeat( false );
 	HeightMapDrawler::getSingleton()->init( 100 , f3( 500.0f , 500.0f , 50.0f ) );
 #ifdef RENDERWATER
 	WaterSimulator::getSingleton()->init( _storage_pass.getDepthBufferPtr() ,
-										  f2( 100.0f , 100.0f ) , 0.0f );
+		f2( 100.0f , 100.0f ) , 0.0f );
 #endif
 	SelectionDrawler::getSingleton()->init();
 }
@@ -161,16 +269,17 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	float time = _cur_time - floorf( _cur_time );
 	for( UnitInstanceState const &ins : scene->getStateVector() )
 	{
-		float cam_dist = f2( ins._pos.x() , ins._pos.y() ).g_dist( f2( scene->getCamera()->_v3pos.x() , scene->getCamera()->_v3pos.y() ) ) / _view[ ins._view[ 0 ] ]->_size.z();
+		ins._size = _meshes[ _view[ ins._view[ 0 ] ]._mesh_id ]->_size;
+		float cam_dist = 1.0f;// f2( ins._pos.x() , ins._pos.y() ).g_dist( f2( scene->getCamera()->_v3pos.x() , scene->getCamera()->_v3pos.y() ) ) / _meshes[ _view[ ins._view[ 0 ] ]._mesh_id ]->_size.z();
 		ins._animstat.update( _dt );
 		for( auto const i : ins._view )
 		{
 			InstanceInfo instance_info{
 				ins._animstat._moment._moment , ins._animstat._moment._last_moment
-				, cam_dist , 1.0f , int( ins._animstat._moment._mixing )
+				, cam_dist , float( ins.selectid ) , int( ins._animstat._moment._mixing )
 				, ins._animstat._moment._cur_set , ins._animstat._moment._last_set , int( ins._auto_height ) , ins._pos , ins._look , vecx( ins._look , ins._up ) , ins._up };
 			if( cam_dist < 3.0f )
-			data[ i * 2 ].push_back( instance_info );
+				data[ i * 2 ].push_back( instance_info );
 			else
 			{
 				//if( !scene->getCamera()->fristrum2d( f2( ins._pos.x() , ins._pos.y() ) ) )
@@ -186,47 +295,53 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	}
 	if( time < 0.01f )
 		LOG << 1.0f / _dt << "\n";
-	_storage_pass.clear();
-	_storage_tess_prog.bind();
-	HeightMapDrawler::getSingleton()->bindHeihgtTexture();
-	glUniform1f( TIME , time );
-	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );
-	glUniform1i( PASSID , PASS_NORMAL );
-	glUniform1i( INSTANSING , 1 );
-	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
-	_storage_prog.bind();
-	HeightMapDrawler::getSingleton()->bindHeihgtTexture();
-	glUniform1f( TIME , time );
-	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
-						scene->getCamera()->getViewProj().getPtr() );
-	glUniform1i( INSTANSING , 1 );
-	glUniform1i( PASSID , PASS_NORMAL );
-	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
-	//
-	//glPolygonMode( GL_FRONT_AND_BACK , GL_LINE );
-	drawInstances( data.get() , true );
-	//glPolygonMode( GL_FRONT_AND_BACK , GL_FILL );
-	//glDisable( GL_CULL_FACE );
-	HeightMapDrawler::getSingleton()->bindToDraw();
-	glUniform1i( PASSID , PASS_NORMAL );
-	glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
-						scene->getCamera()->getViewProj().getPtr() );
-	glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
-	HeightMapDrawler::getSingleton()->draw( true );
+	{
+		_storage_pass.clear();
+		_storage_tess_prog.bind();
+		HeightMapDrawler::getSingleton()->bindHeihgtTexture();
+		glUniform1f( TIME , time );
+		glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );
+		glUniform1i( PASSID , PASS_NORMAL );
+		glUniform1i( INSTANSING , 1 );
+		glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
+		_storage_prog.bind();
+		HeightMapDrawler::getSingleton()->bindHeihgtTexture();
+		glUniform1f( TIME , time );
+		glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , scene->getCamera()->getViewProj().getPtr() );
+		glUniform1i( INSTANSING , 1 );
+		glUniform1i( PASSID , PASS_NORMAL );
+		glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
+		//
+		HeightMapDrawler::getSingleton()->bindToDraw();
+		glUniform1i( PASSID , PASS_NORMAL );
+		glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
+			scene->getCamera()->getViewProj().getPtr() );
+		glUniform3fv( CAM_POS , 1 , scene->getCamera()->_v3pos.getArray() );
+		HeightMapDrawler::getSingleton()->draw( true );
+		u2 txmpos = ( ( _mpos )* 0.5f + 0.5f ) & f2( 1024.0 , 1024.0 );
+		uint temp[ 4 ];
+		glReadBuffer( GL_COLOR_ATTACHMENT0 );
+		glReadnPixels( txmpos.x() , txmpos.y() , 1 , 1 , GL_RGBA_INTEGER , GL_UNSIGNED_INT , 4 * sizeof( uint ) , temp );
+		_wmpos = scene->getCamera()->_v3pos + scene->getCamera()->getCameraRay( _mpos ) * ( float( temp[ 0 ] ) / 100.0f );
+		//glPolygonMode( GL_FRONT_AND_BACK , GL_LINE );
+		drawInstances( data.get() , true );
+		//glPolygonMode( GL_FRONT_AND_BACK , GL_FILL );
+		//glDisable( GL_CULL_FACE );
 
-	//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-	/*f4x4 model( 100.0f );
-	 _prog[2].bind();
-	 glUniform3fv( 11 , 1 , scene->getCamera()->_v3pos.getArray() );
-	 glUniformMatrix4fv( 6 , 1 , GL_FALSE , model.getPtr() );
-	 glActiveTexture( GL_TEXTURE0 );
-	 glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getBumpTexture() );
-	 glUniform1i( 1 , 0 );
-	 glUniform1i( 15 , 0 );
-	 glUniform1f( 16 , 0 );
-	 glUniform1i( 0 , 0 );
-	 _screen_quad.draw();*/
-
+		
+			//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+			/*f4x4 model( 100.0f );
+			 _prog[2].bind();
+			 glUniform3fv( 11 , 1 , scene->getCamera()->_v3pos.getArray() );
+			 glUniformMatrix4fv( 6 , 1 , GL_FALSE , model.getPtr() );
+			 glActiveTexture( GL_TEXTURE0 );
+			 glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getBumpTexture() );
+			 glUniform1i( 1 , 0 );
+			 glUniform1i( 15 , 0 );
+			 glUniform1f( 16 , 0 );
+			 glUniform1i( 0 , 0 );
+			 _screen_quad.draw();*/
+	}
 	 ///lights
 #ifdef LIGHTCASTERS
 	int caster_dir_light_count = 0 , simple_omni_light_count = 0;
@@ -250,13 +365,13 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 			_storage_prog.bind();
 			glUniform1i( PASSID , PASS_LIGHT );
 			glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
-								dir_lights_viewproj[ caster_dir_light_count ].getPtr() );
+				dir_lights_viewproj[ caster_dir_light_count ].getPtr() );
 			drawInstancesToLight( data.get() );
 
 			HeightMapDrawler::getSingleton()->bindToDraw();
 			glUniform1i( PASSID , PASS_LIGHT );
 			glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
-								dir_lights_viewproj[ caster_dir_light_count ].getPtr() );
+				dir_lights_viewproj[ caster_dir_light_count ].getPtr() );
 			HeightMapDrawler::getSingleton()->draw( true );
 
 			caster_dir_light_count++;
@@ -328,12 +443,10 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	glActiveTexture( GL_TEXTURE0 + 2 );
 	glBindTexture( GL_TEXTURE_2D , select_buff );
 	glUniform1i( 2 , 2 );
-	glActiveTexture( GL_TEXTURE0 + 3 );
+	/*glActiveTexture( GL_TEXTURE0 + 3 );
 	glBindTexture( GL_TEXTURE_2D , _lightk_tex.getTexture() );
-	glUniform1i( 8 , 3 );
-	glActiveTexture( GL_TEXTURE0 + 6 );
-	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getReflectionPass() );
-	glUniform1i( 12 , 6 );
+	glUniform1i( 8 , 3 );*/
+
 	/*glActiveTexture( GL_TEXTURE0 + 3 );
 	glBindTexture( GL_TEXTURE_2D_ARRAY , dynamic_cast< RComplexPolyMeshGL* >( _view[0].get() )->__anim_intex.getBufferPtr() );
 	glUniform1i( 3 , 3 );*/
@@ -341,6 +454,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	glActiveTexture( GL_TEXTURE0 + 4 );
 	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getPlaneBuffer() );
 	glUniform1i( 11 , 4 );
+	glActiveTexture( GL_TEXTURE0 + 6 );
+	glBindTexture( GL_TEXTURE_2D , WaterSimulator::getSingleton()->getReflectionPass() );
+	glUniform1i( 12 , 6 );
 #endif
 	glUniform3fv( CAM , 1 , scene->getCamera()->_v3pos.getArray() );
 	glUniform3fv( CAM + 1 , 1 , scene->getCamera()->_v3local_z.getArray() );
@@ -367,7 +483,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 		int lid = 20 + i * 2;
 		glUniform4f( lid , omni_light_ptr[ i ]->_pos.x() , omni_light_ptr[ i ]->_pos.y() , omni_light_ptr[ i ]->_pos.z() , omni_light_ptr[ i ]->_size );
 		glUniform4fv( lid + 1 , 1 , omni_light_ptr[ i ]->_colori.getArray() );
-	}
+}
 #endif
 	_screen_quad.draw();
 
@@ -390,6 +506,11 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	_screen_quad.draw();*/
 
 	return _process_pass.getBufferPtr( 0 );
+}
+f3 DrawlerDeffered::getMousePos( f2 const &mpos )
+{
+	this->_mpos = mpos;
+	return _wmpos;
 }
 DrawlerDeffered *DrawlerDeffered::getSingleton()
 {

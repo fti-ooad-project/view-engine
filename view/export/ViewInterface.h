@@ -24,6 +24,8 @@ public:
 	virtual UnitInstanceState *getInstanceStatePtr( uint ) = 0;
 	virtual std::vector< UnitInstanceState > const &getStateVector() const = 0;
 	virtual std::vector< LightState > const &getLightVector() const = 0;
+	virtual std::vector< uint > getSelected( f2 const & , f2 const & ) const = 0;
+	virtual uint getSelected( f2 const & ) const = 0;
 	virtual uint genLight() = 0;
 	virtual LightState *getLightStatePtr( uint ) = 0;
 	virtual Camera const *getCamera() const = 0;
@@ -86,6 +88,8 @@ public:
 	virtual void setResolution( int , int ) = 0;
 	virtual void setScene( Scene3D const * ) = 0;
 	virtual void setGUI( GUILayout const * ) = 0;
+	virtual void drawSelection( f2 const & , f2 const & ) = 0;
+	virtual f3 getMousePos( f2 const & ) = 0;
 	virtual Scene3D *genScene() = 0;
 	virtual Scene3D const *getScene() = 0;
 	virtual Eventer *getEventer() = 0;

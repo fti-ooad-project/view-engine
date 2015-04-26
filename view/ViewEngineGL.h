@@ -25,6 +25,8 @@ public:
 	Camera *getCamera() override;
 	std::vector< UnitInstanceState > const &getStateVector() const override;
 	std::vector< LightState > const &getLightVector() const override;
+	uint getSelected( f2 const & ) const override;
+	std::vector< uint > getSelected( f2 const & , f2 const & ) const override;
 };
 class ViewEngineGL : public ViewManager
 {
@@ -49,6 +51,8 @@ public:
 	Scene3D *genScene() override;
 	Scene3D  const *getScene() override;
 	Eventer *getEventer() override;
+	void drawSelection( f2 const & , f2 const & ) override;
+	f3 getMousePos( f2 const & ) override;
 	void release() override;
 };
 #endif // VIEWENGINEGL_H

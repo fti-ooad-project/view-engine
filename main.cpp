@@ -159,14 +159,28 @@ int main()
 	button2->_onClick = nullptr;
 	main_menu->addElem( button2 );
 
+	std::vector< uint > selected_units_id;
+	uint single_select_id;
 	eventer->addMouseFunc(
-		[ cam , &cam_z , main_menu ]( const MouseStates &cs , const float dt )
+		[ cam , &cam_z , main_menu , scene , &selected_units_id , engine , &single_select_id ]( const MouseStates &cs , const float dt )
 	{
 		static float phi( 1.4f );
 		static float theta( 1.4f );
 		constexpr float delta = 0.01f;
 		const float dr = dt * 50.0f;
+		static bool select = false;
+		static f2 selectstart;
 		cam_z += ( cs._mwheel - cs._mwheel_last ) * 1.0f;
+		if( cs.__cur_states[ 2 ] && !cs.__last_states[ 2 ] )
+		{
+			select = true;
+			selectstart = -cs.__cur_pos;
+		}
+		if( !cs.__cur_states[ 2 ] && cs.__last_states[ 2 ] )
+		{
+			select = false;
+			single_select_id = scene->getSelected( -cs.__cur_pos );
+		}
 		if( cs.__cur_states[ 0 ] )
 		{
 			
@@ -179,6 +193,35 @@ int main()
 			cam->angle( phi , theta );
 			cam->calc();
 		}
+		//cam->calc();
+		if( select )
+		{
+			f2 center = ( selectstart - cs.__cur_pos ) * 0.5f;
+			f2 dr = f2( fabsf( selectstart.x() + cs.__cur_pos.x() ) * 0.5f , fabsf( selectstart.y() + cs.__cur_pos.y() ) * 0.5f );
+			selected_units_id = scene->getSelected( center , dr );
+			engine->drawSelection( center , dr );
+		} else
+		{
+			engine->drawSelection( f2( 0.0f ) , f2( 0.0f ) );
+		}
+		int c = 0;
+		auto isInList = [ &selected_units_id ]( uint i )
+		{
+			for( auto const &j : selected_units_id )
+				if( j == i )
+					return true;
+			return false;
+		};
+		for( auto const &i : scene->getStateVector() )
+		{
+			if( isInList( c ) || c == single_select_id )
+				i.selectid = 2;
+			else
+				i.selectid = 0;
+			c++;
+		}
+		//engine->getMousePos( -cs.__cur_pos ).print();
+		scene->getInstanceStatePtr( 0 )->_pos = engine->getMousePos( -cs.__cur_pos );
 		auto isin = []( f2 const &p , f2 const &c , f2 const &s )
 		{
 			if(
@@ -208,7 +251,6 @@ int main()
 	);
 	//cam->lookAt( cam_pos , cam_lookat , f3( 0.0f , 0.0f , 1.0f ) );
 	
-	
 	engine->setGUI( main_menu.get() );
 	engine->setScene( scene );
 	//std::cout << "Hello World!" << std::endl;
@@ -217,12 +259,12 @@ int main()
 	{
 		t += 1.0f / 0x20;
 		sleep( 0x10 );
-		xfor( x , 10 )
+		/*xfor( x , 10 )
 		xfor( y , 10 )
 		{
-			auto *state = scene->getInstanceStatePtr( x + y * 10 );
+			auto *state = scene->getInstanceStatePtr( 1 + x + y * 10 );
 			state->_pos = f3( x + X , y , 0.0f );
-		}
+		}*/
 		//ls->_pos = f3( sinf( t ) , cosf( t ) , 1.0f ) * 50.0f;
 		//ls->_dir = -ls->_pos.g_norm();
 		//ls->_dir.print();

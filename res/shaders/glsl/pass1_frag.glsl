@@ -165,8 +165,8 @@ void main()
 	uvec4 wbuf = texture( WATER_BUFFER3 , frag_pos );
 	vec4 wY = unpack4i( wbuf.y );
 	vec3 WATERK = vec3( 1.0 );
-	vec2 screenspacewaternorm = vec2( 0.0 );
 	float wdepth = 1000.0;
+	vec2 screenspacewaternorm = vec2( 0.0 );
 	float DDEPTH = 0.0;
 	if( wY.w > 0.0 )
 	{
@@ -223,7 +223,7 @@ void main()
 		out_data = mix( out_data , FOG , 1.0 - exp( - min( depth , wdepth ) * 0.01 ) );
 	}
 	
-	//vec4 selbuf = texture( SELECTBUFF , frag_pos );
-	//out_data += selbuf.xyz + traceLights( CAM.pos , v );
+	vec4 selbuf = texture( SELECTBUFF , frag_pos );
+	out_data += selbuf.xyz;// + traceLights( CAM.pos , v );
 	//vec3( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );
 }
