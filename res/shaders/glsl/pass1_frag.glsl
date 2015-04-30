@@ -45,10 +45,10 @@ float specular( vec3 n , vec3 l , vec3 refl , float spec , float ldist2 , float 
 	float func;
 	float cosx = max( 0.0 , dot( refl , l ) );
 	if( cosx < cosa )
-		func = pow( cosx / cosa , max( 1.0 , spec * 40.0 ) );
+		func = pow( cosx / cosa , max( 1.0 , pow( spec , 5.0 ) * 40.0 ) );
 	else
 		func = 1.0;
-	return max( 0.0 , dot( n , l ) ) *
+	return max( 0.0 , dot( n , l ) ) * 0.5 *
 	func / max( 0.01 , ldist2 - lr * lr ) * ( spec * 40.0 + 1.0 ) * 0.03;
 }
 vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , vec3 albedo , float env_k )

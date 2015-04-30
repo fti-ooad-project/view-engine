@@ -221,7 +221,7 @@ int main()
 			c++;
 		}
 		//engine->getMousePos( -cs.__cur_pos ).print();
-		scene->getInstanceStatePtr( 0 )->_pos = engine->getMousePos( -cs.__cur_pos );
+		//scene->getInstanceStatePtr( 0 )->_pos = engine->getMousePos( -cs.__cur_pos );
 		auto isin = []( f2 const &p , f2 const &c , f2 const &s )
 		{
 			if(

@@ -1,1 +1,258 @@
-﻿
+﻿Build started 29.04.2015 14:27:03.
+     1>Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Ox /Ob2 /Ot /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\libs\lib\openGL\souce\Blurer.cpp ..\..\libs\lib\openGL\souce\DrawableGL.cpp ..\..\libs\lib\openGL\souce\TexturesGL.cpp main.cpp src\DrawlerDeffered.cpp src\HeighMapDrawler.cpp src\SelectionDrawler.cpp src\ViewEngineGL.cpp src\WaterSimulator.cpp
+         Blurer.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Drawable.h(24): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<4,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(70): note: see reference to class template instantiation 'vec<4,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Vertex.h(11): note: see reference to class template instantiation 'vec<2,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1475): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1474): note: while compiling class template member function 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept'
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(28): note: see reference to function template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(10): note: see reference to class template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>>' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         DrawableGL.cpp
+     1>C:\DEV\libs\lib\base\Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Drawable.h(24): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<4,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(70): note: see reference to class template instantiation 'vec<4,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Vertex.h(11): note: see reference to class template instantiation 'vec<2,float>' being compiled
+     1>..\..\libs\lib\openGL\souce\DrawableGL.cpp(5): warning C4800: 'const uint': forcing value to bool 'true' or 'false' (performance warning)
+     1>..\..\libs\lib\openGL\souce\DrawableGL.cpp(14): warning C4018: '<': signed/unsigned mismatch
+     1>..\..\libs\lib\openGL\souce\DrawableGL.cpp(16): warning C4018: '<': signed/unsigned mismatch
+     1>..\..\libs\lib\openGL\souce\DrawableGL.cpp(19): warning C4018: '<': signed/unsigned mismatch
+     1>..\..\libs\lib\openGL\souce\DrawableGL.cpp(24): warning C4018: '<': signed/unsigned mismatch
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1475): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1474): note: while compiling class template member function 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept'
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(28): note: see reference to function template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(10): note: see reference to class template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>>' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         TexturesGL.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+         main.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,float>': multiple default constructors specified
+         C:\DEV\libs\lib\base/Eventer.h(17): note: see reference to class template instantiation 'vec<2,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(56): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<4,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(70): note: see reference to class template instantiation 'vec<4,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Models.h(21): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<1,T>': multiple default constructors specified
+                 with
+                 [
+                     T=float
+                 ]
+         C:\DEV\libs\lib\openGL\GUIRendererGL.h(94): note: see reference to class template instantiation 'vec<1,T>' being compiled
+                 with
+                 [
+                     T=float
+                 ]
+     1>C:\DEV\libs\lib\openGL\GUIRendererGL.h(284): warning C4018: '<': signed/unsigned mismatch
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,unsigned int>': multiple default constructors specified
+         c:\dev\c++\viewengine\view\DrawlerDeffered.h(50): note: see reference to class template instantiation 'vec<2,unsigned int>' being compiled
+     1>main.cpp(200): warning C4456: declaration of 'dr' hides previous local declaration
+         main.cpp(170): note: see declaration of 'dr'
+         DrawlerDeffered.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Drawable.h(24): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<4,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(70): note: see reference to class template instantiation 'vec<4,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Vertex.h(11): note: see reference to class template instantiation 'vec<2,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Models.h(21): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,unsigned int>': multiple default constructors specified
+         c:\dev\c++\viewengine\src\../view/DrawlerDeffered.h(50): note: see reference to class template instantiation 'vec<2,unsigned int>' being compiled
+     1>src\DrawlerDeffered.cpp(97): warning C4018: '<': signed/unsigned mismatch
+     1>src\DrawlerDeffered.cpp(132): warning C4018: '<': signed/unsigned mismatch
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<1,T>': multiple default constructors specified
+                 with
+                 [
+                     T=float
+                 ]
+         src\DrawlerDeffered.cpp(232): note: see reference to class template instantiation 'vec<1,T>' being compiled
+                 with
+                 [
+                     T=float
+                 ]
+         HeighMapDrawler.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Drawable.h(24): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>src\HeighMapDrawler.cpp(44): warning C4018: '<': signed/unsigned mismatch
+     1>src\HeighMapDrawler.cpp(45): warning C4018: '<': signed/unsigned mismatch
+     1>src\HeighMapDrawler.cpp(49): warning C4018: '<': signed/unsigned mismatch
+     1>src\HeighMapDrawler.cpp(50): warning C4018: '<': signed/unsigned mismatch
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1475): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1474): note: while compiling class template member function 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept'
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(28): note: see reference to function template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(10): note: see reference to class template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>>' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         SelectionDrawler.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Drawable.h(24): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<4,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(70): note: see reference to class template instantiation 'vec<4,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Vertex.h(11): note: see reference to class template instantiation 'vec<2,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1475): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include\memory(1474): note: while compiling class template member function 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept'
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(28): note: see reference to function template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>> &std::unique_ptr<_Ty,std::default_delete<_Ty>>::operator =(std::unique_ptr<_Ty,std::default_delete<_Ty>> &&) noexcept' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         C:\DEV\libs\lib\view\Anim.h(10): note: see reference to class template instantiation 'std::unique_ptr<f4x4 [],std::default_delete<_Ty>>' being compiled
+                 with
+                 [
+                     _Ty=f4x4 []
+                 ]
+         ViewEngineGL.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,float>': multiple default constructors specified
+         C:\DEV\libs\lib\base/Eventer.h(17): note: see reference to class template instantiation 'vec<2,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(56): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<4,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(70): note: see reference to class template instantiation 'vec<4,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Models.h(21): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<1,T>': multiple default constructors specified
+                 with
+                 [
+                     T=float
+                 ]
+         C:\DEV\libs\lib\openGL\GUIRendererGL.h(94): note: see reference to class template instantiation 'vec<1,T>' being compiled
+                 with
+                 [
+                     T=float
+                 ]
+     1>C:\DEV\libs\lib\openGL\GUIRendererGL.h(284): warning C4018: '<': signed/unsigned mismatch
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,unsigned int>': multiple default constructors specified
+         c:\dev\c++\viewengine\view\DrawlerDeffered.h(50): note: see reference to class template instantiation 'vec<2,unsigned int>' being compiled
+     1>src\ViewEngineGL.cpp(45): warning C4018: '<': signed/unsigned mismatch
+     1>src\ViewEngineGL.cpp(63): warning C4018: '<': signed/unsigned mismatch
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,int>': multiple default constructors specified
+         src\ViewEngineGL.cpp(84): note: see reference to class template instantiation 'vec<2,int>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<1,T>': multiple default constructors specified
+                 with
+                 [
+                     T=int
+                 ]
+         src\ViewEngineGL.cpp(84): note: see reference to class template instantiation 'vec<1,T>' being compiled
+                 with
+                 [
+                     T=int
+                 ]
+         WaterSimulator.cpp
+     1>C:\DEV\libs\lib\base/Base.h(17): warning C4005: 'ito': macro redefinition
+         c:\dev\libs\lib\base\../linalg/vec.h(9): note: see previous definition of 'ito'
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<3,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Drawable.h(24): note: see reference to class template instantiation 'vec<3,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/mat.h(86): warning C4520: 'Matrix<float,4,4>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Models.h(21): note: see reference to class template instantiation 'Matrix<float,4,4>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<4,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view\ViewModels.h(70): note: see reference to class template instantiation 'vec<4,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<2,float>': multiple default constructors specified
+         C:\DEV\libs\lib\view/Vertex.h(11): note: see reference to class template instantiation 'vec<2,float>' being compiled
+     1>c:\dev\libs\lib\base\../linalg/vec.h(318): warning C4520: 'vec<1,T>': multiple default constructors specified
+                 with
+                 [
+                     T=float
+                 ]
+         src\WaterSimulator.cpp(109): note: see reference to class template instantiation 'vec<1,T>' being compiled
+                 with
+                 [
+                     T=float
+                 ]
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\DEV\c++\ViewEngine\Release\ViewEngine.exe" /INCREMENTAL /NOLOGO SDL2main.lib SDL2.lib SDL2_image.lib SDL2_ttf.lib opengl32.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\DEV\c++\ViewEngine\Release\ViewEngine.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\DEV\c++\ViewEngine\Release\ViewEngine.lib" /MACHINE:X86 /SAFESEH Release\Base.obj
+         Release\Eventer.obj
+         Release\FileLoader.obj
+         Release\FileParser.obj
+         Release\mat.obj
+         Release\vec.obj
+         Release\AnimGL.obj
+         Release\Blurer.obj
+         Release\DrawableGL.obj
+         Release\PassGL.obj
+         Release\TexturesGL.obj
+         Release\ViewModelsGL.obj
+         Release\WindowGL.obj
+         Release\Camera.obj
+         Release\Models.obj
+         Release\Textures.obj
+         Release\ViewModels.obj
+         Release\main.obj
+         Release\DrawlerDeffered.obj
+         Release\HeighMapDrawler.obj
+         Release\SelectionDrawler.obj
+         Release\ViewEngineGL.obj
+         Release\WaterSimulator.obj
+     1>LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/OPT:ICF' specification
+         ViewEngine.vcxproj -> C:\DEV\c++\ViewEngine\Release\ViewEngine.exe
+     1>Done Building Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:11.75

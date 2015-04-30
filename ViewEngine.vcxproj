@@ -42,7 +42,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\DEV\libs\SDL2-2.0.3;C:\DEV\libs\glew-1.12.0\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\DEV\libs\lib;C:\DEV\libs\SDL2-2.0.3;C:\DEV\libs\glew-1.12.0\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\DEV\libs\glew-1.12.0\lib;C:\DEV\libs\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
