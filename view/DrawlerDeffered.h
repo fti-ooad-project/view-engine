@@ -36,6 +36,7 @@ class DrawlerDeffered : public Initable , public Timer
 private:
 #define LIGHT_CASTER_COUNT 1
 	DrawlerDeffered() = default;
+	Blurer _blurer;
 	GraphicProgrammGL _storage_prog , _storage_tess_prog , _process_prog , _water_prog;
 	DrawPassGL _light_dir_passes[LIGHT_CASTER_COUNT];
 	//RDrawPassGL _light_cube_passes[LIGHT_CASTER_COUNT];

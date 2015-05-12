@@ -64,7 +64,7 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -93,6 +93,7 @@
     <ClCompile Include="..\..\libs\lib\openGL\souce\TexturesGL.cpp" />
     <ClCompile Include="..\..\libs\lib\openGL\souce\ViewModelsGL.cpp" />
     <ClCompile Include="..\..\libs\lib\openGL\souce\WindowGL.cpp" />
+    <ClCompile Include="..\..\libs\lib\view\GUIProcessor.cpp" />
     <ClCompile Include="..\..\libs\lib\view\source\Camera.cpp" />
     <ClCompile Include="..\..\libs\lib\view\source\Models.cpp" />
     <ClCompile Include="..\..\libs\lib\view\source\Textures.cpp" />
@@ -103,6 +104,7 @@
     <ClCompile Include="src\SelectionDrawler.cpp" />
     <ClCompile Include="src\ViewEngineGL.cpp" />
     <ClCompile Include="src\WaterSimulator.cpp" />
+    <ClCompile Include="view\FogDrawler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\view\polymodels\monkey.bin" />
@@ -130,6 +132,8 @@
     <ClInclude Include="..\..\libs\lib\view\Anim.h" />
     <ClInclude Include="..\..\libs\lib\view\Camera.h" />
     <ClInclude Include="..\..\libs\lib\view\Drawable.h" />
+    <ClInclude Include="..\..\libs\lib\view\GUILayot.h" />
+    <ClInclude Include="..\..\libs\lib\view\GUIProcessor.h" />
     <ClInclude Include="..\..\libs\lib\view\Models.h" />
     <ClInclude Include="..\..\libs\lib\view\PassDesc.h" />
     <ClInclude Include="..\..\libs\lib\view\ShaderSpecs.h" />
@@ -138,6 +142,7 @@
     <ClInclude Include="..\..\libs\lib\view\ViewModels.h" />
     <ClInclude Include="view\DrawlerDeffered.h" />
     <ClInclude Include="view\export\ViewInterface.h" />
+    <ClInclude Include="view\FogDrawler.h" />
     <ClInclude Include="view\HeighMapDrawler.h" />
     <ClInclude Include="view\SelectionDrawler.h" />
     <ClInclude Include="view\ViewEngineGL.h" />

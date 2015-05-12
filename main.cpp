@@ -38,6 +38,7 @@ int main()
 	{
 		auto *state = scene->getInstanceStatePtr( scene->genInstance() );
 		state->_view.push_back( 0 );
+		state->_view.push_back( 3 );
 		state->_animstat.update( float( x + y ) / 5.0f );
 		state->_animstat._speed = 0.4f;
 		state->_pos = f3( x , y , 0.0f );
@@ -54,16 +55,12 @@ int main()
 		state->_auto_height = true;
 	}
 	/*{
-		f4x4 temp( 1.0f );
-		temp( 0 , 0 ) = 0.0f;
-		temp( 1 , 0 ) = 1.0f;
-		temp( 0 , 1 ) = 1.0f;
-		temp( 1 , 1 ) = 0.0f;
-		temp( 3 , 2 ) = 20.0f;
-		temp( 3 , 0 ) = 0.0f;
 		auto *state = scene->getInstanceStatePtr( scene->genInstance() );
+		state->_up = f3( 0.0f , 0.0f , 1.0f );
+		state->_look = f3( 1.0f , 0.0f , 0.0f );
+		state->_pos = f3( 0.0f , 0.0f , 0.0f );
 		state->_view.push_back( 3 );
-		state->model = temp;
+		state->_auto_height = false;
 	}*/
 	LightState *ls = scene->getLightStatePtr( scene->genLight() );
 	ls->_cast_shadow = true;
@@ -205,7 +202,7 @@ int main()
 			engine->drawSelection( f2( 0.0f ) , f2( 0.0f ) );
 		}
 		int c = 0;
-		auto isInList = [ &selected_units_id ]( uint i )
+		static auto isInList = [ &selected_units_id ]( uint i )
 		{
 			for( auto const &j : selected_units_id )
 				if( j == i )
@@ -222,31 +219,6 @@ int main()
 		}
 		//engine->getMousePos( -cs.__cur_pos ).print();
 		//scene->getInstanceStatePtr( 0 )->_pos = engine->getMousePos( -cs.__cur_pos );
-		auto isin = []( f2 const &p , f2 const &c , f2 const &s )
-		{
-			if(
-				fabsf( -p.x() - c.x() ) < s.x()
-				&& fabsf( -p.y() - c.y() ) < s.y()
-				)
-				return true;
-			return false;
-		};
-		for( auto &i : main_menu->getElemVec() )
-		{
-			if( isin( cs.__cur_pos , i->_calculated_pos , i->_calculated_size ) )
-			{
-				if( cs.__cur_states[ 0 ] )
-					i->_status = 2;
-				else
-					i->_status = 1;
-				if( !cs.__cur_states[ 0 ] && cs.__last_states[ 0 ] )
-					if( i->_onClick )
-						i->_onClick();
-			}
-			else
-				i->_status = 0;
-			//LOG << "clicked\n";
-		}
 	}
 	);
 	//cam->lookAt( cam_pos , cam_lookat , f3( 0.0f , 0.0f , 1.0f ) );

@@ -11,7 +11,7 @@ void main()
     for( int i = 0; i < 3; ++i )
 	{
 		vec4 p;// = gl_in[i].gl_Position;
-		float h = texture( TEXTURE_ARRAY , vec3( pvte[i].texcoord , 0.0 ) ).w;
+		float h = texture( TEXTURE_ARRAY , vec3( pvte[i].texcoord , 0.0 ) ).w;//
 		p = MAT4X4_VIEWPROJ[0] * vec4( gl_in[i].gl_Position.xyz + pvte[i].normal * 0.08 * ( -0.3 + h ) , 1.0 );
 		switch( PASSID )
 		{

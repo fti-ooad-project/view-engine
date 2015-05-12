@@ -13,7 +13,7 @@ private:
 	Blurer _blurer;
 	SelectionDrawler();
 public:
-	uint process( uint );
+	DrawPassGL const &process( uint );
 	static SelectionDrawler *getSingleton();
 	void init() override;
 	void release() override;

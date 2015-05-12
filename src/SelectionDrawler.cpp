@@ -5,7 +5,7 @@
 SelectionDrawler::SelectionDrawler()
 {
 }
-uint SelectionDrawler::process( uint buffid )
+DrawPassGL const &SelectionDrawler::process( uint buffid )
 {
 	_process_prog.bind();
 	_process_pass.bind();
@@ -15,7 +15,7 @@ uint SelectionDrawler::process( uint buffid )
 	glUniform1i( 0 , 0 );
 	glUniform1i( 2 , 0 );
 	_screen_quad.draw();
-	uint blured = _blurer.process( _process_pass.getBufferPtr( 0 ) , 0.02f );
+	uint blured = _blurer.process( _process_pass.getBufferPtr( 0 ) , 0.02f ).getBufferPtr( 0 );
 	_process_prog.bind();
 	_process_pass.bind();
 	_process_pass.clear();
@@ -27,7 +27,7 @@ uint SelectionDrawler::process( uint buffid )
 	glBindTexture( GL_TEXTURE_2D , blured );
 	glUniform1i( 1 , 1 );
 	_screen_quad.draw();
-	return _process_pass.getBufferPtr( 0 );
+	return _process_pass;
 }
 SelectionDrawler * SelectionDrawler::getSingleton()
 {

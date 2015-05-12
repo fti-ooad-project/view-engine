@@ -6,6 +6,7 @@ layout( location = 1 ) uniform sampler2D ENV;//normal depth
 layout( location = 2 ) uniform sampler2D SELECTBUFF;//normal depth
 layout( location = 3 ) uniform mat4 VIEWPROJ;
 layout( location = 8 ) uniform sampler2D LIGHTK;
+layout( location = 9 ) uniform sampler2D FOGPASS;
 layout( location = 12 ) uniform sampler2D WATER_REFLECTBUF;
 //layout( location = 3 ) uniform sampler2DArray TEST;//spec gloss
 //layout( location = 3 ) uniform sampler2D BUFFER3;//diff emiss
@@ -35,7 +36,7 @@ vec3 env( vec3 n , float s )
 	return //vec3( pow( max( 0.0 , min( 1.0 , dot( n , -DLIGHT[0].dir ) * 1.001 ) ) , ( 1.0 - s ) * 15.0 ) ) + 
 	textureLod( ENV , vec2( 0.5 + alpha / pi * 0.5 , 0.5 - theta / pi ) , s * 15.0 ).xyz;
 }
-float diffuse( vec3 n , vec3 l , float ldist2 , float lr )
+float diffuse( vec3 n , vec3 l , float ldist2 )
 {
 	return max( 0.0 , dot( n , l ) ) / ldist2 * 0.25 / pi;
 }
@@ -45,7 +46,7 @@ float specular( vec3 n , vec3 l , vec3 refl , float spec , float ldist2 , float 
 	float func;
 	float cosx = max( 0.0 , dot( refl , l ) );
 	if( cosx < cosa )
-		func = pow( cosx / cosa , max( 1.0 , pow( spec , 5.0 ) * 40.0 ) );
+		func = pow( 1.0 - cos( pi * 0.5 * cosx / cosa ) , max( 1.0 , pow( spec , 5.0 ) * 40.0 ) );
 	else
 		func = 1.0;
 	return max( 0.0 , dot( n , l ) ) * 0.5 *
@@ -53,23 +54,11 @@ float specular( vec3 n , vec3 l , vec3 refl , float spec , float ldist2 , float 
 }
 vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , vec3 albedo , float env_k )
 {
-	//vec3 diff_out = vec3( 0.0 );
-	//vec3 spec_out = vec3( 0.0 );
+	vec3 diff_out = vec3( 0.0 );
+	vec3 spec_out = vec3( 0.0 );
 	vec3 refl = reflect( normalize( p - v ) , n );
 	vec3 view = normalize( p - v );
 	float freshnel = mix( 1.0 , max( 0.0 , 1.0 - specw.g * dot( -normalize( p - v ) , n ) ) , specw.g );
-	/*for( int i = 0; i < 1; i++ )//COUNT!!!
-	{
-		vec3 to_light = p - OLIGHT[i].pos;
-		float k;
-		if( dot( n , n ) == 0.0 )
-			k = 1.0;
-		else
-			k = pow( max( 0.0 , dot( refl , -to_light ) ) , 1.0 );
-		float r2 = 1.0 / dot( to_light , to_light );
-		lightness += OLIGHT[i].colori.xyz * OLIGHT[i].colori.w *
-		smoothLightCube( p , n , 1.0 , OLIGHT[i].pos , OLIGHT[i].DepthCubeMap_Buffer ) * k * r2 * 5.0;
-	}*/
 	vec3 out_c = vec3( 0.0 );
 	for( int i = 0; i < SLIGHT_COUNT; i++ )//COUNT!!!
 	{
@@ -77,15 +66,20 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , vec3 albedo , float env_k )
 		float ldist2 = dot( rl , rl );
 		vec3 l = normalize( rl );
 		float sk = specular( n , l , refl , specw.w , ldist2 , SLIGHT[i].pos_r.w );
-		out_c += freshnel * sk * SLIGHT[i].colori.xyz * SLIGHT[i].colori.w;
+		float dk = diffuse( n , l , ldist2 );
+		vec3 lk = SLIGHT[i].colori.xyz * SLIGHT[i].colori.w;
+		spec_out += freshnel * sk * lk;
+		diff_out += dk * lk;
 	}
 	for( int i = 0; i < DLIGHT_COUNT; i++ )//COUNT!!!
 	{
-		float sk = specular( n , -DLIGHT[i].dir , refl , specw.w , 1.0 , 0.04 );
-		out_c +=  
-		freshnel * sk * DLIGHT[i].colori.xyz * DLIGHT[i].colori.w * mix( smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) , env_k , specw.w );
+		float sk = specular( n , -DLIGHT[i].dir , refl , specw.w , 0.8 , 0.04 );
+		float dk = diffuse( n , -DLIGHT[i].dir , 1.0 );
+		vec3 lk = DLIGHT[i].colori.xyz * DLIGHT[i].colori.w * mix( smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) , env_k , specw.w );
+		spec_out += freshnel * sk * lk;
+		diff_out += dk * lk;
 	}
-	return out_c + ( env_k * 0.7 + 0.3 ) * freshnel * env( refl , 1.0 - specw.w ) * albedo;
+	return mix( diff_out , spec_out , specw.w ) + ( env_k * 0.7 + 0.3 ) * freshnel * env( refl , 1.0 - specw.w ) * albedo;
 	//return vec3( smoothLightDir( p , n , 0.1 , DLIGHT[0].toLightViewProj , DLIGHT[0].DepthMap_Buffer ) );
 }
 vec3 traceLights( vec3 p , vec3 v , float depth )
@@ -224,6 +218,7 @@ void main()
 	}
 	
 	vec4 selbuf = texture( SELECTBUFF , frag_pos );
-	out_data += selbuf.xyz;// + traceLights( CAM.pos , v );
+	vec4 fogpass = texture( FOGPASS , frag_pos );
+	out_data += FOG * fogpass.xyz + selbuf.xyz;// + traceLights( CAM.pos , v );
 	//vec3( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );
 }
