@@ -78,10 +78,10 @@ void ViewEngineGL::tick( int w , int h )
 		_screen_quad.init();
 		_inited = true;
 		_quad_prog.init( "res/shaders/glsl/screen_quad_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
-		_guimng.init();
-		//_guimng.genText( "start game" );
+		GUIRendererGL::getSingleton()->init();
+		//GUIRendererGL::getSingleton()->genText( "start game" );
 	}
-	_resolution = i2( w , h );
+	i2 _resolution = i2( w , h );
 	uint draw = DrawlerDeffered::getSingleton()->draw( _cur_scene , _resolution );
 	glBindFramebuffer( GL_FRAMEBUFFER , 0 );
 	glClearColor( 0.0f , 0.0f , 0.0f , 0.0f );
@@ -94,14 +94,10 @@ void ViewEngineGL::tick( int w , int h )
 	glUniform1i( 0 , 0 );
 	glUniform4fv( 1 , 1 , selection_box.getArray() );
 	_screen_quad.draw();
-	//if( _gui )
-		_guimng.renderLayout( w , h , _gui );
-	//_guimng.drawPanel( f2( 0.0f , 0.0f ) , f2( 0.3f , 0.2f ) , 0 );
-	//_guimng.drawText( 0 , f2( 0.0f , 0.0f ) , f2( 0.2f , 0.1f ) );
-}
-void ViewEngineGL::updateRes()
-{
-
+	if( _gui )
+		GUIRendererGL::getSingleton()->renderLayout( w , h , _gui );
+	//GUIRendererGL::getSingleton()->drawPanel( f2( 0.0f , 0.0f ) , f2( 0.3f , 0.2f ) , 0 );
+	//GUIRendererGL::getSingleton()->drawText( 0 , f2( 0.0f , 0.0f ) , f2( 0.2f , 0.1f ) );
 }
 void ViewEngineGL::init()
 {
@@ -114,9 +110,9 @@ void ViewEngineGL::setScene( Scene3D const *scene )
 {
 	_cur_scene = dynamic_cast< Scene3DGL const * >( scene );
 }
-void ViewEngineGL::setResolution( int w , int h )
+void ViewEngineGL::setGraphicSettings( GraphicSettings const &grphs )
 {
-	_resolution = i2( w , h );
+	DrawlerDeffered::getSingleton()->setGraphicSettings( grphs );
 }
 void ViewEngineGL::setGUI( GUILayout const *gui )
 {

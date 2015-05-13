@@ -36,17 +36,14 @@ private:
 	bool _tess = true;
 	PolyQuadGL _screen_quad;
 	Eventer _eventer;
-	GUIRendererGL _guimng;
 	GUILayout const *_gui = nullptr;
 	bool _inited = false;
-	u2 _resolution;
 	Scene3DGL const *_cur_scene = nullptr;
 	void tick( int w , int h );
-	void updateRes();
 public:
 	void init() override;
 	void setScene( Scene3D const * ) override;
-	void setResolution( int , int ) override;
+	void setGraphicSettings( GraphicSettings const & ) override;
 	void setGUI( GUILayout const * ) override;
 	Scene3D *genScene() override;
 	Scene3D  const *getScene() override;

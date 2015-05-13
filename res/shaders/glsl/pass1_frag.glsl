@@ -8,6 +8,7 @@ layout( location = 3 ) uniform mat4 VIEWPROJ;
 layout( location = 8 ) uniform sampler2D LIGHTK;
 layout( location = 9 ) uniform sampler2D FOGPASS;
 layout( location = 12 ) uniform sampler2D WATER_REFLECTBUF;
+layout( location = 14 ) uniform int HAVE_REFLECTIONS;
 //layout( location = 3 ) uniform sampler2DArray TEST;//spec gloss
 //layout( location = 3 ) uniform sampler2D BUFFER3;//diff emiss
 layout( location = 11 ) uniform usampler2D WATER_BUFFER3;//diff emiss
@@ -177,7 +178,7 @@ void main()
 		DDEPTH = abs( wdepth - depth );
 		float dw = max( 0.0 , dot( normalize( CAM.pos - wpos ) , wnorm ) );
 		WATERK = dw * mix( vec3( 0.7 , 0.8 , 0.9 ) , vec3( 0.1 , 0.15 , 0.2 ) , min( 1.0 , DDEPTH / 3.0 ) );
-		vec3 wl = light( wpos , wnorm , CAM.pos , vec4( 0.0 , 0.5 , 0.0 , 0.99 ) , vec3( 0.9 , 0.85 , 0.89 ) , ( texture( WATER_REFLECTBUF , distfragpos ).x < 1.0 ? 0.0 : 1.0 ) );
+		vec3 wl = light( wpos , wnorm , CAM.pos , vec4( 0.0 , 0.5 , 0.0 , 0.99 ) , vec3( 0.9 , 0.85 , 0.89 ) , HAVE_REFLECTIONS == 0 ? 1.0f : ( texture( WATER_REFLECTBUF , distfragpos ).x < 1.0 ? 0.0 : 1.0 ) );
 		out_data += ( 1.0 - dw ) * 
 		vec3( wl );//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );reflectWater( wdepth , frag_pos , wnorm , wpos ) * 
 		

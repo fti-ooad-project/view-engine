@@ -32,6 +32,14 @@ public:
 	virtual Camera const *getCamera() const = 0;
 	virtual Camera *getCamera() = 0;
 };
+struct GraphicSettings
+{
+	bool _reflect_water = true;
+	bool _draw_shadows = true;
+	bool _draw_fog = true;
+	bool _tesselation = true;
+	uint _screen_width = 512 , _screen_height = 512;
+};
 class ViewManager : public Initable
 {
 public:
@@ -45,7 +53,7 @@ public:
 	void operator=( ViewManager const & ) = delete;
 	static VIEWAPI ViewManager *singletonGet( int );
 	virtual void init() = 0;
-	virtual void setResolution( int , int ) = 0;
+	virtual void setGraphicSettings( GraphicSettings const & ) = 0;
 	virtual void setScene( Scene3D const * ) = 0;
 	virtual void setGUI( GUILayout const * ) = 0;
 	virtual void drawSelection( f2 const & , f2 const & ) = 0;

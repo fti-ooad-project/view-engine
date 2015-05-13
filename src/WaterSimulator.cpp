@@ -13,14 +13,14 @@ void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 	_screen_quad.init();
 	ito( 2 )
 	{
-		_water_surf_pass[ i ].init( { { 1024 , 1024 } , BufferStoreType::BUFFER_INT , 1 , -1 , false , false , 4 } );
+		_water_surf_pass[ i ].init( { { 512 , 512 } , BufferStoreType::BUFFER_INT , 1 , -1 , false , false , 4 } );
 		_water_bump_pass[ i ].init( { { dest , dest } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 4 } );
 		_water_bump_pass[ i ].bind();
 		_water_bump_pass[ i ].clear();
 	}
-	_final.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 4 } );
-	_water_plane_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_INT , 1 , depth_buf , false , false , 4 } );
-	_water_refl_pass.init( { { 1024 , 1024 } , BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , false } );
+	_final.init( { { 512 , 512 } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 4 } );
+	_water_plane_pass.init( { { 256 , 256 } , BufferStoreType::BUFFER_INT , 1 , depth_buf , false , false , 4 } );
+	_water_refl_pass.init( { { 256 , 256 } , BufferStoreType::BUFFER_FLOAT , 0 , -1 , true , false } );
 	_water_plane_prog.init( "res/shaders/glsl/water_plane_fragment.glsl" , "res/shaders/glsl/water_plane_vertex.glsl" );
 	_water_bump_prog.init( "res/shaders/glsl/water_bump_frag.glsl" , "res/shaders/glsl/screen_quad_vertex.glsl" );
 	//_water_surf_prog.init( "res/shaders/glsl/watersurf_frag.glsl" , "res/shaders/glsl/polymesh_tess_vertex.glsl" , "res/shaders/glsl/water_geometry.glsl" );

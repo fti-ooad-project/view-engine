@@ -44,7 +44,7 @@ int main()
 		state->_pos = f3( x , y , 0.0f );
 		state->_up = f3( 0.0f , 0.0f , 1.0f );
 		state->_look = f3( 1.0f , 0.0f , 0.0f );
-		state->_auto_height = true;
+		state->_auto_height = false;
 	}
 	{
 		auto *state = scene->getInstanceStatePtr( scene->genInstance() );
@@ -218,7 +218,7 @@ int main()
 			c++;
 		}
 		//engine->getMousePos( -cs.__cur_pos ).print();
-		//scene->getInstanceStatePtr( 0 )->_pos = engine->getMousePos( -cs.__cur_pos );
+		scene->getInstanceStatePtr( 0 )->_pos = engine->getMousePos( -cs.__cur_pos );
 	}
 	);
 	//cam->lookAt( cam_pos , cam_lookat , f3( 0.0f , 0.0f , 1.0f ) );

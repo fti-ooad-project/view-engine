@@ -51,6 +51,7 @@ private:
 	u2 _resolution;
 	f2 _mpos;
 	f3 _wmpos;
+	GraphicSettings _graph_settings;
 public:
 	std::vector< std::unique_ptr< PolyMeshGL > > _meshes;
 	std::vector< TextureHolderGL > _textures;
@@ -60,6 +61,7 @@ public:
 	f3 getMousePos( f2 const & );
 	void release();
 	uint draw( Scene3D const * , u2 const & );
+	void setGraphicSettings( GraphicSettings const & );
 	static DrawlerDeffered *getSingleton();
 };
 #endif // DRAWLERDEFFERED_HPP
