@@ -1,3 +1,4 @@
+#pragma once
 #ifndef RSCENEDRAWLER_H
 #define RSCENEDRAWLER_H
 #include <base/Base.h>
@@ -34,14 +35,32 @@ public:
 };
 struct GraphicSettings
 {
-	bool _reflect_water = true;
+	bool _reflect_water = false;
 	bool _draw_shadows = true;
 	bool _draw_fog = true;
 	bool _tesselation = true;
 	uint _screen_width = 512 , _screen_height = 512;
+	bool operator!=( GraphicSettings const &set )
+	{
+		if( this->_reflect_water != set._reflect_water )
+			return true;
+		if( this->_draw_fog != set._draw_fog )
+			return true;
+		if( this->_draw_shadows != set._draw_shadows )
+			return true;
+		if( this->_screen_height != set._screen_height )
+			return true;
+		if( this->_screen_width != set._screen_width )
+			return true;
+		if( this->_tesselation != set._tesselation )
+			return true;
+		return false;
+	}
 };
 class ViewManager : public Initable
 {
+private:
+	static GraphicSettings _graph_settings;
 public:
 	class API
 	{
@@ -52,10 +71,18 @@ public:
 	ViewManager( ViewManager const & ) = delete;
 	void operator=( ViewManager const & ) = delete;
 	static VIEWAPI ViewManager *singletonGet( int );
+	static GraphicSettings getGraphicSettings()
+	{
+		return _graph_settings;
+	}
+	static void setGraphicSettings( GraphicSettings const &gset )
+	{
+		_graph_settings = gset;
+	}
 	virtual void init() = 0;
-	virtual void setGraphicSettings( GraphicSettings const & ) = 0;
 	virtual void setScene( Scene3D const * ) = 0;
 	virtual void setGUI( GUILayout const * ) = 0;
+	//virtual GUILayout const *getGUI() const = 0;
 	virtual void drawSelection( f2 const & , f2 const & ) = 0;
 	virtual f3 getMousePos( f2 const & ) = 0;
 	virtual Scene3D *genScene() = 0;

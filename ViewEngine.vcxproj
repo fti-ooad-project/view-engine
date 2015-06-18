@@ -18,12 +18,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -126,6 +126,7 @@
     <ClInclude Include="..\..\libs\lib\openGL\Light.h" />
     <ClInclude Include="..\..\libs\lib\openGL\LightGL.h" />
     <ClInclude Include="..\..\libs\lib\openGL\PassGL.h" />
+    <ClInclude Include="..\..\libs\lib\openGL\ShaderBuilderGL.h" />
     <ClInclude Include="..\..\libs\lib\openGL\TexturesGL.h" />
     <ClInclude Include="..\..\libs\lib\openGL\ViewModelsGL.h" />
     <ClInclude Include="..\..\libs\lib\openGL\WindowGL.h" />
@@ -136,6 +137,7 @@
     <ClInclude Include="..\..\libs\lib\view\GUIProcessor.h" />
     <ClInclude Include="..\..\libs\lib\view\Models.h" />
     <ClInclude Include="..\..\libs\lib\view\PassDesc.h" />
+    <ClInclude Include="..\..\libs\lib\view\ShaderBuilder.h" />
     <ClInclude Include="..\..\libs\lib\view\ShaderSpecs.h" />
     <ClInclude Include="..\..\libs\lib\view\Textures.h" />
     <ClInclude Include="..\..\libs\lib\view\Vertex.h" />
@@ -144,6 +146,7 @@
     <ClInclude Include="view\export\ViewInterface.h" />
     <ClInclude Include="view\FogDrawler.h" />
     <ClInclude Include="view\HeighMapDrawler.h" />
+    <ClInclude Include="view\ScreenQuadShaderGL.h" />
     <ClInclude Include="view\SelectionDrawler.h" />
     <ClInclude Include="view\ViewEngineGL.h" />
     <ClInclude Include="view\WaterSimulator.h" />

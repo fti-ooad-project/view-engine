@@ -3,17 +3,7 @@
 #include "../GlslDefines.h"
 #include "../view/FogDrawler.h"
 #define LIGHTCASTERS
-#define RENDERWATER
-void DrawlerDeffered::setGraphicSettings( GraphicSettings const &grphs )
-{
-	this->_graph_settings = grphs;
-	_storage_pass.release();
-	_storage_pass.init( { { grphs._screen_width , grphs._screen_height } , BufferStoreType::BUFFER_INT , 1 , -1 ,
-		false , false , 4 } );
-	_process_pass.release();
-	_process_pass.init( { { grphs._screen_width , grphs._screen_height } , BufferStoreType::BUFFER_FLOAT , 1 , -1 ,
-		false , false , 3 } );
-}
+//#define RENDERWATER
 void DrawlerDeffered::bindUniforms( View const &view ) const
 {
 	glUniform1i( 0 , view._flags );
@@ -42,12 +32,11 @@ void DrawlerDeffered::bindUniforms( View const &view ) const
 		}
 	}
 }
-uint DrawlerDeffered::loadView( std::string filename , int type )
+uint DrawlerDeffered::loadView( std::string filename , int type , int pref_anim )
 {
 	auto stream = FileLoader::getStream( filename.c_str() );
 	auto mesh = std::unique_ptr< PolyMeshGL >( new PolyMeshGL() );
-	auto meshdata = std::move( FileLoader::loadPolyMeshBin( stream , type ) );
-	mesh->genVboFromMesh( std::move( meshdata ) );
+	mesh->genVboFromMesh( std::move( FileLoader::loadPolyMeshBin( stream , type ) ) );
 	_meshes.push_back( std::move( mesh ) );
 	View out;
 	out._mesh_id = _meshes.size() - 1;
@@ -97,13 +86,16 @@ uint DrawlerDeffered::loadView( std::string filename , int type )
 		animintex.init( std::move( animdata ) , anim_count );
 		_animations.push_back( std::move( animintex ) );
 		out._anim_id = _animations.size() - 1;
+	} else
+	{
+		out._anim_id = pref_anim;
 	}
 exit:
 	stream->close();
 	_view.push_back( out );
 	return _view.size() - 1;
 }
-void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info , bool tess )
+void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info )
 {
 	ito( _view.size() )
 	{
@@ -112,29 +104,15 @@ void DrawlerDeffered::drawInstances( std::vector<InstanceInfo> const *info , boo
 		_storage_prog.bind();
 		bindUniforms( _view[ i ] );
 		int meshid = _view[ i ]._mesh_id;
-		if( tess )
+		if( info[ 2 * i ].size() > 0 )
 		{
-			if( info[ 2 * i ].size() > 0 )
-			{
-				_storage_tess_prog.bind();
-				_meshes[ meshid ]->drawInstancedPatches( &info[ i * 2 ][ 0 ] , info[ 2 * i ].size() * sizeof( InstanceInfo ) , info[ 2 * i ].size() );
-			}
-			if( info[ 2 * i + 1 ].size() > 0 )
-			{
-				_storage_prog.bind();
-				_meshes[ meshid ]->drawInstanced( &info[ i * 2 + 1 ][ 0 ] , info[ 2 * i + 1 ].size() * sizeof( InstanceInfo ) , info[ 2 * i + 1 ].size() );
-			}
-		} else
+			_storage_tess_prog.bind();
+			_meshes[ meshid ]->drawInstancedPatches( &info[ i * 2 ][ 0 ] , info[ 2 * i ].size() * sizeof( InstanceInfo ) , info[ 2 * i ].size() );
+		}
+		if( info[ 2 * i + 1 ].size() > 0 )
 		{
 			_storage_prog.bind();
-			if( info[ 2 * i ].size() > 0 )
-			{
-				_meshes[ meshid ]->drawInstanced( &( info[ i * 2 ][ 0 ] ) , info[ 2 * i ].size() * sizeof( InstanceInfo ) , info[ 2 * i ].size() );
-			}
-			if( info[ 2 * i + 1 ].size() > 0 )
-			{
-				_meshes[ meshid ]->drawInstanced( &( info[ i * 2 + 1 ][ 0 ] ) , info[ 2 * i + 1 ].size() * sizeof( InstanceInfo ) , info[ 2 * i + 1 ].size() );
-			}
+			_meshes[ meshid ]->drawInstanced( &info[ i * 2 + 1 ][ 0 ] , info[ 2 * i + 1 ].size() * sizeof( InstanceInfo ) , info[ 2 * i + 1 ].size() );
 		}
 	}
 }
@@ -152,12 +130,19 @@ void DrawlerDeffered::drawInstancesToLight( std::vector<InstanceInfo> const *inf
 }
 void DrawlerDeffered::updateRes()
 {
+	this->_graph_settings = ViewManager::getGraphicSettings();
 	_storage_pass.release();
+	_storage_pass.init( { { _graph_settings._screen_width , _graph_settings._screen_height } , BufferStoreType::BUFFER_INT , 1 , -1 ,
+		false , false , 4 } );
+	_process_pass.release();
+	_process_pass.init( { { _graph_settings._screen_width , _graph_settings._screen_height } , BufferStoreType::BUFFER_FLOAT , 1 , -1 ,
+		false , false , 3 } );
+	/*_storage_pass.release();
 	_storage_pass.init( PassDesc{ { _resolution.x() , _resolution.y() } , BufferStoreType::BUFFER_INT , 1 , -1 , false , false , 4 } );
 	_process_pass.release();
 	_process_pass.init( PassDesc{ { _resolution.x() , _resolution.y() } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 3 } );
 	_water_pass.release();
-	_water_pass.init( PassDesc{ { _resolution.x() , _resolution.y() } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 3 } );
+	_water_pass.init( PassDesc{ { _resolution.x() , _resolution.y() } , BufferStoreType::BUFFER_FLOAT , 1 , -1 , false , false , 3 } );*/
 }
 void DrawlerDeffered::init()
 {
@@ -180,15 +165,19 @@ void DrawlerDeffered::init()
 	_water_prog.init( "res/shaders/glsl/pass2_frag.glsl" ,
 		"res/shaders/glsl/screen_quad_vertex.glsl" , "" );
 	loadView( "res/view/polymodels/monkey.bin" , Polymesh::PolyMeshType::BONED_PMESH );
-	View boxview;
-	_meshes.push_back( std::move( std::unique_ptr < PolyMeshGL >( new PolyBoxGL() ) ) );
-	boxview._mesh_id = _meshes.size() - 1;
-	boxview._anim_id = -1;
-	boxview._texture_id = -1;
-	boxview._flags = 0;
-	_view.push_back( boxview );
+	{
+		auto mesh = new PolyBoxGL();
+		mesh->init();
+		_meshes.push_back( std::move( std::unique_ptr < PolyMeshGL >( mesh ) ) );
+		View boxview;
+		boxview._mesh_id = _meshes.size() - 1;
+		boxview._anim_id = -1;
+		boxview._texture_id = -1;
+		boxview._flags = 0;
+		_view.push_back( boxview );
+	}
 	loadView( "res/view/polymodels/tower.bin" , Polymesh::PolyMeshType::STATIC_PMESH );
-	loadView( "res/view/polymodels/sword.bin" , Polymesh::PolyMeshType::BONED_PMESH );
+	loadView( "res/view/polymodels/sword.bin" , Polymesh::PolyMeshType::BONED_PMESH , 0 );
 
 
 	/*_view.push_back(
@@ -217,8 +206,8 @@ void DrawlerDeffered::init()
 		FileLoader::getStream(
 		"res/view/polymodels/sword.bin" ) ,
 		Polymesh::PolyMeshType::STATIC_PMESH ) ) ) ) );*/
-	std::vector< uint > shader_comp{ 4 , 4 , 3 , 3 , 3 , 3 };
-	for( std::unique_ptr<PolyMeshGL> &i : _meshes )
+	std::vector< int > shader_comp{ 4 , 4 , 3 , 3 , 3 , 3 };
+	for( auto &i : _meshes )
 	{
 		i->genInstancedBuffer( 7 , shader_comp );
 	}
@@ -270,47 +259,53 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 	updateTime();
 	if( !scene )
 		return 0;
-	//if( _resolution != res )
-	//{
-	_resolution = res;
-
-	scene->getCamera()->setAspect(
-		float( _resolution.x() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f ,
-		float( _resolution.y() ) / std::max( _resolution.x() , _resolution.y() ) * 3.14f * 0.5f );
-	//}
+	{
+		_resolution = res;
+		uint asp = std::max( _resolution.x() , _resolution.y() );
+		scene->getCamera()->setAspect(
+			float( _resolution.x() ) / asp * 3.14f * 0.5f ,
+			float( _resolution.y() ) / asp * 3.14f * 0.5f );
+	}
+	if( this->_graph_settings != ViewManager::getGraphicSettings() )
+	{
+		//updateRes();
+	}
 	auto temp_camera = *scene->getCamera();
 	std::unique_ptr< std::vector<InstanceInfo>[] > data( new std::vector<InstanceInfo>[ _view.size() * 2 ] );
 	float time = _cur_time - floorf( _cur_time );
-	for( UnitInstanceState const &ins : scene->getStateVector() )
 	{
-		ins._size = _meshes[ _view[ ins._view[ 0 ] ]._mesh_id ]->_size;
-		float cam_dist = 1.0f;// f2( ins._pos.x() , ins._pos.y() ).g_dist( f2( temp_camera._v3pos.x() , temp_camera._v3pos.y() ) ) / _meshes[ _view[ ins._view[ 0 ] ]._mesh_id ]->_size.z();
-		ins._animstat.update( _dt );
-		for( auto const i : ins._view )
+		for( UnitInstanceState const &ins : scene->getStateVector() )
 		{
+			//ins._size = _meshes[ _view[ ins._view[ 0 ] ]._mesh_id ]->_size;
+			float cam_dist = 1.0f;// f2( ins._pos.x() , ins._pos.y() ).g_dist( f2( temp_camera._v3pos.x() , temp_camera._v3pos.y() ) ) / _meshes[ _view[ ins._view[ 0 ] ]._mesh_id ]->_size.z();
+			ins._animstat.update( _dt );
 			InstanceInfo instance_info{
 				ins._animstat._moment._moment , ins._animstat._moment._last_moment
 				, cam_dist , float( ins.selectid ) , int( ins._animstat._moment._mixing )
 				, ins._animstat._moment._cur_set , ins._animstat._moment._last_set , int( ins._auto_height ) , ins._pos , ins._look , vecx( ins._look , ins._up ) , ins._up };
-			if( cam_dist < 3.0f )
-				data[ i * 2 ].push_back( instance_info );
-			else
+			for( auto const i : ins._view )
 			{
-				//if( !temp_camera.fristrum2d( f2( ins._pos.x() , ins._pos.y() ) ) )
-				//	continue;
-				if( cam_dist < 15.0f )
-					data[ i * 2 + 1 ].push_back( instance_info );
-				else
+				if( cam_dist < 3.0f && _graph_settings._tesselation )
 				{
-					data[ 3 ].push_back( instance_info );
+					data[ i * 2 ].push_back( instance_info );
+				} else
+				{
+					//if( !temp_camera.fristrum2d( f2( ins._pos.x() , ins._pos.y() ) ) )
+					//	continue;
+					if( cam_dist < 15.0f )
+					{
+						data[ i * 2 + 1 ].push_back( instance_info );
+					} else
+					{
+						data[ 3 ].push_back( instance_info );
+					}
 				}
 			}
 		}
 	}
-	if( time < 0.01f )
-		LOG << 1.0f / _dt << "\n";
 	{
 		_storage_pass.clear();
+		//
 		_storage_tess_prog.bind();
 		HeightMapDrawler::getSingleton()->bindHeihgtTexture();
 		glUniform1f( TIME , time );
@@ -328,17 +323,17 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 		//
 		HeightMapDrawler::getSingleton()->bindToDraw();
 		glUniform1i( PASSID , PASS_NORMAL );
-		glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE ,
-			temp_camera.getViewProj().getPtr() );
+		glUniformMatrix4fv( MAT4X4_VIEWPROJ , 1 , GL_FALSE , temp_camera.getViewProj().getPtr() );
 		glUniform3fv( CAM_POS , 1 , temp_camera._v3pos.getArray() );
+		//
 		HeightMapDrawler::getSingleton()->draw( true );
 		u2 txmpos = ( ( _mpos )* 0.5f + 0.5f ) & f2( _graph_settings._screen_width , _graph_settings._screen_height );
 		uint temp[ 4 ];
-		glReadBuffer( GL_COLOR_ATTACHMENT0 );
-		glReadnPixels( txmpos.x() , txmpos.y() , 1 , 1 , GL_RGBA_INTEGER , GL_UNSIGNED_INT , 4 * sizeof( uint ) , temp );
-		_wmpos = temp_camera._v3pos + temp_camera.getCameraRay( _mpos ) * ( float( temp[ 0 ] ) / 100.0f );
+		//glReadBuffer( GL_COLOR_ATTACHMENT0 );
+		//glReadnPixels( txmpos.x() , txmpos.y() , 1 , 1 , GL_RGBA_INTEGER , GL_UNSIGNED_INT , 4 * sizeof( uint ) , temp );
+		//_wmpos = temp_camera._v3pos + temp_camera.getCameraRay( _mpos ) * ( float( temp[ 0 ] ) / 100.0f );
 		//glPolygonMode( GL_FRONT_AND_BACK , GL_LINE );
-		drawInstances( data.get() , true );
+		drawInstances( data.get() );
 		//glPolygonMode( GL_FRONT_AND_BACK , GL_FILL );
 		//glDisable( GL_CULL_FACE );
 

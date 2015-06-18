@@ -229,5 +229,14 @@
     <ClInclude Include="view\FogDrawler.h">
       <Filter>localview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\lib\view\ShaderBuilder.h">
+      <Filter>view</Filter>
+    </ClInclude>
+    <ClInclude Include="view\ScreenQuadShaderGL.h">
+      <Filter>localview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\lib\openGL\ShaderBuilderGL.h">
+      <Filter>opengl</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

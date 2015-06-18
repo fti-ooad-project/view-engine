@@ -110,10 +110,6 @@ void ViewEngineGL::setScene( Scene3D const *scene )
 {
 	_cur_scene = dynamic_cast< Scene3DGL const * >( scene );
 }
-void ViewEngineGL::setGraphicSettings( GraphicSettings const &grphs )
-{
-	DrawlerDeffered::getSingleton()->setGraphicSettings( grphs );
-}
 void ViewEngineGL::setGUI( GUILayout const *gui )
 {
 	_gui = gui;

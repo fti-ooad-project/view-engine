@@ -43,7 +43,6 @@ private:
 public:
 	void init() override;
 	void setScene( Scene3D const * ) override;
-	void setGraphicSettings( GraphicSettings const & ) override;
 	void setGUI( GUILayout const * ) override;
 	Scene3D *genScene() override;
 	Scene3D  const *getScene() override;

@@ -43,11 +43,11 @@ private:
 	DrawPassGL  _storage_pass , _process_pass , _water_pass;
 	TextureHolderGL _env_tex , _lightk_tex;
 	PolyQuadGL _screen_quad;
-	void drawInstances( std::vector< InstanceInfo > const * , bool tess = false );
+	void drawInstances( std::vector< InstanceInfo > const * );
 	void drawInstancesToLight( std::vector< InstanceInfo > const * );
 	void bindUniforms( View const & ) const;
 	void updateRes();
-	uint loadView( std::string , int );
+	uint loadView( std::string , int , int pref_anim = -1 );
 	u2 _resolution;
 	f2 _mpos;
 	f3 _wmpos;
@@ -61,7 +61,6 @@ public:
 	f3 getMousePos( f2 const & );
 	void release();
 	uint draw( Scene3D const * , u2 const & );
-	void setGraphicSettings( GraphicSettings const & );
 	static DrawlerDeffered *getSingleton();
 };
 #endif // DRAWLERDEFFERED_HPP

@@ -1,5 +1,5 @@
 layout( location = 0 ) uniform int FLAGS;
-layout( location = 1 ) uniform sampler2DArray  TEXTURE_ARRAY;
+layout( location = 1 ) uniform sampler2DArray TEXTURE_ARRAY;
 layout( location = 2 ) uniform sampler2DArray ANIM_TEX_ARRAY;
 layout( location = 3 ) uniform sampler2D BUFFER1;
 layout( location = 4 ) uniform vec3 HEIGHTMAP_SIZE;

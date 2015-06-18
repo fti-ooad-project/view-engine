@@ -156,11 +156,10 @@ void main()
 	
 	
 	vec2 distfragpos = frag_pos;
-	///
-	uvec4 wbuf = texture( WATER_BUFFER3 , frag_pos );
+	float wdepth = 1000.0;
+	/*uvec4 wbuf = texture( WATER_BUFFER3 , frag_pos );
 	vec4 wY = unpack4i( wbuf.y );
 	vec3 WATERK = vec3( 1.0 );
-	float wdepth = 1000.0;
 	vec2 screenspacewaternorm = vec2( 0.0 );
 	float DDEPTH = 0.0;
 	if( wY.w > 0.0 )
@@ -183,7 +182,7 @@ void main()
 		vec3( wl );//vec4( dot( wnorm , vec3( 0.0 , 0.0 , 1.0 ) ) );reflectWater( wdepth , frag_pos , wnorm , wpos ) * 
 		
 		
-	}
+	}*/
 	uvec4 buf0 = texture( BUFFER0 , distfragpos );
 	float depth = depthFromi( buf0 );
 	///
@@ -214,8 +213,9 @@ void main()
 		vec4 diff = unpack4i( buf0.y );
 		vec3 l = light( pos , norm , CAM.pos , specw , diff.xyz , 1.0 );// * mix( vec3( 1.0 ) , diff.xyz , specw.x );
 		//float ao = 1.0;//ssao( BUFFER0 , vec4( norm , depth ) , distfragpos , 0.8 );
-		out_data += WATERK * l;
-		out_data = mix( out_data , FOG , 1.0 - exp( - min( depth , wdepth ) * 0.01 ) );
+		//out_data += WATERK * l;
+		float mindepth = min( depth , wdepth );
+		out_data = mix( out_data , FOG , 1.0 - exp( - mindepth * 0.01 ) );
 	}
 	
 	vec4 selbuf = texture( SELECTBUFF , frag_pos );

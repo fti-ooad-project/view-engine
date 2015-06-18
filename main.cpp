@@ -4,6 +4,8 @@
 #include "view/ViewEngineGL.h"
 #include <stdexcept>
 #include <openGL\GLincludes.h>
+GraphicSettings ViewManager::_graph_settings;
+int GUIProcessor::_focused_elem = -1;
 void assertGL( int mark )
 {
 	if( int i = glGetError() )
@@ -82,7 +84,7 @@ int main()
 	float X = 0.0f;
 	float cam_z = 10.0f;
 	ls = scene->getLightStatePtr( 0 );
-	eventer->addTimeFunc(
+	eventer->setTimeFunc(
 		[ ss ]( const float dt )
 	{
 		static float t = 0.0f;
@@ -90,7 +92,7 @@ int main()
 		ss->_colori = f4( 0.9f , 0.8f , 0.4f , 500.0f + 100.0f * sinf( t * 30.0f ) );
 	}
 		);
-	eventer->addKeyFunc(
+	eventer->setKeyFunc(
 		[ cam , ls , ss , &X , &cam_pos , &cam_z ]( const KeyStates &cs , const float dt )
 	{
 		const float dr = dt * 30.0f;
@@ -131,6 +133,7 @@ int main()
 	}
 	);
 	std::shared_ptr< GUILayout > main_menu( new GUILayout() );
+	eventer->setGuiLayout( main_menu.get() );
 	std::shared_ptr< GUIElem > button1( new GUIElem() );
 	button1->_floatX = GUIElem::GUIFloat::LEFT;
 	button1->_floatY = GUIElem::GUIFloat::TOP;
@@ -150,20 +153,37 @@ int main()
 	button2->_floatX = GUIElem::GUIFloat::LEFT;
 	button2->_floatY = GUIElem::GUIFloat::TOP;
 	button2->_layer = 0;
-	button2->_text = "but2";
-	button2->_size_pix = f2( 40.0f , 30.0f );
+	button2->_text = "";
+	button2->_size_pix = f2( 60.0f , 30.0f );
 	button2->_visible = true;
 	button2->_onClick = nullptr;
+	button2->_onKeyPressWhenFocused = [ button2 ]( int keycode )
+	{
+		static std::string text( "" );
+		if( keycode == SDLK_BACKSPACE )
+		{
+			if( text.size() > 0 )
+			{
+				text.pop_back();
+			}
+		} else
+		{
+			char ch[ 2 ] = { ( char )keycode , '\0' };
+			text.append( ch );
+		}
+		button2->_text = text;
+		button2->_size_pix.x() = std::max( ( int )text.size() , 6 ) * 10.0f;
+	};
 	main_menu->addElem( button2 );
 
 	std::vector< uint > selected_units_id;
 	uint single_select_id;
-	eventer->addMouseFunc(
+	eventer->setMouseFunc(
 		[ cam , &cam_z , main_menu , scene , &selected_units_id , engine , &single_select_id ]( const MouseStates &cs , const float dt )
 	{
 		static float phi( 1.4f );
 		static float theta( 1.4f );
-		constexpr float delta = 0.01f;
+		const float delta = 0.01f;
 		const float dr = dt * 50.0f;
 		static bool select = false;
 		static f2 selectstart;

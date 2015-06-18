@@ -27,9 +27,9 @@ void main()
 		vec4( INS_POS.xy , vz , 1.0 )
 	);
 	//}
-
+	
 	$include anim_func.glsl
-
+	
 	p = m * p;
 	gl_Position = p;
 	switch( PASSID )
