@@ -25,9 +25,9 @@ if( bool( FLAGS & MASK_ANIMATED ) )
 		for( int i = 0; i < 3; i++ )
 		{
 			temp += invertex_bone_weight[i];
-			ma += getMatFromTex( time , invertex_indx[i] , BONE_COUNT , ANIM_TEX_ARRAY , 0.0 ) * invertex_bone_weight[i];
+			ma += getMatFromTex( time , invertex_indx[i] , BONE_COUNT , ANIM_TEX_ARRAY , curanim ) * invertex_bone_weight[i];
 		}
-		ma += getMatFromTex( time , invertex_indx[3] , BONE_COUNT , ANIM_TEX_ARRAY , 0.0 ) * ( 1.0 - temp );
+		ma += getMatFromTex( time , invertex_indx[3] , BONE_COUNT , ANIM_TEX_ARRAY , curanim ) * ( 1.0 - temp );
 		for( int i = 0; i < 3; ++i )
 			ma[i].w = 0.0;
 		ma[3].w = 1.0;

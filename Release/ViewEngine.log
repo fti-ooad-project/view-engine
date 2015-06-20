@@ -1,11 +1,8 @@
-﻿Build started 16.06.2015 18:19:16.
+﻿Build started 20.06.2015 20:36:11.
      1>Project "C:\DEV\c++\ViewEngine\ViewEngine.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W0 /WX- /Ox /Ob2 /Ot /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp src\DrawlerDeffered.cpp src\ViewEngineGL.cpp
-         main.cpp
-         DrawlerDeffered.cpp
-         ViewEngineGL.cpp
-         Generating Code...
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W0 /WX- /Ox /Ob2 /Ot /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\libs\lib\openGL\souce\WindowGL.cpp
+         WindowGL.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\DEV\c++\ViewEngine\Release\ViewEngine.exe" /INCREMENTAL /NOLOGO SDL2main.lib SDL2.lib SDL2_image.lib SDL2_ttf.lib opengl32.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\DEV\c++\ViewEngine\Release\ViewEngine.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\DEV\c++\ViewEngine\Release\ViewEngine.lib" /MACHINE:X86 /SAFESEH Release\Base.obj
          Release\Eventer.obj
@@ -38,4 +35,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.82
+Time Elapsed 00:00:00.93

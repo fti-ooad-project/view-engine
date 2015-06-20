@@ -282,7 +282,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 			InstanceInfo instance_info{
 				ins._animstat._moment._moment , ins._animstat._moment._last_moment
 				, cam_dist , float( ins.selectid ) , int( ins._animstat._moment._mixing )
-				, ins._animstat._moment._cur_set , ins._animstat._moment._last_set , int( ins._auto_height ) , ins._pos , ins._look , vecx( ins._look , ins._up ) , ins._up };
+				, ins._animstat._moment._cur_set , ins._animstat._moment._last_set , int( ins._auto_height ) , ins._pos , ins._look , ins._left , ins._up };
 			for( auto const i : ins._view )
 			{
 				if( cam_dist < 3.0f && _graph_settings._tesselation )
@@ -329,9 +329,9 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 		HeightMapDrawler::getSingleton()->draw( true );
 		u2 txmpos = ( ( _mpos )* 0.5f + 0.5f ) & f2( _graph_settings._screen_width , _graph_settings._screen_height );
 		uint temp[ 4 ];
-		//glReadBuffer( GL_COLOR_ATTACHMENT0 );
-		//glReadnPixels( txmpos.x() , txmpos.y() , 1 , 1 , GL_RGBA_INTEGER , GL_UNSIGNED_INT , 4 * sizeof( uint ) , temp );
-		//_wmpos = temp_camera._v3pos + temp_camera.getCameraRay( _mpos ) * ( float( temp[ 0 ] ) / 100.0f );
+		glReadBuffer( GL_COLOR_ATTACHMENT0 );
+		glReadnPixels( txmpos.x() , txmpos.y() , 1 , 1 , GL_RGBA_INTEGER , GL_UNSIGNED_INT , 4 * sizeof( uint ) , temp );
+		_wmpos = temp_camera._v3pos + temp_camera.getCameraRay( _mpos ) * ( float( temp[ 0 ] ) / 100.0f );
 		//glPolygonMode( GL_FRONT_AND_BACK , GL_LINE );
 		drawInstances( data.get() );
 		//glPolygonMode( GL_FRONT_AND_BACK , GL_FILL );

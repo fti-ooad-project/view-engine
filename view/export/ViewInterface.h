@@ -37,9 +37,9 @@ struct GraphicSettings
 {
 	bool _reflect_water = false;
 	bool _draw_shadows = true;
-	bool _draw_fog = true;
-	bool _tesselation = true;
-	uint _screen_width = 512 , _screen_height = 512;
+	bool _draw_fog = false;
+	bool _tesselation = false;
+	uint _screen_width = 1024 , _screen_height = 1024;
 	bool operator!=( GraphicSettings const &set )
 	{
 		if( this->_reflect_water != set._reflect_water )

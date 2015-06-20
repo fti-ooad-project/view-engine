@@ -103,7 +103,7 @@ void ViewEngineGL::init()
 {
 	if( isInited() ) return;
 	setInited( true );
-	win.init( [ this ]( int w , int h ) { tick( w , h ); } , [ this ]() { this->release(); } , &_eventer , true , "OOOD PROJ" );
+	win.init( [ this ]( int w , int h ) { tick( w , h ); } , [ this ]() { this->release(); } , &_eventer , false , "OOOD PROJ" );
 	_eventer.start();
 }
 void ViewEngineGL::setScene( Scene3D const *scene )

@@ -76,7 +76,7 @@ vec3 light( vec3 p , vec3 n , vec3 v , vec4 specw , vec3 albedo , float env_k )
 	{
 		float sk = specular( n , -DLIGHT[i].dir , refl , specw.w , 0.8 , 0.04 );
 		float dk = diffuse( n , -DLIGHT[i].dir , 1.0 );
-		vec3 lk = DLIGHT[i].colori.xyz * DLIGHT[i].colori.w * mix( smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) , env_k , specw.w );
+		vec3 lk = DLIGHT[i].colori.xyz * DLIGHT[i].colori.w;// * mix( smoothLightDir( p , n , 0.1 , DLIGHT[i].toLightViewProj , DLIGHT[i].DepthMap_Buffer ) , env_k , specw.w );
 		spec_out += freshnel * sk * lk;
 		diff_out += dk * lk;
 	}
@@ -196,6 +196,7 @@ void main()
 	const vec3 FOG = vec3( 0.1 , 0.2 , 0.2 );
 	vec3 v = camRay( CAM , frag_pos );
 	out_data += traceLights( CAM.pos , v , depth );
+	float mindepth = min( depth , wdepth );
 	if( buf0.x == 0 )
 	{
 		
@@ -213,13 +214,14 @@ void main()
 		vec4 diff = unpack4i( buf0.y );
 		vec3 l = light( pos , norm , CAM.pos , specw , diff.xyz , 1.0 );// * mix( vec3( 1.0 ) , diff.xyz , specw.x );
 		//float ao = 1.0;//ssao( BUFFER0 , vec4( norm , depth ) , distfragpos , 0.8 );
-		//out_data += WATERK * l;
-		float mindepth = min( depth , wdepth );
-		out_data = mix( out_data , FOG , 1.0 - exp( - mindepth * 0.01 ) );
+		out_data += l;//WATERK * l;
+		
+		//out_data = diff.xyz;//mix( out_data , FOG , 1.0 - exp( - mindepth * 0.01 ) );
 	}
 	
 	vec4 selbuf = texture( SELECTBUFF , frag_pos );
 	vec4 fogpass = texture( FOGPASS , frag_pos );
-	out_data += FOG * fogpass.xyz + selbuf.xyz;// + traceLights( CAM.pos , v );
+	out_data += selbuf.xyz;
+	//out_data = mix( out_data , fogpass.xyz * FOG + vec3( 0.01 ) , 1.0 - exp( - mindepth * 0.001 ) ) + selbuf.xyz;// + traceLights( CAM.pos , v );
 	//vec3( pow( texture2D( DLIGHT[0].DepthMap_Buffer , frag_pos ).x , 4.0 ) );
 }

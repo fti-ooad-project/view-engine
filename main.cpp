@@ -35,35 +35,58 @@ int main()
 	engine->init();
 	auto scene = engine->genScene();
 	auto eventer = engine->getEventer();
+	/*adding some units in scene*/
 	xfor( x , 10 )
 		xfor( y , 10 )
 	{
-		auto *state = scene->getInstanceStatePtr( scene->genInstance() );
+		int unit_id = scene->genInstance();
+		auto *state = scene->getInstanceStatePtr( unit_id );
+		/*0 - monkey warrior view 3 - sword view 2 - tower 1 - cube*/
 		state->_view.push_back( 0 );
 		state->_view.push_back( 3 );
+		AnimationMixer::TimeEvent unit_event;
+		/*0th unit will print when he done 50% of his animation only once per animation cycle*/
+		unit_event._active = false;
+		if( x == 0 && y == 0 )
+		{
+			unit_event._func = []()
+			{
+				std::cout << "50% of animation\n";
+			};
+			unit_event._active = true;
+			unit_event._switch_time = 0.5f;
+		}
+		state->_animstat.change( /*anim set 0 - walking 1 - run 2 - idle*/2 , /*speed*/0.5f , /*time event on 50% of animation*/unit_event );
+		/*every unit will start animation with different time*/
 		state->_animstat.update( float( x + y ) / 5.0f );
-		state->_animstat._speed = 0.4f;
 		state->_pos = f3( x , y , 0.0f );
 		state->_up = f3( 0.0f , 0.0f , 1.0f );
 		state->_look = f3( 1.0f , 0.0f , 0.0f );
-		state->_auto_height = false;
+		state->_left = f3( 0.0f , -1.0f , 0.0f );
+		/*flag means that unit will be automaticly adjusted on heightmap*/
+		state->_auto_height = true;
 	}
+	/*add tower*/
 	{
 		auto *state = scene->getInstanceStatePtr( scene->genInstance() );
 		state->_view.push_back( 2 );
 		state->_pos = f3( 0.0f , 0.0f , 0.0f );
 		state->_up = f3( 0.0f , 0.0f , 1.0f );
 		state->_look = f3( 1.0f , 0.0f , 0.0f );
+		state->_left = f3( 0.0f , -1.0f , 0.0f );
 		state->_auto_height = true;
 	}
-	/*{
+	/*add 10 times scaled box*/
+	{
 		auto *state = scene->getInstanceStatePtr( scene->genInstance() );
-		state->_up = f3( 0.0f , 0.0f , 1.0f );
-		state->_look = f3( 1.0f , 0.0f , 0.0f );
-		state->_pos = f3( 0.0f , 0.0f , 0.0f );
-		state->_view.push_back( 3 );
+		state->_up = f3( 0.0f , 0.0f , 10.0f );
+		state->_look = f3( 10.0f , 0.0f , 0.0f );
+		state->_left = f3( 0.0f , -10.0f , 0.0f );
+		state->_pos = f3( 0.0f , 0.0f , 40.0f );
+		state->_view.push_back( 1 );
 		state->_auto_height = false;
-	}*/
+	}
+	/*ading lights. no more lights pls*/
 	LightState *ls = scene->getLightStatePtr( scene->genLight() );
 	ls->_cast_shadow = true;
 	ls->_colori = f4( 0.9f , 0.99f , 1.0f , 5.0f );
@@ -78,11 +101,13 @@ int main()
 	ss->_type = LightSourceType::LIGHT_OMNI;
 	ss->_size = 1.0f;
 
+	/*setup camera*/
 	auto cam = scene->getCamera();
 	cam->lookAt( f3( 0.0f , -2.0f , 2.0f ) , f3( 0.0f , 0.0f , 0.0f ) , f3( 0.0f , 0.0f , 1.0f ) );
 	f3 cam_pos( 0.0f ) , cam_lookat;
 	float X = 0.0f;
 	float cam_z = 10.0f;
+	/*resieve light sstate ptr to change intensity over time*/
 	ls = scene->getLightStatePtr( 0 );
 	eventer->setTimeFunc(
 		[ ss ]( const float dt )
@@ -132,6 +157,7 @@ int main()
 		//cam->$getViewProj().print();
 	}
 	);
+	/*setup gui*/
 	std::shared_ptr< GUILayout > main_menu( new GUILayout() );
 	eventer->setGuiLayout( main_menu.get() );
 	std::shared_ptr< GUIElem > button1( new GUIElem() );
@@ -143,6 +169,7 @@ int main()
 	button1->_visible = true;
 	button1->_onClick = [ engine , scene ]()
 	{
+		/*switch to render scene or not*/
 		if( engine->getScene() )
 			engine->setScene( nullptr );
 		else
@@ -150,13 +177,14 @@ int main()
 	};
 	main_menu->addElem( button1 );
 	std::shared_ptr< GUIElem > button2( new GUIElem() );
-	button2->_floatX = GUIElem::GUIFloat::LEFT;
-	button2->_floatY = GUIElem::GUIFloat::TOP;
+	button2->_floatX = GUIElem::GUIFloat::RIGHT;
+	button2->_floatY = GUIElem::GUIFloat::BOTTOM;
 	button2->_layer = 0;
 	button2->_text = "";
 	button2->_size_pix = f2( 60.0f , 30.0f );
 	button2->_visible = true;
 	button2->_onClick = nullptr;
+	/*function called when gui elem in ficuse and key pressed*/
 	button2->_onKeyPressWhenFocused = [ button2 ]( int keycode )
 	{
 		static std::string text( "" );
@@ -176,6 +204,10 @@ int main()
 	};
 	main_menu->addElem( button2 );
 
+	/*tell engine to use main menu layout and scene*/
+	engine->setGUI( main_menu.get() );
+	engine->setScene( scene );
+
 	std::vector< uint > selected_units_id;
 	uint single_select_id;
 	eventer->setMouseFunc(
@@ -187,6 +219,7 @@ int main()
 		const float dr = dt * 50.0f;
 		static bool select = false;
 		static f2 selectstart;
+		/*rotate camera stuff*/
 		cam_z += ( cs._mwheel - cs._mwheel_last ) * 1.0f;
 		if( cs.__cur_states[ 2 ] && !cs.__last_states[ 2 ] )
 		{
@@ -211,6 +244,7 @@ int main()
 			cam->calc();
 		}
 		//cam->calc();
+		/*selection stuff*/
 		if( select )
 		{
 			f2 center = ( selectstart - cs.__cur_pos ) * 0.5f;
@@ -238,18 +272,17 @@ int main()
 			c++;
 		}
 		//engine->getMousePos( -cs.__cur_pos ).print();
+		/*set 0th unit position to mouse ray collision position*/
 		scene->getInstanceStatePtr( 0 )->_pos = engine->getMousePos( -cs.__cur_pos );
 	}
 	);
 	//cam->lookAt( cam_pos , cam_lookat , f3( 0.0f , 0.0f , 1.0f ) );
 	
-	engine->setGUI( main_menu.get() );
-	engine->setScene( scene );
 	//std::cout << "Hello World!" << std::endl;
 	float t = 0.0f;
 	while( true )
 	{
-		t += 1.0f / 0x20;
+		//t += 1.0f / 0x20;
 		sleep( 0x10 );
 		/*xfor( x , 10 )
 		xfor( y , 10 )
