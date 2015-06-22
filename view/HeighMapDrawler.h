@@ -1,8 +1,8 @@
 #ifndef HEIGHMAPDRAWLER_HPP
 #define HEIGHMAPDRAWLER_HPP
 #include <base/Base.h>
-#include <openGL\ViewModelsGL.h>
-#include <openGL\TexturesGL.h>
+#include <openGL/ViewModelsGL.h>
+#include <openGL/TexturesGL.h>
 class HeightMapDrawler : public Initable
 {
 private:

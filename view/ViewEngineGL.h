@@ -1,12 +1,12 @@
 #ifndef VIEWENGINEGL_H
 #define VIEWENGINEGL_H
 #include "export/ViewInterface.h"
-#include <openGL\WindowGL.h>
+#include <openGL/WindowGL.h>
 #include <base/Eventer.h>
-#include <openGL\DrawableGL.h>
-#include <openGL\ViewModelsGL.h>
+#include <openGL/DrawableGL.h>
+#include <openGL/ViewModelsGL.h>
 #include <list>
-#include <openGL\GUIRendererGL.h>
+#include <openGL/GUIRendererGL.h>
 #include "DrawlerDeffered.h"
 #include <vector>
 class Scene3DGL : public Scene3D

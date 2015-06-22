@@ -1,6 +1,6 @@
 #include "../view/SelectionDrawler.h"
-#include <openGL\Blurer.h>
-#include <openGL\GLincludes.h>
+#include <openGL/Blurer.h>
+#include <openGL/GLincludes.h>
 #include <base/Base.h>
 SelectionDrawler::SelectionDrawler()
 {

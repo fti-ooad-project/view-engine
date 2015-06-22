@@ -1,9 +1,9 @@
 #pragma once
-#include <base\Base.h>
-#include <openGL\PassGL.h>
-#include <openGL\ViewModelsGL.h>
-#include <view\ViewModels.h>
-#include <view\Camera.h>
+#include <base/Base.h>
+#include <openGL/PassGL.h>
+#include <openGL/ViewModelsGL.h>
+#include <view/ViewModels.h>
+#include <view/Camera.h>
 class FogDrawler : public Initable
 {
 private:

@@ -1,7 +1,7 @@
 #include "../view/WaterSimulator.h"
-#include <view\Camera.h>
+#include <view/Camera.h>
 #include "../GlslDefines.h"
-#include <base\Fileloader.h>
+#include <base/FileLoader.h>
 void WaterSimulator::init( int depth_buf , f2 const &size , float height )
 {
 	if( isInited() ) return;

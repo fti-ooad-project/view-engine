@@ -1,5 +1,5 @@
 #pragma once
-#include <openGL\ShaderBuilderGL.h>
+#include <openGL/ShaderBuilderGL.h>
 class ScreenQuadShaderGL : ShaderBaseGL
 {
 private:

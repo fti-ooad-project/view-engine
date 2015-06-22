@@ -1,13 +1,13 @@
 #ifndef DRAWLERDEFFERED_HPP
 #define DRAWLERDEFFERED_HPP
 #include <base/Base.h>
-#include <openGL\DrawableGL.h>
-#include <openGL\PassGL.h>
+#include <openGL/DrawableGL.h>
+#include <openGL/PassGL.h>
 #include "WaterSimulator.h"
 #include "HeighMapDrawler.h"
-#include <openGL\ViewModelsGL.h>
-#include <view\Camera.h>
-#include "export\ViewInterface.h"
+#include <openGL/ViewModelsGL.h>
+#include <view/Camera.h>
+#include "export/ViewInterface.h"
 #include "SelectionDrawler.h"
 struct View
 {

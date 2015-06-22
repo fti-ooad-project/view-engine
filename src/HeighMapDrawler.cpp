@@ -1,5 +1,5 @@
 #include "../view/HeighMapDrawler.h"
-#include <openGL\GLincludes.h>
+#include <openGL/GLincludes.h>
 #include "../GlslDefines.h"
 void HeightMapDrawler::bindHeihgtTexture() const
 {

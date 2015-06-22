@@ -1,6 +1,6 @@
 #include "FogDrawler.h"
-#include <openGL\GLincludes.h>
-#include <openGL\DrawableGL.h>
+#include <openGL/GLincludes.h>
+#include <openGL/DrawableGL.h>
 FogDrawler * FogDrawler::getSIngleton()
 {
 	static FogDrawler *sngl = new FogDrawler();

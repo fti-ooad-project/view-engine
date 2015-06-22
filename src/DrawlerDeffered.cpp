@@ -330,7 +330,7 @@ uint DrawlerDeffered::draw( Scene3D const *scene , u2 const &res )
 		u2 txmpos = ( ( _mpos )* 0.5f + 0.5f ) & f2( _graph_settings._screen_width , _graph_settings._screen_height );
 		uint temp[ 4 ];
 		glReadBuffer( GL_COLOR_ATTACHMENT0 );
-		glReadnPixels( txmpos.x() , txmpos.y() , 1 , 1 , GL_RGBA_INTEGER , GL_UNSIGNED_INT , 4 * sizeof( uint ) , temp );
+		glReadnPixelsARB( txmpos.x() , txmpos.y() , 1 , 1 , GL_RGBA_INTEGER , GL_UNSIGNED_INT , 4 * sizeof( uint ) , temp );
 		_wmpos = temp_camera._v3pos + temp_camera.getCameraRay( _mpos ) * ( float( temp[ 0 ] ) / 100.0f );
 		//glPolygonMode( GL_FRONT_AND_BACK , GL_LINE );
 		drawInstances( data.get() );

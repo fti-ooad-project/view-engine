@@ -3,7 +3,7 @@
 #include <memory>
 #include "view/ViewEngineGL.h"
 #include <stdexcept>
-#include <openGL\GLincludes.h>
+#include <openGL/GLincludes.h>
 GraphicSettings ViewManager::_graph_settings;
 int GUIProcessor::_focused_elem = -1;
 void assertGL( int mark )

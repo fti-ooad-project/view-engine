@@ -3,9 +3,9 @@
 #define RSCENEDRAWLER_H
 #include <base/Base.h>
 #include <base/Eventer.h>
-#include <view\ViewModels.h>
-#include <view\Camera.h>
-#include <view\GUILayot.h>
+#include <view/ViewModels.h>
+#include <view/Camera.h>
+#include <view/GUILayot.h>
 //#ifdef _WIN32
 /*#if defined( VIEWLIBRARY_EXPORT )
 #define VIEWAPI   __declspec( dllexport )

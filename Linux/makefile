@@ -5,8 +5,8 @@ LINKFLAGS = -lSDL2 -lGLEW -lGL -lSDL2_image -lSDL2_ttf
 OBJDIR = obj
 DEPDIR = dep
 
-CFLAGS = -I..
-CXXFLAGS = -I.. -std=c++11
+CFLAGS = -Isource -Isource/lib
+CXXFLAGS = -Isource -Isource/lib -std=c++11
 
 HEADERS = $(shell ./getheader.sh)
 SOURCES = $(shell ./getsource.sh)

@@ -1,9 +1,9 @@
 #pragma once
-#include <openGL\PassGL.h>
-#include <openGL\DrawableGL.h>
-#include <openGL\Blurer.h>
+#include <openGL/PassGL.h>
+#include <openGL/DrawableGL.h>
+#include <openGL/Blurer.h>
 #include <base/Base.h>
-#include <openGL\ViewModelsGL.h>
+#include <openGL/ViewModelsGL.h>
 class SelectionDrawler : public Initable
 {
 private:

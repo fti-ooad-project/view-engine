@@ -1,11 +1,11 @@
 #ifndef WATERSIMULATOR_HPP
 #define WATERSIMULATOR_HPP
 #include <base/Base.h>
-#include <openGL\ViewModelsGL.h>
-#include <view\Camera.h>
-#include <openGL\PassGL.h>
-#include <openGL\DrawableGL.h>
-#include <openGL\TexturesGL.h>
+#include <openGL/ViewModelsGL.h>
+#include <view/Camera.h>
+#include <openGL/PassGL.h>
+#include <openGL/DrawableGL.h>
+#include <openGL/TexturesGL.h>
 class WaterSimulator : public Initable
 {
 private:
